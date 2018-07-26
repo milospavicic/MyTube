@@ -1,0 +1,225 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+body { 
+    background: url('../Images/background.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+body{
+    position: relative;
+    text-align: center;   
+}
+
+.container {
+    width: 100%;
+    padding:0;
+    margin:0;
+    min-height: 100%;
+    position: relative;
+}
+
+.mainDiv {
+    padding: 10px;
+    padding-bottom: 35px; /* Height of the footer */
+    margin-top: 50px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 35px; /* Height of the footer */
+    background-color: #FF0000;
+}
+
+footer p {
+    margin: 0;
+    margin-left: 5%;
+    margin-top: 7px;
+    text-align: left;
+    font-size: 12;
+    color: white;
+}
+
+
+.btn-danger{
+    background-color: red;
+}
+.container-fluid{
+    text-align: left;
+}
+
+
+#navbarLoggedIn{
+    display: none;
+}
+#navbarNotLoggedIn{
+    display: block;
+}
+#login-modal{
+    text-align: left;
+    width: 100%;
+    margin: 0 auto;
+}
+#login-modal input{
+    max-width: auto;
+    
+}
+#login-modal .modal-footer p{
+    text-align: center;
+    margin-top: 10px;
+}
+
+
+.loginWindow.visible{
+    display: inline;
+}
+.loginWindow {
+    display: none;
+    position: absolute;
+    top: 10%;
+    z-index: 1;
+    width: 25%;
+    box-shadow: 1;
+    margin: 0 auto;
+}
+.loginWindow p {
+    text-align: center;
+    margin-right: 5%;
+}
+.item {
+    padding: 20px;
+    font-size: 15px;
+}
+#logInSubmit{
+    margin-right: 15%;
+    margin-top: 5%;
+    /* top staviti u media */
+    margin-bottom: 5%;
+}
+#badLoginModal,#logoutModal,#badRegisterModal{
+    text-align: left;
+    width: 80%;
+    margin: 0 auto;
+}
+.form-group{
+    text-align: left;
+    margin: 1%;
+}
+.itemInListCollapse{
+    text-decoration: none;
+    list-style: none;
+    margin 0;
+    padding:0;
+    margin: 0 2%;
+}
+.itemInListCollapse li a{
+    color: black;
+    text-decoration: none;
+}
+.itemInListCollapse li:hover{
+    background-color: #eaebed;
+}
+.dropdown-menu>li{
+    margin: 2% 0;
+}
+#mainDropdown{
+    width: 230px;
+}
+@media only screen and (max-width: 770px) {
+    .itemInListCollapse{
+        margin: 0 5%;
+    }
+}
+
+@media only screen and (min-width: 770px) {
+    #mainDropdown{
+        max-height: 500px;
+        overflow-y: scroll;
+    }
+}
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent; 
+}
+/*
+RESENO SA margin: 0;
+
+#following li:last-child{
+    margin-bottom: -25px;
+    
+}
+@media only screen and (max-width: 770px) {
+    #following li:last-child{
+        margin-bottom: 0; 
+    }
+}
+*/
+#searchBarNav{
+    margin-left: 35px;
+    width: 400%;
+}
+@media only screen and (max-width: 1400px) {
+    #searchBarNav{
+        width: 350%;
+        
+    }
+}
+@media only screen and (max-width: 1300px) {
+    #searchBarNav{
+        margin-left: 15px;
+        
+    }
+}
+@media only screen and (max-width: 1230px) {
+    #searchBarNav{
+        margin-left: 0px;
+        width: 350%;
+        
+    }
+}
+@media only screen and (max-width: 1160px) {
+    #searchBarNav{
+        width: 300%;
+    }
+}
+@media only screen and (max-width: 1080px) {
+    #searchBarNav{
+        width: 250%;
+    }
+}
+@media only screen and (max-width: 1000px) {
+    #searchBarNav{
+        width: 200%;
+    }
+}
+@media only screen and (max-width: 900px) {
+    #searchBarNav{
+        width: 150%;
+    }
+}
+@media only screen and (max-width: 830px) {
+    #searchBarNav{
+        width: 100%;
+    }
+}
+#newVideomodal{
+    text-align: left;
+}
+
+.newVideoTitle{
+	text-align: left;
+	display:inline-block;
+}
+.newOption{
+	text-align: left;
+	display:inline-block;
+}
+#fillAllModal,#invalidLinkModal,#newVideoModal{
+	text-align: left;
+}

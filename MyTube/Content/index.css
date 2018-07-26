@@ -1,0 +1,119 @@
+.mainDiv{
+    width: 60%;
+    margin-top: 70px;
+    display: inline-block;
+    text-align: left;
+    height:100%;
+}
+.mainDiv h4{
+    float: right;
+    margin: 0;
+    padding:0;
+}
+.mainDiv h4 a{
+    color: black;
+    text-decoration: none;
+}
+#videoInfo{
+    color: dimgray;
+    font-size: 12px;
+}
+#titleBar{
+    margin-top: 5px;
+    font-weight: 500;
+    font-size: 15px;
+}
+#videoImage{
+    height: 30vh;
+    border-radius: 5px;
+}
+@media only screen and (max-width: 1200px) {
+    #videoImage{
+        height: 22vh;
+    }
+
+}
+@media only screen and (max-width: 990px) {
+    #videoImage{
+        height: 53vh;
+    }
+}
+@media only screen and (max-width: 750px) {
+
+    #profileImage{
+        transform: scale(0.9);
+    }
+    .mainDiv{
+        width: 70%;
+    }
+}
+@media only screen and (max-width: 600px) {
+
+    .mainDiv h4{
+        float: none;
+        margin: 0 auto;
+    }
+    .mainDiv{
+        width: 75%;
+    }
+}
+@media only screen and (max-width: 500px) {
+    #videoImage{
+        height: 38vh;
+    }
+    .mainDiv{
+        width: 80%;
+    }
+}
+@media only screen and (max-width: 400px) {
+    #videoImage{
+        height: 35vh;
+    }
+}
+@media only screen and (max-width: 320px) {
+    #videoImage{
+        height: 30vh;
+    }
+}
+
+#profileName, #videoInfo{
+    color: black;
+    text-decoration: none;
+}
+#videoInfo{
+    color: dimgray;
+    text-decoration: none;
+    margin-left: 1%;
+}
+.rowOne a, .rowTwo a,.row a{
+    color: black;
+    text-decoration: none;
+}
+
+hr{
+    clear: right;
+    margin: 0;
+    padding: 0;
+}
+#popularChannels{
+    margin-bottom: 45px;
+    text-align: center;
+}
+#popularChannels h3{
+    text-align: left;
+}
+#profileImage{
+    border-radius: 50%;
+}
+#profileImage:hover{
+    transform: scale(1.05);
+}
+.col-md-4, .col-md-2{
+    padding: 25px 5px;
+}
+#channelName{
+    color: dimgray;
+}
+#channelName:hover{
+    color: black;
+}

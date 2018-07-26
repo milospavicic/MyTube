@@ -1,0 +1,147 @@
+.mainDiv{
+    width: 70%;
+    margin-top: 70px;
+    display: inline-block;
+    text-align: left; 
+    min-height: 800px;
+    margin-bottom: 50px;
+}
+#picDiv{
+	text-decoration: none;
+}
+#btnFilter{
+    width: 100%;
+    margin-bottom: 5px;
+}
+#filter{
+    margin: 0;
+    padding: 0;
+    margin-left: 4%;
+    margin-bottom: 1%;
+}
+
+.col-md-12 a img{
+    float: left;
+    padding: 0;
+    margin: 0;
+    margin-left: 25px;
+    display: inline-block;
+    border-radius: 10px;
+}
+.col-md-12{
+    margin: 5px 0;
+}
+.col-md-12 ul li p{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 600px;
+    
+}
+#videoInfo h3{
+    margin: 0 0 10px 0;
+    padding: 0;
+    width: 100%;
+    color: black;
+    text-decoration: none;
+}
+#videoInfo h3:hover{
+    text-decoration: none;
+}
+#videoInfo{
+    margin: 0;
+    padding: 0;
+    margin-left: 15px; 
+    margin-top: 35px;  
+    text-decoration: none;
+    list-style: none;
+    color: black;
+    display: inline-block;
+    clear: right;
+    float: left;
+}
+#videoInfo p{
+    color: dimgray;
+}
+#videoUserViewsDate a{
+    text-decoration: none;
+    color: dimgray;
+}
+#videoUserViewsDate a:hover{
+    color: black;
+}
+.pagination{
+    margin-left: 2.5%;
+}
+.pagination li a{
+    border-color: silver;
+    color: dimgray;
+}
+.pagination .active a{
+    color: white;
+    background-color: red;
+}
+.pagination .active a:hover{
+    background-color: darkred;
+}
+@media only screen and (max-width: 1220px) {
+    .mainDiv{
+        width: 80%;
+    }
+    .col-md-12 ul li p{
+        width: 500px;
+    }
+}
+@media only screen and (max-width: 960px) {
+    .col-md-12 ul li p{
+        width: 400px;
+    }
+}
+@media only screen and (max-width: 860px) {
+    .mainDiv{
+        width: 90%;
+    }
+    .col-md-12 ul li p{
+        width: 300px;
+    }
+}
+@media only screen and (max-width: 600px) {
+    .col-md-12 a img{
+        margin-left: 30%;
+    }
+    #videoInfo{
+        margin-left: 30%; 
+    }
+}
+@media only screen and (max-width: 530px) {
+    .col-md-12 a img{
+        margin-left: 22%;
+    }
+    #videoInfo{
+        margin-left: 22%; 
+    }
+}
+@media only screen and (max-width: 450px) {
+    .col-md-12 a img{
+        margin-left: 12%;
+    }
+    #videoInfo{
+        margin-left: 12%; 
+    }
+    .col-md-12 ul li p{
+        max-width: 240px;
+    }
+}
+@media only screen and (max-width: 380px) {
+    .col-md-12 a img{
+        margin-left: 5%;
+    }
+    #videoInfo{
+        margin-left: 5%; 
+    }
+}
+@media only screen and (max-width: 300px) {
+    #videoInfo h3{
+        max-width: 200px;
+    }
+}

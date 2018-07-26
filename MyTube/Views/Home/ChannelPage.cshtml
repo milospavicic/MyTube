@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "ChannelPage";
+}
+
+<html>
+<head>
+    <script src="~/Scripts/channelPage.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/channelPage.css">
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12 thumbnail" id="infoAndOptions">
+            <img id="profileImage" src="#" alt="Profile Picture" style="width:80px;height: 80px">
+            <ul id="nameAndFollowers" class="thumbnail">
+                <li id="name"></li>    <!-- CHANNEL NAME -->
+                <li id="followers"></li>      <!-- FOLLOWERS -->
+            </ul>
+            <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
+                <button id="followButton" type="button" class="btn btn-danger changeActive" onclick="follow()">Follow</button>
+                <button id="userVideos" type="button" class="btn btn-default active changeActive">Videos</button>
+                <button id="userFollow" type="button" class="btn btn-default changeActive">Following</button>
+                <button id="userLiked" type="button" class="btn btn-default changeActive">Likes</button>
+                <button id="userInfo" type="button" class="btn btn-default changeActive">Info</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+                    <ul class="dropdown-menu" role="menu" id="optionsDropdown">
+                        <li id="deleteOptionChannel"><a href="#deleteModal" data-toggle="modal" id="deleteOptionBlocked">Delete user</a></li>
+                        <li id="blockOptionChannel"><a href="#blockModal" data-toggle="modal" id="blockOptionBlocked">Block user</a></li>
+                        <li id="unblockOptionChannel"><a href="#unblockModal" data-toggle="modal" id="unblockOptionBlocked">Unblock user</a></li>
+                        <li id="editChannelOption"><a href="#editChannel-modal" data-toggle="modal" id="editOptionBlocked">Edit user</a></li>
+                        <li><a href="#">Send message</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-sm-12 thumbnail" id="mainDiv">
+            <h4 class="orderVideos" id="h4Tittle">Order videos by: </h4>
+            <select name="type" form="typeForm" class="orderVideos" id="orderVideosSelect" onchange="refreshVideos()">
+                <option value="1">Latest</option>
+                <option value="2">Oldest</option>
+                <option value="3">Most viewed</option>
+                <option value="4">Least viewed</option>
+            </select>
+            <div class="row" id="content">
+            </div>
+        </div>
+    </div>
+</body>
+</html>

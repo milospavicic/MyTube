@@ -1,0 +1,285 @@
+.mainDiv{
+    width: 82%;
+    display: inline-block;
+    text-align: left;  
+    min-height: 800px;
+    padding: 0;
+}
+
+#infoAndOptions{
+    width: 100%;
+    overflow: visible;
+    margin: 0;
+    padding: 0;
+    border-radius: 0 0 10px 10px;
+    margin-top: 50px;
+}
+
+#infoAndOptions ul li a{
+    background-color: white;
+}
+#infoAndOptions ul {
+    width: 20%;
+}
+#navButtons{
+    float: left;
+    width: 430px;
+    margin-left: 20%;
+    margin-top: 35px;
+}
+.row{
+    padding: 0;
+    margin: 0;
+    widows: 100%;
+    margin: 0 auto;
+}
+
+#profileImage{
+    clear: left;
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5%;
+    padding: 0;
+    border-radius: 50%;  
+}
+#nameAndFollowers{
+    float: left;
+    list-style: none;
+    margin: 27px 1% 0 2%;
+    padding:5px;
+    border-radius: 5px;
+    min-width: 130px;
+}
+#nameAndFollowers h4{
+    margin: 0;
+    padding: 0;
+}
+#nameAndFollowers p{
+    margin: 0;
+    padding: 0;
+    color: dimgray;
+}
+#followButton{
+    width: 100px;
+}
+#mainDiv{
+    width: 100%;
+    height: auto;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    border-radius: 10px;
+    margin-bottom: 50px;
+}
+#videoImage{
+    height: 30vh;
+    border-radius: 5px;
+}
+@media only screen and (max-width: 1200px) {
+    #videoImage{
+        height: 28vh;
+    }
+    #navButtons{
+        margin-left: 10%;
+    }
+}
+@media only screen and (max-width: 1010px) {
+    #videoImage{
+        height: 30vh;
+    }
+    .mainDiv{
+        width: 85%;
+    }
+    #navButtons{
+        margin-left: 5%;
+    }
+}
+@media only screen and (max-width: 850px) {
+    
+    #navButtons{
+        margin-left: 0;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+}
+@media only screen and (max-width: 850px) {
+    #navButtons{
+        margin-left: 0;
+    }
+}
+@media only screen and (max-width: 780px) {
+    #videoImage{
+        height: 55vh;
+    }
+    .mainDiv{
+        width: 90%;
+    }
+    #profileImage{
+        margin-left: 28%;
+    }
+    #navButtons{
+        margin-left: 15%;
+    }
+    #infoAndOptions{
+        margin-top: -20px;
+    }
+}
+
+@media only screen and (max-width: 630px) {
+    #videoImage{
+        height: 42vh;
+    }
+    .mainDiv{
+        width: 95%;
+    }
+    #navButtons{
+        margin-left: 10%;
+    }
+}
+@media only screen and (max-width: 500px) {
+    #videoImage{
+        height: 35vh;
+    }
+    #navButtons{
+        margin-left: 2%;
+    }
+    
+}
+ @media only screen and (max-width: 450px) {
+    #navButtons{
+        transform: scale(0.9);
+        margin-left: 0;
+    }
+}   
+@media only screen and (max-width: 420px) {
+    #videoImage{
+        height: 28vh;
+    }
+        #navButtons{
+        transform: scale(0.8);
+        margin-left: -5%;
+    }
+    #profileImage{
+        margin-left: 25%;
+    }
+}
+@media only screen and (max-width: 370px) {
+    #navButtons{
+        margin-left: -12%;
+    }
+}
+@media only screen and (max-width: 320px) {
+    #videoImage{
+        height: 20vh;
+    }
+}
+
+#videoInfo{
+    color: black;
+    text-decoration: none;
+    margin-left: 4%;
+}
+.row a{
+    color: black;
+    text-decoration: none;
+}
+.col-md-4{
+    padding: 10px 20px;
+}
+#videoImageHomepage{
+    height: 60vh;
+    border-radius: 10px;
+}
+#channelImage{
+    border-radius: 50%;
+}
+
+#channelDiv{
+    margin: 0;
+    padding: 0;
+    transform: scale(1.2);
+    text-align: left;
+    float: left;
+    width: 230px;
+    margin-bottom: 35px;
+    margin-top: 17px;
+}
+
+#channelDiv li{
+    padding: 5px 0 5px 5px;
+    list-style: none;
+}
+
+#channelPic{
+    padding: 0;
+    display: inline-block;
+    margin-left: 2%;
+    margin-right: 2%;
+    border-radius: 50%;
+}
+#simmChanelHeader{
+    margin-top: 30px;
+    margin-left: 0;
+}
+#list-group-item{
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+#titleBar{
+    margin-top: 5px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+#infoDiv{
+    height: auto;
+    margin-bottom: 15px;
+    margin-left: 8%;
+    border-radius: 10px;
+}
+#infoDivHeader{
+    padding-left: 7%;
+}
+.thumbnail{
+    margin: 0 1px;
+}
+#editChannel-modal,#blockModal,#deleteModal,#unblockModal,#succesEdit,#uploadPicModal{
+    text-align: left;
+}
+#welcomeVideo{
+    margin-top: 15px;
+    padding: 0;
+    margin-right: 0;
+    border-radius: 10px;
+}
+#followingInfo{
+    color: black;
+    text-decoration: none;
+    margin-left: 3%;
+    font-size: 12px;
+}
+.editUser{
+	text-align: left;
+	display:inline-block;
+}
+.editOption{
+	text-align: left;
+	display:inline-block;
+}
+.orderVideos{
+	text-align: left;
+	display:inline-block;
+}
+#h4Tittle{
+	margin-top: 2%;
+	margin-left: 2%;
+	padding: 0;
+}
+#lol{
+	vertical-align : middle;
+}
+#lou{
+	padding-top: 1%;
+}

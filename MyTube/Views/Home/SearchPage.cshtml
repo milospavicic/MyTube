@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "SearchPage";
+}
+<html>
+<head>
+    <script src="~/Scripts/index.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/index.css">
+</head>
+<body>
+    <button data-toggle="collapse" class="btn btn-default" data-target="#filter" id="btnFilter">Filter</button>
+    <div id="filter" class="collapse">
+        <p class="editVideoTitle">Order by: </p>
+        <select name="visibility" form="visibilityForm" class="editOption" id="selectOne" onchange="refreshVideos()">
+            <option value="1">Title desc</option>
+            <option value="2">Title asc</option>
+            <option value="3">Owner desc</option>
+            <option value="4">Owner asc</option>
+            <option value="5">Views desc</option>
+            <option value="6">Views asc</option>
+            <option value="7">Date Posted desc</option>
+            <option value="8">Date Posted asc</option>
+        </select>
+        <label for="Checkbox1">Search by:</label>
+        <input type="checkbox" id="videoNameSearch" checked="checked">
+        <label for="videoNameSearch">Video Name</label>
+        <input type="checkbox" id="ownerSearch" checked="checked">
+        <label for="ownerSearch">Owner</label>
+        <input type="checkbox" id="viewCountSearch" checked="checked">
+        <label for="viewCountSearch">View Count</label>
+        <input type="checkbox" id="dateSearch" checked="checked">
+        <label for="dateSearch">Date</label>
+        <input type="checkbox" id="commentSearch" checked="checked">
+        <label for="commentSearch">Comments</label>
+    </div>
+    <div class="row">
+        <!--
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <a href="videoPage.html" id="picDiv"><img src="pictures/1.jpg" alt="Lights" style="width:190px;height: 150px">
+            <ul id="videoInfo">
+                <li><h3>Video title</h3></li>
+                <li id="videoUserViewsDate"><p><a href="channelPage.html">User</a> - 123.123 views - on 21.5.2007.</p></li>
+                <li><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eleifend volutpat turpis.</p></li>
+            </ul>
+            </a>
+        </div>
+        -->
+    </div>
+</body>
+</html>

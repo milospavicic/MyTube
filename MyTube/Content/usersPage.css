@@ -1,0 +1,152 @@
+.mainDiv{
+    padding: 0;
+    margin: 0;
+    width: 60%;
+    margin-top: 70px;
+    display: inline-block;
+    text-align: left; 
+    min-height: 800px;
+    margin-bottom: 50px;
+}
+.row{
+    padding: 0;
+    margin: 0;
+}
+#searchUserBar{
+    width: 50%;
+}
+
+.col-md-12 a img{
+    float: left;
+    padding: 0;
+    margin: 0;
+    margin-left: 35px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.col-md-12{
+    margin: 5px 0;
+}
+.col-md-12 ul li p{
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 220px;
+}
+
+#channelInfo h3{
+    margin: 0;
+    padding: 0;
+}
+#channelInfo{
+    margin: 0;
+    padding: 0;
+    margin-left: 15px; 
+    margin-top: 25px;  
+    text-decoration: none;
+    list-style: none;
+    color: black;
+    display: inline-block;
+    clear: right;
+    float: left;
+}
+#channelButton{
+    float: right;
+    margin-top: 55px;  
+    margin-bottom: 20px;
+    margin-right: 20px;
+    display: inline-block;
+}
+
+
+@media only screen and (max-width: 1220px) {
+    .mainDiv{
+    width: 60%;
+    }
+}
+@media only screen and (max-width: 930px) {
+    .mainDiv{
+    width: 70%;
+    }
+    #searchUserBar{
+        width: 60%;
+    }
+}
+@media only screen and (max-width: 750px) {
+    .mainDiv{
+    width: 80%;
+    }
+    #searchUserBar{
+        width: 70%;
+    }
+}
+@media only screen and (max-width: 660px) {
+    .mainDiv{
+    width: 90%;
+    }
+    #searchUserBar{
+        width: 75%;
+    }
+}
+@media only screen and (max-width: 580px) {
+    #channelButton{ 
+        margin-top: 15px;
+        margin-right: 35%;
+    }
+        #searchUserBar{
+        width: 80%;
+    }
+}
+@media only screen and (max-width: 550px) {
+    #channelInfo{
+        margin-left:  30%;
+    }
+    .col-md-12 a img{
+        margin-left:  32%;
+    } 
+}
+@media only screen and (max-width: 450px) {
+    #channelButton{ 
+        float: left;
+        margin-top: 15px;
+        margin-left: 25%;
+    }
+    #channelInfo{
+        margin-left:  20%;
+    }
+    .col-md-12 a img{
+        margin-left:  22%;
+    } 
+        #searchUserBar{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 330px) {
+    #channelButton{ 
+        margin-left: 15%;
+    }
+    #channelInfo{
+        margin-left:  10%;
+    }
+    .col-md-12 a img{
+        margin-left:  12%;
+    } 
+}
+#editChannel-modal,#blockModal,#deleteModal,#unblockModal,#succesEdit,#uploadPicModal{
+    text-align: left;
+}
+.editUser{
+	text-align: left;
+	display:inline-block;
+}
+.editOption{
+	text-align: left;
+	display:inline-block;
+}
+
+#lol{
+	vertical-align : middle;
+}
+#lou{
+	padding-top: 1%;
+}
