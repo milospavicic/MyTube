@@ -1,0 +1,56 @@
+﻿@model MyTube.Models.EditUserModel
+@{
+    ViewBag.Title = "EditUserForm";
+}
+
+@using (Html.BeginForm("EditUserForm", "Users", FormMethod.Post, new { id = "userEditForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        @Html.LabelFor(model => model.Pass, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Pass, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Password", @type = "password" } })
+            @Html.ValidationMessageFor(model => model.Pass, "", new { @class = "text-danger" })
+        </div>
+        @Html.LabelFor(model => model.Firstname, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Firstname, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter First Name" } })
+            @Html.ValidationMessageFor(model => model.Firstname, "", new { @class = "text-danger" })
+        </div>
+        @Html.LabelFor(model => model.Lastname, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Lastname, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Last Name" } })
+            @Html.ValidationMessageFor(model => model.Lastname, "", new { @class = "text-danger" })
+        </div>
+        @if (@ViewBag.CurrentUserUserType == "ADMIN" && Session["loggedInUserUsername"].ToString() != Model.Username)
+        {
+            @Html.LabelFor(model => model.UserType, "UserType", htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-12">
+                @Html.DropDownList("UserType", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
+            </div>
+        }
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Email" } })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+        @Html.LabelFor(model => model.UserDescription, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.UserDescription, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Description" } })
+            @Html.ValidationMessageFor(model => model.UserDescription, "", new { @class = "text-danger" })
+        </div>
+        @Html.LabelFor(model => model.ProfilePictureUrl, htmlAttributes: new { @class = "control-label col-md-12" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.ProfilePictureUrl, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Picture Url" } })
+            @Html.ValidationMessageFor(model => model.ProfilePictureUrl, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <!-- footer -->
+    <div class="modal-footer">
+        <div class="col-md-12">
+            <input type="button" class="btn btn-danger btn-block" onclick="userEditSubmit(event)" value="Submit Changes." />
+            <button class="btn btn-default btn-block" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+}

@@ -1,0 +1,34 @@
+﻿@model MyTube.Models.User
+@{
+    ViewBag.Title = "LoginForm";
+}
+@using (Html.BeginForm("Login", "Users", FormMethod.Post, new { id = "loginForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="modal-header">
+        <div class="col-md-12">
+            <h5 id="loginMessage">@ViewBag.Message</h5>
+        </div>
+        @Html.LabelFor(model => model.Username, htmlAttributes: new { @class = "control-label col-md-2", @id = "loginModalUsernameLabel" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Username, new { htmlAttributes = new { @class = "form-control", @id = "loginModalUsername", @placeholder = " Enter Username" } })
+            @Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })
+        </div>
+        @Html.LabelFor(model => model.Pass, htmlAttributes: new { @class = "control-label col-md-2", @id = "loginModalPassLabel" })
+        <div class="col-md-12">
+            @Html.EditorFor(model => model.Pass, new { htmlAttributes = new { @class = "form-control", @id = "loginModalPass", @placeholder = " Enter Password", @type = "password" } })
+            @Html.ValidationMessageFor(model => model.Pass, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <!-- footer -->
+    <div class="modal-footer">
+        <div class="col-md-12">
+            <input type="button" class="btn btn-danger btn-block" id="loginsubmit" onclick="loginSubmit(event)" value="Login" />
+            @*<button class="btn btn-danger btn-block" id="loginsubmit">Login</button>*@
+            <p>Or</p>
+            <button class="btn btn-default btn-block" data-toggle="modal" href="#register-modal" data-dismiss="modal">Register</button>
+        </div>
+    </div>
+}

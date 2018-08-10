@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<MyTube.Models.Video>
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -11,6 +12,18 @@
     <div id="recommendedDiv">
         <h3>Most recent</h3>
         <div class="row">
+            @foreach (var video in Model)
+            {
+            <div class="col-md-4">
+                <a href="@Url.Action("VideoPage/"+video.VideoID+"", "Home")" target="_self">
+                    <img id="videoImage" src="@video.ThumbnailUrl" alt="video" style="width:100%">
+                    <div class="caption">
+                        <p id="titleBar">@video.VideoName</p>
+                    </div>
+                </a>
+                <p id="videoInfo"><a href="@Url.Action("ChannelPage/"+video.VideoOwner+"", "Home")" id="channelName">@video.VideoOwner</a><br>@video.ViewsCount views<br>Posted on: @video.DatePosted</p>
+            </div>
+            }
         </div>
     </div>
     <h4><a href="searchPage.html?result_for=">See more</a></h4>

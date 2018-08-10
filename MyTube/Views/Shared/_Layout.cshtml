@@ -9,7 +9,7 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
-    <script src="~/Scripts/nav.js" type="text/javascript"></script>
+    <script src="~/Scripts/layout.js" type="text/javascript"></script>
 </head>
 <body>
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -20,7 +20,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">MyTube</a>
+                @Html.ActionLink("MyTube", "Index", "Home", null, new { @class = "navbar-brand" })
             </div>
             <div class="collapse navbar-collapse" id="toggleMenu">
                 <form class="navbar-form navbar-left" role="search" action="#">
@@ -31,39 +31,7 @@
                         </div>
                     </div>
                 </form>
-                <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
-                    <li><a data-toggle="modal" href="#login-modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                    <li><a data-toggle="modal" href="#register-modal"><span class="glyphicon glyphicon-user"></span> Register</a></li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span> Options</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" target="_self">Help</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
-                    <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
-                    <li class="dropdown">
-                        <!-- Link koji otvara dropdown listu -->
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab">TEST</a>
-                        <!-- Lista koja se pojavljuje i sakriva na klik -->
-                        <ul class="dropdown-menu" id="mainDropdown">
-                            <li><a href="usersPage.html" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
-                            <li><a id="myChannel" href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
-                            <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
-                            <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <span class="glyphicon glyphicon-cog"></span> Options<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" target="_self"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
-                            <li><a target="_self" data-toggle="modal" href="#logoutModal"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                @Html.Action("Navbar","Home")
             </div>
         </div>
     </nav>
@@ -73,27 +41,29 @@
                 <!-- header -->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="modal-title">Login Form</h3>
+                    <h3 class="modal-title">Login</h3>
                 </div>
                 <!-- body -->
-                <div class="modal-header">
-                    <form role="form">
-                        <div class="form-group">
-                            <input type="text" name="uname" id="usernameLogin" class="form-control" placeholder="Username" maxlength="15" required />
-                            <input type="password" name="passw" id="passwordLogin" class="form-control" placeholder="Password" maxlength="15" required />
-                        </div>
-                    </form>
+                <div class="imgContaiener">
+                    <img alt="loginImg" draggable="false" src="http://www.smartprint4u.com/images/profile-icon.png" id="loginImage" />
                 </div>
-                <!-- footer -->
-                <div class="modal-footer">
-                    <button class="btn btn-danger btn-block" id="logInSubmit">Log In</button>
-                    <p>Or</p>
-                    <button class="btn btn-default btn-block" data-toggle="modal" href="#register-modal" data-dismiss="modal">Register</button>
+                <div id="loginFormContent">
+
+                    @Html.Action("LoginModal","Users")
+                    @*<form role="form">
+                            <div class="form-group">
+                                <input type="text" name="uname" id="usernamelogin" class="form-control" placeholder="username" maxlength="15" required />
+                                <input type="password" name="passw" id="passwordlogin" class="form-control" placeholder="password" maxlength="15" required />
+                            </div>
+                        </form>*@
                 </div>
+
 
             </div>
         </div>
     </div>
+
+    @*@RenderPage("~/Views/Shared/LoginModal.cshtml")*@
     <div class="modal fade" id="register-modal">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -125,45 +95,17 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="newVideoModal">
-        <div class="modal-dialog">
+    <div class="modal fade" id="logoutModal" role="dialog">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <!-- header -->
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="modal-title">New video</h3>
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
                 </div>
-                <!-- body -->
-                <div class="modal-header">
-                    <input type="text" id="newVideoUrl" class="form-control" placeholder="Video url*" maxlength="100" required />
-                    <input type="text" id="newVideoName" class="form-control" placeholder="Title*" maxlength="80" required />
-                    <textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="newDescription" maxlength="500" rows="4" placeholder="Description"></textarea>
-                    <label for="lod" id="lodl">Default video picture : </label>
-                    <input type="checkbox" id="lod" onchange="hideShowLink()" />
-                    <input type="text" id="newPicUrl" class="form-control" placeholder="Picture url*" maxlength="200" required />
-                    <hr>
-                    <p class="newVideoTitle">Visibility</p>
-                    <select name="visibility" form="visibilityForm" class="newOption" id="selectVisib">
-                        <option value="1">Public</option>
-                        <option value="2">Private</option>
-                        <option value="3">Unlisted</option>
-                    </select>
-                    <hr>
-                    <p class="newVideoTitle">Comments enabled</p>
-                    <select name="commAble" form="commAbleForm" class="newOption" id="selectCE">
-                        <option value="1">Yes</option>
-                        <option value="2">No</option>
-                    </select>
-                    <hr>
-                    <p class="newVideoTitle">Rating enabled</p>
-                    <select name="ratAble" form="ratAbleForm" class="newOption" id="selectRE">
-                        <option value="1">Yes</option>
-                        <option value="2">No</option>
-                    </select>
-                </div>
-                <!-- footer -->
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-danger btn-block" onclick="saveNewVideo()">Submit</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    @Html.ActionLink("Logout", "Logout", "Users", null, new { @class = "btn btn-danger" })
+                    @*<a class="btn btn-danger" href="index.html" onclick="logout()">Logout</a>*@
                 </div>
             </div>
         </div>

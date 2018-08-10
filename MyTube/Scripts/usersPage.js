@@ -112,11 +112,9 @@ function fillPage(sort){
 		});
 	});
 }
-function deleteModal(userName){
-	if(blocked == true){
-		$("#blockedModal").modal('toggle');
-		return;
-	}
+function deleteModal(userName) {
+    console.log(userName);
+    $("#DeleteModalYesButton").attr("href", "User/Delete/" + userName);
 	tempChannelName = userName;
 	$('#deleteModal').modal();
 }

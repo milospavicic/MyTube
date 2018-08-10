@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "MessageModal";
+}
+<div class="modal-dialog modal-sm" id="messageModalContainer" role="document">
+    <div class="modal-content modal-sm">
+        <div>
+            <div class="modal-header">
+                <div class="col-md-12">
+                    <h4 id="messageModalText">@ViewBag.Message</h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12">
+                    <button class="btn btn-danger btn-sm btn-block" data-toggle="modal" data-dismiss="modal" onclick="refreshPage()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

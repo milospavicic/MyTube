@@ -1,0 +1,136 @@
+﻿@model MyTube.Models.Video
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Video</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.VideoUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VideoUrl)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThumbnailUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThumbnailUrl)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VideoName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VideoName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VideoDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VideoDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Blocked)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Blocked)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Deleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Deleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentsEnabled)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentsEnabled)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RatingEnabled)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RatingEnabled)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LikesCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LikesCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DislikesCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DislikesCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ViewsCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ViewsCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DatePosted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DatePosted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Pass)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.Pass)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VideoType1.TypeName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VideoType1.TypeName)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

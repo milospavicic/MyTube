@@ -1,48 +1,116 @@
-﻿
+﻿@model IEnumerable<MyTube.Models.User>
 @{
     ViewBag.Title = "AdminPage";
 }
 
 <html>
 <head>
-    <script src="~/Scripts/usersPage.js" type="text/javascript"></script>
+    <script src="~/Scripts/adminPage.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/usersPage.css">
 </head>
 <body>
-    <div class="input-group" id="searchUserBar">
-        <input type="text" class="form-control" placeholder="Search users" autocomplete="off" id="searchUsers">
-        <span class="input-group-btn"><button class="btn btn-danger" onclick="searchUsersButton()">Submit</button></span>
-    </div>
-    <select name="type" form="typeForm" id="selectSort" onchange="refreshUsers()">
-        <option value="1">Username ASC</option>
-        <option value="2">Username DESC</option>
-        <option value="3">First Name ASC</option>
-        <option value="4">First Name DESC</option>
-        <option value="5">Last Name ASC</option>
-        <option value="6">Last Name DESC</option>
-        <option value="7">Email ASC</option>
-        <option value="8">Email DESC</option>
-        <option value="9">Role ASC</option>
-        <option value="10">Role DESC</option>
-        <option value="11">Status ASC</option>
-        <option value="12">Status DESC </option>
-    </select>
-    <div class="row">
-        <!--
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a href="channelPage.html" id="picDiv"><img src="pictures/1.jpg" alt="Lights" style="width:150px;height: 150px">
-            <ul id="channelInfo">
-                <li><h3>Channel name</h3></li>
-                <li><p>151.412 followers - 142 videos</p></li>
-                <li><p>15 41412 1241 41 15 1134131 12124 1231 1 1241 1241 12 123 123 1</p></li>
-            </ul>
-            </a>
-            <div class="btn-group" role="group" id="channelButton">
-                <button type="button" class="btn btn-danger" id="btnFollow">Follow</button>
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-option-horizontal"></span></button>
+    <div class="modal fade" id="blockModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Block" below if you are want to block this channel.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("BlockUser","Users")" class="btn btn-danger" onclick="blockUser(event)" id="BlockModalYesButton">Block User.</a>
+                </div>
             </div>
         </div>
-        -->
+    </div>
+    <div class="modal fade" id="unblockModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Unblock" below if you are want to unblock this channel.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("UnblockUser","Users")" class="btn btn-danger" onclick="unblockUser(event)" id="UnblockModalYesButton">Unblock User.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Delete" below if you are want to delete this channel.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("DeleteUser","Users")" class="btn btn-danger" onclick="deleteUser(event)" id="DeleteModalYesButton">Delete User.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editUserModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Edit user</h3>
+                </div>
+                <!-- body -->
+                <div id="userEditFormContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+    @using (Html.BeginForm("SortAndSearchUsers", "Users", FormMethod.Post, new { id = "SortAndSearchUsersForm" }))
+    {
+        <div class="input-group" id="searchUserBar">
+            <input type="text" name="searchString" class="form-control" placeholder="Search users" autocomplete="off" id="searchInputField" value="@ViewBag.SearchString">
+            <span class="input-group-btn"><input class="btn btn-danger" type="submit" onclick="sortAndSearchUsers()" value="Submit"></span>
+        </div>
+        @Html.DropDownList("sortOrder", new SelectList(ViewBag.Values, "Value", "Text"), new { onchange = "this.form.submit();" })
+    }
+
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            if (item.Username == Session["loggedInUserUsername"].ToString()) { continue; }
+
+
+            <div class="col-md-12 col-sm-12 col-xs-12" id="div">
+                <a href="channelPage.html?channel=" id="picDiv">
+                    <img src="@item.ProfilePictureUrl" alt="Profile picture" style="width:150px;height: 150px">
+                    <ul id="channelInfo">
+                        <li><h3>@item.Username</h3></li>
+                        <li><p>Followers: @item.SubscribersCount</p></li>
+                        <li><p>Name: @item.Firstname @item.Lastname</p></li>
+                        <li><p>Email: @item.Email</p></li>
+                        <li><p>Role: @item.UserType</p></li>
+                        @if (@item.Blocked == true)
+                        {
+                            <li><p>Status: Blocked</p></li>}
+                        else
+                        {
+                            <li><p>Status: Normal</p></li>}
+                    </ul>
+                </a>
+                <div class="btn-group">
+                    <button type="button" onclick="editModal('@item.Username')" class="btn btn-default" title="Edit channel."><span class="glyphicon glyphicon-edit"></span></button>
+                    @if (item.Blocked == true)
+                    {
+                        <button type="button" onclick="unblockModal('@item.Username')" class="btn btn-default" title="Unblock channel."><span class="glyphicon glyphicon-ok-circle"></span></button>
+                    }
+                    else
+                    {
+                        <button type="button" onclick="blockModal('@item.Username')" class="btn btn-default" title="Block channel."><span class="glyphicon glyphicon-ban-circle"></span></button>
+                    }
+                    <button type="button" onclick="deleteModal('@item.Username')" class="btn btn-default" title="Delete channel."><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+            </div>
+        }
     </div>
 </body>
 </html>

@@ -1,0 +1,111 @@
+﻿@model IEnumerable<MyTube.Models.Video>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.VideoUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ThumbnailUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.VideoName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.VideoDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Blocked)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Deleted)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CommentsEnabled)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RatingEnabled)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LikesCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DislikesCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ViewsCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DatePosted)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.User.Pass)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.VideoType1.TypeName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.VideoUrl)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ThumbnailUrl)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.VideoName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.VideoDescription)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Blocked)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Deleted)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CommentsEnabled)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RatingEnabled)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LikesCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DislikesCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ViewsCount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DatePosted)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.User.Pass)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.VideoType1.TypeName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.VideoID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.VideoID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.VideoID })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,46 @@
+﻿@model MyTube.Models.User
+@{
+    ViewBag.Title = "Navbar";
+}
+@if (Model == null)
+{
+    <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
+        <li><a data-toggle="modal" href="#login-modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="@Url.Action("Register", "Users")"><span class="glyphicon glyphicon-user"></span> Register</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-cog"></span> Options</a>
+            <ul class="dropdown-menu">
+                <li><a href="#" target="_self">Help</a></li>
+            </ul>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
+        <li><a href="#newVideoModal" data-toggle="modal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+        <li class="dropdown">
+            <!-- Link koji otvara dropdown listu -->
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"><span class="glyphicon glyphicon-user"></span> @Model.Username <span class="caret"></span></a>
+            <!-- Lista koja se pojavljuje i sakriva na klik -->
+            <ul class="dropdown-menu" id="mainDropdown">
+                @if (Model.UserType.ToString() == "ADMIN" && Model.Blocked!=true)
+                {
+                    <li><a href="@Url.Action("AdminPage", "Home")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                }
+                <li><a id="myChannel" href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
+                <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <span class="glyphicon glyphicon-cog"></span> Options <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="#" target="_self"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+                <li><a target="_self" data-toggle="modal" href="#logoutModal"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+        </li>
+    </ul>
+}

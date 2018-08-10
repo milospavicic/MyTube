@@ -1,0 +1,717 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="MyTubeDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CommentRating">
+          <Key>
+            <PropertyRef Name="LikeID" />
+          </Key>
+          <Property Name="LikeID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LikeOwner" Type="varchar" MaxLength="16" />
+          <Property Name="CommentId" Type="bigint" />
+          <Property Name="IsLike" Type="bit" Nullable="false" />
+          <Property Name="LikeDate" Type="date" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Comments">
+          <Key>
+            <PropertyRef Name="CommentID" />
+          </Key>
+          <Property Name="CommentID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VideoID" Type="bigint" />
+          <Property Name="CommentOwner" Type="varchar" MaxLength="16" />
+          <Property Name="CommentText" Type="varchar" MaxLength="500" Nullable="false" />
+          <Property Name="DatePosted" Type="date" Nullable="false" />
+          <Property Name="LikesCount" Type="bigint" Nullable="false" />
+          <Property Name="DislikesCount" Type="bigint" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Subscribers">
+          <Key>
+            <PropertyRef Name="SubID" />
+          </Key>
+          <Property Name="SubID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChannelSubscribed" Type="varchar" MaxLength="16" />
+          <Property Name="Subscriber" Type="varchar" MaxLength="16" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Username" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="Pass" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="Firstname" Type="varchar" MaxLength="15" />
+          <Property Name="Lastname" Type="varchar" MaxLength="15" />
+          <Property Name="UserType" Type="varchar" MaxLength="10" />
+          <Property Name="Email" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="UserDescription" Type="varchar" MaxLength="500" />
+          <Property Name="RegistrationDate" Type="date" Nullable="false" />
+          <Property Name="Blocked" Type="bit" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+          <Property Name="ProfilePictureUrl" Type="varchar" MaxLength="300" />
+        </EntityType>
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="TypeName" />
+          </Key>
+          <Property Name="TypeName" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="VideoRating">
+          <Key>
+            <PropertyRef Name="LikeID" />
+          </Key>
+          <Property Name="LikeID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VideoID" Type="bigint" />
+          <Property Name="LikeOwner" Type="varchar" MaxLength="16" />
+          <Property Name="IsLike" Type="bit" Nullable="false" />
+          <Property Name="LikeDate" Type="date" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Videos">
+          <Key>
+            <PropertyRef Name="VideoID" />
+          </Key>
+          <Property Name="VideoID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VideoUrl" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="ThumbnailUrl" Type="varchar" MaxLength="200" Nullable="false" />
+          <Property Name="VideoName" Type="varchar" MaxLength="80" Nullable="false" />
+          <Property Name="VideoDescription" Type="varchar" MaxLength="500" />
+          <Property Name="VideoType" Type="varchar" MaxLength="10" />
+          <Property Name="Blocked" Type="bit" Nullable="false" />
+          <Property Name="Deleted" Type="bit" Nullable="false" />
+          <Property Name="CommentsEnabled" Type="bit" Nullable="false" />
+          <Property Name="RatingEnabled" Type="bit" />
+          <Property Name="LikesCount" Type="bigint" Nullable="false" />
+          <Property Name="DislikesCount" Type="bigint" Nullable="false" />
+          <Property Name="ViewsCount" Type="bigint" Nullable="false" />
+          <Property Name="DatePosted" Type="date" Nullable="false" />
+          <Property Name="VideoOwner" Type="varchar" MaxLength="16" />
+        </EntityType>
+        <EntityType Name="VideoType">
+          <Key>
+            <PropertyRef Name="TypeName" />
+          </Key>
+          <Property Name="TypeName" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__CommentRa__Comme__30F848ED">
+          <End Role="Comments" Type="Self.Comments" Multiplicity="0..1" />
+          <End Role="CommentRating" Type="Self.CommentRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comments">
+              <PropertyRef Name="CommentID" />
+            </Principal>
+            <Dependent Role="CommentRating">
+              <PropertyRef Name="CommentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CommentRa__LikeO__300424B4">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="CommentRating" Type="Self.CommentRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="CommentRating">
+              <PropertyRef Name="LikeOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Comments__Commen__276EDEB3">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Comments">
+              <PropertyRef Name="CommentOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Comments__VideoI__267ABA7A">
+          <End Role="Videos" Type="Self.Videos" Multiplicity="0..1" />
+          <End Role="Comments" Type="Self.Comments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Videos">
+              <PropertyRef Name="VideoID" />
+            </Principal>
+            <Dependent Role="Comments">
+              <PropertyRef Name="VideoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Subscribe__Chann__182C9B23">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="ChannelSubscribed" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Subscribe__Subsc__1920BF5C">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Subscribers" Type="Self.Subscribers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="Subscriber" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Users__UserType__1367E606">
+          <End Role="UserType" Type="Self.UserType" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserType">
+              <PropertyRef Name="TypeName" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="UserType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__VideoRati__LikeO__2C3393D0">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="VideoRating" Type="Self.VideoRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="VideoRating">
+              <PropertyRef Name="LikeOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__VideoRati__Video__2B3F6F97">
+          <End Role="Videos" Type="Self.Videos" Multiplicity="0..1" />
+          <End Role="VideoRating" Type="Self.VideoRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Videos">
+              <PropertyRef Name="VideoID" />
+            </Principal>
+            <Dependent Role="VideoRating">
+              <PropertyRef Name="VideoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Videos__VideoOwn__239E4DCF">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="Videos" Type="Self.Videos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Videos">
+              <PropertyRef Name="VideoOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Videos__VideoTyp__1ED998B2">
+          <End Role="VideoType" Type="Self.VideoType" Multiplicity="0..1" />
+          <End Role="Videos" Type="Self.Videos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VideoType">
+              <PropertyRef Name="TypeName" />
+            </Principal>
+            <Dependent Role="Videos">
+              <PropertyRef Name="VideoType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MyTubeDBModelStoreContainer">
+          <EntitySet Name="CommentRating" EntityType="Self.CommentRating" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comments" EntityType="Self.Comments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Subscribers" EntityType="Self.Subscribers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserType" EntityType="Self.UserType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VideoRating" EntityType="Self.VideoRating" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Videos" EntityType="Self.Videos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VideoType" EntityType="Self.VideoType" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__CommentRa__Comme__30F848ED" Association="Self.FK__CommentRa__Comme__30F848ED">
+            <End Role="Comments" EntitySet="Comments" />
+            <End Role="CommentRating" EntitySet="CommentRating" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CommentRa__LikeO__300424B4" Association="Self.FK__CommentRa__LikeO__300424B4">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="CommentRating" EntitySet="CommentRating" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Comments__Commen__276EDEB3" Association="Self.FK__Comments__Commen__276EDEB3">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Comments" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Comments__VideoI__267ABA7A" Association="Self.FK__Comments__VideoI__267ABA7A">
+            <End Role="Videos" EntitySet="Videos" />
+            <End Role="Comments" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Subscribe__Chann__182C9B23" Association="Self.FK__Subscribe__Chann__182C9B23">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Subscribe__Subsc__1920BF5C" Association="Self.FK__Subscribe__Subsc__1920BF5C">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Users__UserType__1367E606" Association="Self.FK__Users__UserType__1367E606">
+            <End Role="UserType" EntitySet="UserType" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK__VideoRati__LikeO__2C3393D0" Association="Self.FK__VideoRati__LikeO__2C3393D0">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="VideoRating" EntitySet="VideoRating" />
+          </AssociationSet>
+          <AssociationSet Name="FK__VideoRati__Video__2B3F6F97" Association="Self.FK__VideoRati__Video__2B3F6F97">
+            <End Role="Videos" EntitySet="Videos" />
+            <End Role="VideoRating" EntitySet="VideoRating" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Videos__VideoOwn__239E4DCF" Association="Self.FK__Videos__VideoOwn__239E4DCF">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Videos" EntitySet="Videos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Videos__VideoTyp__1ED998B2" Association="Self.FK__Videos__VideoTyp__1ED998B2">
+            <End Role="VideoType" EntitySet="VideoType" />
+            <End Role="Videos" EntitySet="Videos" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="MyTubeDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CommentRating">
+          <Key>
+            <PropertyRef Name="LikeID" />
+          </Key>
+          <Property Name="LikeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LikeOwner" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="CommentId" Type="Int64" />
+          <Property Name="IsLike" Type="Boolean" Nullable="false" />
+          <Property Name="LikeDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Comment" Relationship="Self.FK__CommentRa__Comme__30F848ED" FromRole="CommentRating" ToRole="Comments" />
+          <NavigationProperty Name="User" Relationship="Self.FK__CommentRa__LikeO__300424B4" FromRole="CommentRating" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Comment">
+          <Key>
+            <PropertyRef Name="CommentID" />
+          </Key>
+          <Property Name="CommentID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VideoID" Type="Int64" />
+          <Property Name="CommentOwner" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="CommentText" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DatePosted" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="LikesCount" Type="Int64" Nullable="false" />
+          <Property Name="DislikesCount" Type="Int64" Nullable="false" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="CommentRatings" Relationship="Self.FK__CommentRa__Comme__30F848ED" FromRole="Comments" ToRole="CommentRating" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Comments__Commen__276EDEB3" FromRole="Comments" ToRole="Users" />
+          <NavigationProperty Name="Video" Relationship="Self.FK__Comments__VideoI__267ABA7A" FromRole="Comments" ToRole="Videos" />
+        </EntityType>
+        <EntityType Name="Subscriber">
+          <Key>
+            <PropertyRef Name="SubID" />
+          </Key>
+          <Property Name="SubID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChannelSubscribed" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="Subscriber1" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Subscribe__Chann__182C9B23" FromRole="Subscribers" ToRole="Users" />
+          <NavigationProperty Name="User1" Relationship="Self.FK__Subscribe__Subsc__1920BF5C" FromRole="Subscribers" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Username" />
+          </Key>
+          <Property Name="Username" Type="String" MaxLength="16" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Pass" Type="String" MaxLength="16" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Firstname" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Lastname" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="UserType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="UserDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="RegistrationDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Blocked" Type="Boolean" Nullable="false" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="ProfilePictureUrl" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CommentRatings" Relationship="Self.FK__CommentRa__LikeO__300424B4" FromRole="Users" ToRole="CommentRating" />
+          <NavigationProperty Name="Comments" Relationship="Self.FK__Comments__Commen__276EDEB3" FromRole="Users" ToRole="Comments" />
+          <NavigationProperty Name="Subscribers" Relationship="Self.FK__Subscribe__Chann__182C9B23" FromRole="Users" ToRole="Subscribers" />
+          <NavigationProperty Name="Subscribers1" Relationship="Self.FK__Subscribe__Subsc__1920BF5C" FromRole="Users" ToRole="Subscribers" />
+          <NavigationProperty Name="UserType1" Relationship="Self.FK__Users__UserType__1367E606" FromRole="Users" ToRole="UserType" />
+          <NavigationProperty Name="VideoRatings" Relationship="Self.FK__VideoRati__LikeO__2C3393D0" FromRole="Users" ToRole="VideoRating" />
+          <NavigationProperty Name="Videos" Relationship="Self.FK__Videos__VideoOwn__239E4DCF" FromRole="Users" ToRole="Videos" />
+        </EntityType>
+        <EntityType Name="UserType">
+          <Key>
+            <PropertyRef Name="TypeName" />
+          </Key>
+          <Property Name="TypeName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Users" Relationship="Self.FK__Users__UserType__1367E606" FromRole="UserType" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="VideoRating">
+          <Key>
+            <PropertyRef Name="LikeID" />
+          </Key>
+          <Property Name="LikeID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VideoID" Type="Int64" />
+          <Property Name="LikeOwner" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Name="IsLike" Type="Boolean" Nullable="false" />
+          <Property Name="LikeDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="Self.FK__VideoRati__LikeO__2C3393D0" FromRole="VideoRating" ToRole="Users" />
+          <NavigationProperty Name="Video" Relationship="Self.FK__VideoRati__Video__2B3F6F97" FromRole="VideoRating" ToRole="Videos" />
+        </EntityType>
+        <EntityType Name="Video">
+          <Key>
+            <PropertyRef Name="VideoID" />
+          </Key>
+          <Property Name="VideoID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VideoUrl" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ThumbnailUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="VideoName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="VideoDescription" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="VideoType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Blocked" Type="Boolean" Nullable="false" />
+          <Property Name="Deleted" Type="Boolean" Nullable="false" />
+          <Property Name="CommentsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="RatingEnabled" Type="Boolean" />
+          <Property Name="LikesCount" Type="Int64" Nullable="false" />
+          <Property Name="DislikesCount" Type="Int64" Nullable="false" />
+          <Property Name="ViewsCount" Type="Int64" Nullable="false" />
+          <Property Name="DatePosted" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="VideoOwner" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Comments" Relationship="Self.FK__Comments__VideoI__267ABA7A" FromRole="Videos" ToRole="Comments" />
+          <NavigationProperty Name="User" Relationship="Self.FK__Videos__VideoOwn__239E4DCF" FromRole="Videos" ToRole="Users" />
+          <NavigationProperty Name="VideoRatings" Relationship="Self.FK__VideoRati__Video__2B3F6F97" FromRole="Videos" ToRole="VideoRating" />
+          <NavigationProperty Name="VideoType1" Relationship="Self.FK__Videos__VideoTyp__1ED998B2" FromRole="Videos" ToRole="VideoType" />
+        </EntityType>
+        <EntityType Name="VideoType">
+          <Key>
+            <PropertyRef Name="TypeName" />
+          </Key>
+          <Property Name="TypeName" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Videos" Relationship="Self.FK__Videos__VideoTyp__1ED998B2" FromRole="VideoType" ToRole="Videos" />
+        </EntityType>
+        <Association Name="FK__CommentRa__Comme__30F848ED">
+          <End Role="Comments" Type="Self.Comment" Multiplicity="0..1" />
+          <End Role="CommentRating" Type="Self.CommentRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Comments">
+              <PropertyRef Name="CommentID" />
+            </Principal>
+            <Dependent Role="CommentRating">
+              <PropertyRef Name="CommentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__CommentRa__LikeO__300424B4">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="CommentRating" Type="Self.CommentRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="CommentRating">
+              <PropertyRef Name="LikeOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Comments__Commen__276EDEB3">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Comments" Type="Self.Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Comments">
+              <PropertyRef Name="CommentOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Comments__VideoI__267ABA7A">
+          <End Role="Videos" Type="Self.Video" Multiplicity="0..1" />
+          <End Role="Comments" Type="Self.Comment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Videos">
+              <PropertyRef Name="VideoID" />
+            </Principal>
+            <Dependent Role="Comments">
+              <PropertyRef Name="VideoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Subscribe__Chann__182C9B23">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Subscribers" Type="Self.Subscriber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="ChannelSubscribed" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Subscribe__Subsc__1920BF5C">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Subscribers" Type="Self.Subscriber" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Subscribers">
+              <PropertyRef Name="Subscriber1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Users__UserType__1367E606">
+          <End Role="UserType" Type="Self.UserType" Multiplicity="0..1" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserType">
+              <PropertyRef Name="TypeName" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="UserType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__VideoRati__LikeO__2C3393D0">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="VideoRating" Type="Self.VideoRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="VideoRating">
+              <PropertyRef Name="LikeOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Videos__VideoOwn__239E4DCF">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="Videos" Type="Self.Video" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Username" />
+            </Principal>
+            <Dependent Role="Videos">
+              <PropertyRef Name="VideoOwner" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__VideoRati__Video__2B3F6F97">
+          <End Role="Videos" Type="Self.Video" Multiplicity="0..1" />
+          <End Role="VideoRating" Type="Self.VideoRating" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Videos">
+              <PropertyRef Name="VideoID" />
+            </Principal>
+            <Dependent Role="VideoRating">
+              <PropertyRef Name="VideoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Videos__VideoTyp__1ED998B2">
+          <End Role="VideoType" Type="Self.VideoType" Multiplicity="0..1" />
+          <End Role="Videos" Type="Self.Video" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VideoType">
+              <PropertyRef Name="TypeName" />
+            </Principal>
+            <Dependent Role="Videos">
+              <PropertyRef Name="VideoType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="MyTubeDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CommentRatings" EntityType="Self.CommentRating" />
+          <EntitySet Name="Comments" EntityType="Self.Comment" />
+          <EntitySet Name="Subscribers" EntityType="Self.Subscriber" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="UserTypes" EntityType="Self.UserType" />
+          <EntitySet Name="VideoRatings" EntityType="Self.VideoRating" />
+          <EntitySet Name="Videos" EntityType="Self.Video" />
+          <EntitySet Name="VideoTypes" EntityType="Self.VideoType" />
+          <AssociationSet Name="FK__CommentRa__Comme__30F848ED" Association="Self.FK__CommentRa__Comme__30F848ED">
+            <End Role="Comments" EntitySet="Comments" />
+            <End Role="CommentRating" EntitySet="CommentRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__CommentRa__LikeO__300424B4" Association="Self.FK__CommentRa__LikeO__300424B4">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="CommentRating" EntitySet="CommentRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Comments__Commen__276EDEB3" Association="Self.FK__Comments__Commen__276EDEB3">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Comments" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Comments__VideoI__267ABA7A" Association="Self.FK__Comments__VideoI__267ABA7A">
+            <End Role="Videos" EntitySet="Videos" />
+            <End Role="Comments" EntitySet="Comments" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Subscribe__Chann__182C9B23" Association="Self.FK__Subscribe__Chann__182C9B23">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Subscribe__Subsc__1920BF5C" Association="Self.FK__Subscribe__Subsc__1920BF5C">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Subscribers" EntitySet="Subscribers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Users__UserType__1367E606" Association="Self.FK__Users__UserType__1367E606">
+            <End Role="UserType" EntitySet="UserTypes" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="FK__VideoRati__LikeO__2C3393D0" Association="Self.FK__VideoRati__LikeO__2C3393D0">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="VideoRating" EntitySet="VideoRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Videos__VideoOwn__239E4DCF" Association="Self.FK__Videos__VideoOwn__239E4DCF">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Videos" EntitySet="Videos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__VideoRati__Video__2B3F6F97" Association="Self.FK__VideoRati__Video__2B3F6F97">
+            <End Role="Videos" EntitySet="Videos" />
+            <End Role="VideoRating" EntitySet="VideoRatings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Videos__VideoTyp__1ED998B2" Association="Self.FK__Videos__VideoTyp__1ED998B2">
+            <End Role="VideoType" EntitySet="VideoTypes" />
+            <End Role="Videos" EntitySet="Videos" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="MyTubeDBModelStoreContainer" CdmEntityContainer="MyTubeDBEntities">
+          <EntitySetMapping Name="CommentRatings">
+            <EntityTypeMapping TypeName="MyTubeDBModel.CommentRating">
+              <MappingFragment StoreEntitySet="CommentRating">
+                <ScalarProperty Name="LikeID" ColumnName="LikeID" />
+                <ScalarProperty Name="LikeOwner" ColumnName="LikeOwner" />
+                <ScalarProperty Name="CommentId" ColumnName="CommentId" />
+                <ScalarProperty Name="IsLike" ColumnName="IsLike" />
+                <ScalarProperty Name="LikeDate" ColumnName="LikeDate" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Comments">
+            <EntityTypeMapping TypeName="MyTubeDBModel.Comment">
+              <MappingFragment StoreEntitySet="Comments">
+                <ScalarProperty Name="CommentID" ColumnName="CommentID" />
+                <ScalarProperty Name="VideoID" ColumnName="VideoID" />
+                <ScalarProperty Name="CommentOwner" ColumnName="CommentOwner" />
+                <ScalarProperty Name="CommentText" ColumnName="CommentText" />
+                <ScalarProperty Name="DatePosted" ColumnName="DatePosted" />
+                <ScalarProperty Name="LikesCount" ColumnName="LikesCount" />
+                <ScalarProperty Name="DislikesCount" ColumnName="DislikesCount" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subscribers">
+            <EntityTypeMapping TypeName="MyTubeDBModel.Subscriber">
+              <MappingFragment StoreEntitySet="Subscribers">
+                <ScalarProperty Name="SubID" ColumnName="SubID" />
+                <ScalarProperty Name="ChannelSubscribed" ColumnName="ChannelSubscribed" />
+                <ScalarProperty Name="Subscriber1" ColumnName="Subscriber" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="MyTubeDBModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="Pass" ColumnName="Pass" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="UserDescription" ColumnName="UserDescription" />
+                <ScalarProperty Name="RegistrationDate" ColumnName="RegistrationDate" />
+                <ScalarProperty Name="Blocked" ColumnName="Blocked" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+                <ScalarProperty Name="ProfilePictureUrl" ColumnName="ProfilePictureUrl" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserTypes">
+            <EntityTypeMapping TypeName="MyTubeDBModel.UserType">
+              <MappingFragment StoreEntitySet="UserType">
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VideoRatings">
+            <EntityTypeMapping TypeName="MyTubeDBModel.VideoRating">
+              <MappingFragment StoreEntitySet="VideoRating">
+                <ScalarProperty Name="LikeID" ColumnName="LikeID" />
+                <ScalarProperty Name="VideoID" ColumnName="VideoID" />
+                <ScalarProperty Name="LikeOwner" ColumnName="LikeOwner" />
+                <ScalarProperty Name="IsLike" ColumnName="IsLike" />
+                <ScalarProperty Name="LikeDate" ColumnName="LikeDate" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Videos">
+            <EntityTypeMapping TypeName="MyTubeDBModel.Video">
+              <MappingFragment StoreEntitySet="Videos">
+                <ScalarProperty Name="VideoID" ColumnName="VideoID" />
+                <ScalarProperty Name="VideoUrl" ColumnName="VideoUrl" />
+                <ScalarProperty Name="ThumbnailUrl" ColumnName="ThumbnailUrl" />
+                <ScalarProperty Name="VideoName" ColumnName="VideoName" />
+                <ScalarProperty Name="VideoDescription" ColumnName="VideoDescription" />
+                <ScalarProperty Name="VideoType" ColumnName="VideoType" />
+                <ScalarProperty Name="Blocked" ColumnName="Blocked" />
+                <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+                <ScalarProperty Name="CommentsEnabled" ColumnName="CommentsEnabled" />
+                <ScalarProperty Name="RatingEnabled" ColumnName="RatingEnabled" />
+                <ScalarProperty Name="LikesCount" ColumnName="LikesCount" />
+                <ScalarProperty Name="DislikesCount" ColumnName="DislikesCount" />
+                <ScalarProperty Name="ViewsCount" ColumnName="ViewsCount" />
+                <ScalarProperty Name="DatePosted" ColumnName="DatePosted" />
+                <ScalarProperty Name="VideoOwner" ColumnName="VideoOwner" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VideoTypes">
+            <EntityTypeMapping TypeName="MyTubeDBModel.VideoType">
+              <MappingFragment StoreEntitySet="VideoType">
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

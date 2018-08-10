@@ -5,16 +5,16 @@
 
 <html>
 <head>
-    <script src="~/Scripts/channelPage.js" type="text/javascript"></script>
+    @*<script src="~/Scripts/channelPage.js" type="text/javascript"></script>*@
     <link rel="stylesheet" type="text/css" href="~/Content/channelPage.css">
 </head>
 <body>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 thumbnail" id="infoAndOptions">
-            <img id="profileImage" src="#" alt="Profile Picture" style="width:80px;height: 80px">
+            <img id="profileImage" src="~/Pictures/brushed-alum.png" alt="Profile Picture" style="width:80px;height: 80px">
             <ul id="nameAndFollowers" class="thumbnail">
-                <li id="name"></li>    <!-- CHANNEL NAME -->
-                <li id="followers"></li>      <!-- FOLLOWERS -->
+                <li id="name">123</li>    <!-- CHANNEL NAME -->
+                <li id="followers">123</li>      <!-- FOLLOWERS -->
             </ul>
             <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
                 <button id="followButton" type="button" class="btn btn-danger changeActive" onclick="follow()">Follow</button>
