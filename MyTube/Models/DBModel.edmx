@@ -382,7 +382,7 @@
           <Property Name="Blocked" Type="Boolean" Nullable="false" />
           <Property Name="Deleted" Type="Boolean" Nullable="false" />
           <Property Name="CommentsEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="RatingEnabled" Type="Boolean" />
+          <Property Name="RatingEnabled" Type="Boolean" Nullable="false" />
           <Property Name="LikesCount" Type="Int64" Nullable="false" />
           <Property Name="DislikesCount" Type="Int64" Nullable="false" />
           <Property Name="ViewsCount" Type="Int64" Nullable="false" />

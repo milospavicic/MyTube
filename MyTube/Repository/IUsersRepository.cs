@@ -7,6 +7,8 @@ namespace MyTube.Repository
     interface IUsersRepository : IDisposable
     {
         IEnumerable<User> GetUsers();
+        IEnumerable<User> GetAllUsersFollowedBy(string username);
+        IEnumerable<User> GetAllAvaiableUsersFollowedBy(string username);
         User GetUserByUsername(string username);
         void InsertUser(User user);
         void UpdateUser(User user);

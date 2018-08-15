@@ -1,4 +1,4 @@
-﻿
+﻿@model MyTube.Models.Video
 @{
     ViewBag.Title = "VideoPage";
 }
@@ -12,17 +12,17 @@
     <div class="row">
         <div class="col-md-8 col-sm-12 thumbnail">
             <div class="videoAndControl thumbnail" id="videoDiv">
-                <iframe id="videoPlayer" width="100%" height="430" src="https://www.youtube.com/embed/so2s-NZVXZA?" frameborder="0" allowfullscreen></iframe>
+                <iframe id="videoPlayer" src="@Model.VideoUrl" frameborder="0" allowfullscreen></iframe>
             </div>
             <div class="videoInfo ">
-                <h4 id="videoName"></h4>
+                <h4 id="videoName">@Model.VideoName</h4>
                 <div class="viewsAndButton">
-                    <p class="viewsCounter" id="vCounter"></p>
+                    <p class="viewsCounter" id="vCounter">Views: @Model.ViewsCount</p>
                 </div>
                 <div class="viewsAndButton" id="buttonsDiv">
                     <div class="btn-group" id="ldBtnGroup">
-                        <button type="button" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-                        <button type="button" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+                        <button type="button" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                        <button type="button" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
                     </div>
                     <div class="btn-group" id="optionsBtnGroup">
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Share</button>
@@ -39,14 +39,14 @@
                 </div>
                 <div class="description" id="desc">
                     
-                    <a href="channelPage.html"><img src="~/Pictures/brushed-alum.png" alt="Lights" style="width:70px;height: 70px"></a>
+                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
                     <ul id="nameAndDate">
-                        <li><a href="channelPage.html" >Test Name</a></li>
-                        <li><p>Published on<br>22.2.2222.</p></li>
+                        <li><a href="channelPage.html">@Model.User.Username</a></li>
+                        <li><p>Published on<br>@Model.DatePostedString</p></li>
                     </ul>
                     <button id="btnFollow" type="button" class="btn btn-danger">Follow</button>
 
-                    <p class="thumbnail" id="textDescription">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis est lectus, luctus nec est vitae, hendrerit volutpat dui. Vivamus in lacinia elit. Pellentesque convallis congue tempor. Phasellus luctus arcu ac risus tempor, id scelerisque lacus lacinia. Maecenas a dolor maximus, rutrum augue ut, sodales augue. Vestibulum id tellus non erat interdum volutpat hendrerit a ante. Donec eget dui eget enim condimentum scelerisque.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis est lectus, luctus nec est vitae, hendrerit volutpat dui. Vivamus in lacinia elit. Pellentesque convallis congue tempor. Phasellus luctus arcu ac risus tempor, id scelerisque lacus lacinia. Maecenas a dolor maximus, rutrum augue ut, sodales augue. Vestibulum id tellus non erat interdum volutpat hendrerit a ante. Donec eget dui eget enim condimentum scelerisque.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis est lectus, luctus nec est vitae, hendrerit volutpat dui. Vivamus in lacinia elit. Pellentesque convallis congue tempor. Phasellus luctus arcu ac risus tempor, id scelerisque lacus lacinia. Maecenas a dolor maximus, rutrum augue ut, sodales augue. Vestibulum id tellus non erat interdum volutpat hendrerit a ante. Donec eget dui eget enim condimentum scelerisque.</p>
+                    <p class="thumbnail" id="textDescription">@Model.VideoDescription</p>
                     
                 </div>
             </div>

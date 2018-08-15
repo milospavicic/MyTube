@@ -9,9 +9,7 @@
 
 namespace MyTube.Models
 {
-    using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
 
     public partial class Comment
     {
@@ -22,10 +20,8 @@ namespace MyTube.Models
         }
 
         public long CommentID { get; set; }
-        public Nullable<long> VideoID { get; set; }
+        public long VideoID { get; set; }
         public string CommentOwner { get; set; }
-        [Required]
-        [Display(Name = "Text")]
         public string CommentText { get; set; }
         public System.DateTime DatePosted { get; set; }
         public long LikesCount { get; set; }

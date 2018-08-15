@@ -2,22 +2,18 @@
 $('document').ready(function (e) {
     console.log("layout.js file start");
     $('#blockModal').on('hidden.bs.modal', function () {
-        console.log(loggedInStatus);
         if (modalCloseReloadPage == true)
             refreshPage();
     });
     $('#unblockModal').on('hidden.bs.modal', function () {
-        console.log(loggedInStatus);
         if (modalCloseReloadPage == true)
             refreshPage();
     });
     $('#deleteModal').on('hidden.bs.modal', function () {
-        console.log(loggedInStatus);
         if (modalCloseReloadPage == true)
             refreshPage();
     });
     $('#editUserModal').on('hidden.bs.modal', function () {
-        console.log(loggedInStatus);
         if (modalCloseReloadPage == true)
             refreshPage();
     });
@@ -53,7 +49,6 @@ function userEditSubmit(event) {
             console.log("return value");
             var page = 'User has been successfully edited';
             if (partialResult.includes(page)) {
-                loggedInStatus = true;
                 modalCloseReloadPage = true;
                 $("#editUserModal").html(partialResult);
             } else {
@@ -80,7 +75,6 @@ function deleteUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully deleted';
             if (partialResult.includes(page)) {
-                loggedInStatus = true;
                 modalCloseReloadPage = true;
                 $("#deleteModal").html(partialResult);
             }
@@ -102,7 +96,6 @@ function blockUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully blocked';
             if (partialResult.includes(page)) {
-                loggedInStatus = true;
                 modalCloseReloadPage = true;
                 $("#blockModal").html(partialResult);
             }
@@ -125,7 +118,6 @@ function unblockUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully unblocked';
             if (partialResult.includes(page)) {
-                loggedInStatus = true;
                 modalCloseReloadPage = true;
                 $("#unblockModal").html(partialResult);
             }

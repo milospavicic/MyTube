@@ -24,6 +24,25 @@ namespace MyTube.Repository
             return userExists;
 
         }
+
+        public IEnumerable<User> GetAllUsersFollowedBy(string username)
+        {
+            IEnumerable<User> foundUsers = from users in db.Users
+                                           join subs in db.Subscribers on users.Username equals subs.ChannelSubscribed
+                                           where subs.Subscriber1 == username && users.Deleted == false && users.Blocked == false
+                                           select users;
+            return foundUsers;
+        }
+
+        public IEnumerable<User> GetAllAvaiableUsersFollowedBy(string username)
+        {
+            IEnumerable<User> foundUsers = from users in db.Users
+                                           join subs in db.Subscribers on users.Username equals subs.ChannelSubscribed
+                                           where subs.Subscriber1 == username && users.Deleted == false
+                                           select users;
+
+            return foundUsers;
+        }
         public IEnumerable<User> GetUsers()
         {
             return db.Users.Where(x => x.Deleted == false);
@@ -31,7 +50,12 @@ namespace MyTube.Repository
 
         public User GetUserByUsername(string username)
         {
-            return db.Users.Find(username);
+            User foundUser = db.Users.Find(username);
+            if (foundUser != null && foundUser.Deleted == true)
+            {
+                return null;
+            }
+            return foundUser;
         }
 
         public void InsertUser(User user)
@@ -52,6 +76,7 @@ namespace MyTube.Repository
             }
 
         }
+
         public void BlockUser(string username)
         {
             var found_user = GetUserByUsername(username);
@@ -84,6 +109,5 @@ namespace MyTube.Repository
         {
             db.Dispose();
         }
-
     }
 }

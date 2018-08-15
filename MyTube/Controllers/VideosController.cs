@@ -1,5 +1,8 @@
 ﻿using MyTube.Models;
 using MyTube.Repository;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 
@@ -16,7 +19,64 @@ namespace MyTube.Controllers
             this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities());
         }
+        public ActionResult ChannelPageVideosPartial(string channelName, bool? ownedOrLikedVideos, string sortOrder)
+        {
+            IEnumerable<Video> videos = null;
+            if (ownedOrLikedVideos == true)
+            {
+                ViewBag.SelectedView = "PostedVideos";
+                ViewBag.SortValues = Video.VideosSortOrderSelectList();
+                videos = VideosPostedBy(channelName);
+                ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "latest" : "";
+                videos = SortVideos(videos, sortOrder);
+            }
+            else
+                videos = VideosLikedBy(channelName);
 
+
+            return PartialView(videos);
+        }
+
+        public IEnumerable<Video> VideosPostedBy(string username)
+        {
+            var userType = (string)Session["loggedInUserUserType"];
+            if (userType == "ADMIN")
+                return videosRepository.GetVideosAllOwnedByUser(username);
+            else
+                return videosRepository.GetVideosPublicOwnedByUser(username);
+        }
+        public IEnumerable<Video> VideosLikedBy(string username)
+        {
+            var userType = (string)Session["loggedInUserUserType"];
+            if (userType == "ADMIN")
+                return videosRepository.GetVideosAllLikedByUser(username);
+            else
+                return videosRepository.GetVideosPublicLikedByUser(username);
+        }
+        public IEnumerable<Video> SortVideos(IEnumerable<Video> videos, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "latest":
+                    videos = videos.OrderBy(s => s.DatePosted);
+                    break;
+                case "oldest":
+                    videos = videos.OrderByDescending(s => s.DatePosted);
+                    break;
+                case "most_viewed":
+                    videos = videos.OrderByDescending(s => s.ViewsCount);
+                    break;
+                case "least_viewed":
+                    videos = videos.OrderBy(s => s.ViewsCount);
+                    break;
+
+                default:
+                    videos = videos.OrderBy(s => s.DatePosted);
+                    break;
+            }
+            return videos;
+        }
+        //-------------------------------------------------------------------
         // GET: Videos
         public ActionResult Index()
         {

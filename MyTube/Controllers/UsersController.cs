@@ -1,6 +1,7 @@
 ﻿using MyTube.Models;
 using MyTube.Repository;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -12,10 +13,12 @@ namespace MyTube.Controllers
         private MyTubeDBEntities db = new MyTubeDBEntities();
         private UsersRepository usersRepository;
         private UserTypesRepository userTypesRepository;
+        private SubscribeRepository subscribeRepository;
         public UsersController()
         {
             this.usersRepository = new UsersRepository(new MyTubeDBEntities());
             this.userTypesRepository = new UserTypesRepository(new MyTubeDBEntities());
+            this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
         }
 
         [ChildActionOnly]
@@ -44,7 +47,10 @@ namespace MyTube.Controllers
         }
         public void StoreInSession(string username)
         {
-            Session.Add("loggedInUserUsername", username);
+            User loggedInUser = usersRepository.GetUserByUsername(username);
+            Session.Add("loggedInUserUsername", loggedInUser.Username);
+            Session.Add("loggedInUserUserType", loggedInUser.UserType);
+            Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
         }
         public ActionResult Register()
         {
@@ -95,15 +101,6 @@ namespace MyTube.Controllers
         }
         public ActionResult EditUserForm(string id)
         {
-            if (Session["loggedInUserUsername"] != null)
-            {
-                var loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                if (loggedInUser != null)
-                {
-                    ViewBag.CurrentUserUserType = loggedInUser.UserType;
-                }
-            }
-
             EditUserModel userToEdit = EditUserModel.EditUserModalFromUser(usersRepository.GetUserByUsername(id));
             ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(userToEdit.UserType);
             return PartialView("EditUserForm", userToEdit);
@@ -124,19 +121,30 @@ namespace MyTube.Controllers
             ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(eum.UserType);
             return PartialView(eum);
 
-            //var userToEdit = usersRepository.GetUserByUsername(id);
-            //var tempUsername = userToEdit.Username;
-            //ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(userToEdit.UserType);
-            //return PartialView("EditUserForm", userToEdit);
-
         }
-        public ActionResult SortAndSearchUsers(string sortOrder, string searchString)
+        public ActionResult AdminPage(string sortOrder, string searchString)
         {
             if (!CheckIfPermited()) { return RedirectToAction("Index", "Home"); }
 
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
             ViewBag.SearchString = searchString;
-            var users = usersRepository.GetUsers();
+
+            var users = SearchUsers(usersRepository.GetUsers(), searchString);
+            users = SortUsers(users, sortOrder);
+
+            ViewBag.Values = Models.User.UsersSortOrderSelectList();
+            return View("~/Views/Home/AdminPage.cshtml", users);
+        }
+        public bool CheckIfPermited()
+        {
+            if (Session["loggedInUserUsername"] == null || Session["loggedInUserUserType"].ToString() != "ADMIN")
+            {
+                return false;
+            }
+            return true;
+        }
+        public IEnumerable<User> SearchUsers(IEnumerable<User> users, string searchString)
+        {
             if (!String.IsNullOrEmpty(searchString))
             {
                 users = users.Where(s => s.Username.Contains(searchString)
@@ -145,6 +153,10 @@ namespace MyTube.Controllers
                                        || s.Email.Contains(searchString)
                                        || s.UserType.Contains(searchString));
             }
+            return users;
+        }
+        public IEnumerable<User> SortUsers(IEnumerable<User> users, string sortOrder)
+        {
             switch (sortOrder)
             {
                 case "username_asc":
@@ -188,33 +200,54 @@ namespace MyTube.Controllers
                     users = users.OrderBy(s => s.Username);
                     break;
             }
-            ViewBag.Values = Models.User.UsersSortOrder();
-            return View("~/Views/Home/AdminPage.cshtml", users);
+            return users;
         }
-        public bool CheckIfPermited()
-        {
-            if (Session["loggedInUserUsername"] == null)
-            {
-                return false;
-            }
-            else
-            {
-                var loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                if (loggedInUser.UserType != "ADMIN")
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        //--------------------------------------------------------------------------------
-
-
-        // GET: Users
         public ActionResult Index()
         {
             return View(usersRepository.GetUsers());
         }
+
+
+
+        // GET: Users
+        public ActionResult ChannelPageUsersPartial(string id)
+        {
+            return PartialView(UsersFollowedBy(id));
+        }
+        public IEnumerable<User> UsersFollowedBy(string username)
+        {
+            var userType = (string)Session["loggedInUserUserType"];
+            if (userType == "ADMIN")
+                return usersRepository.GetAllUsersFollowedBy(username);
+            else
+                return usersRepository.GetAllAvaiableUsersFollowedBy(username);
+
+        }
+        public ActionResult ChannelPageInfoPartial(string id)
+        {
+            return PartialView(usersRepository.GetUserByUsername(id));
+        }
+        public JsonResult Subscribe(string id)
+        {
+            User currentUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+
+
+            bool exists = subscribeRepository.SubscriptionExists(id, currentUser.Username);
+            if (exists)
+            {
+                subscribeRepository.DeleteSubscription(id, currentUser.Username);
+
+            }
+            else
+            {
+                subscribeRepository.NewSubscription(id, currentUser.Username);
+
+            }
+            User userSubscribedTo = usersRepository.GetUserByUsername(id);
+            return Json(new { subStatus = exists, subCount = userSubscribedTo.SubscribersCount }, JsonRequestBehavior.AllowGet);
+
+        }
+        //--------------------------------------------------------------------------------
         // GET: Users/Details/5
         public ActionResult Details(string id)
         {

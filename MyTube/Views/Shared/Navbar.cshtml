@@ -26,9 +26,9 @@ else
             <ul class="dropdown-menu" id="mainDropdown">
                 @if (Model.UserType.ToString() == "ADMIN" && Model.Blocked!=true)
                 {
-                    <li><a href="@Url.Action("AdminPage", "Home")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                    <li><a href="@Url.Action("AdminPage", "Users")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
                 }
-                <li><a id="myChannel" href="channelPage.html" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                <li><a id="myChannel" href="@Url.Action("ChannelPage/"+Model.Username, "Home")" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
             </ul>

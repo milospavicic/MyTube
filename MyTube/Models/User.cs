@@ -11,6 +11,7 @@ namespace MyTube.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using System.Web.Mvc;
 
     public partial class User
@@ -25,21 +26,24 @@ namespace MyTube.Models
             this.VideoRatings = new HashSet<VideoRating>();
             this.Videos = new HashSet<Video>();
         }
-        [Display(Name = "Username")]
         [Required]
+        [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Required]
         [Display(Name = "Password")]
         public string Pass { get; set; }
+
         [Required]
-        [Display(Name = "First name")]
+        [Display(Name = "Firstname")]
         public string Firstname { get; set; }
+
         [Required]
-        [Display(Name = "Last name")]
+        [Display(Name = "Lastname")]
         public string Lastname { get; set; }
 
-        [Display(Name = "User type")]
+        [Required]
+        [Display(Name = "Type")]
         public string UserType { get; set; }
 
         [Required]
@@ -50,19 +54,35 @@ namespace MyTube.Models
         [Display(Name = "Description")]
         public string UserDescription { get; set; }
 
-        [Display(Name = "Reg. Date")]
         public System.DateTime RegistrationDate { get; set; }
-
-        [Display(Name = "Blocked")]
         public bool Blocked { get; set; }
-
-        [Display(Name = "Deleted")]
         public bool Deleted { get; set; }
 
-        [Display(Name = "Profile Url")]
+        [Required]
+        [Display(Name = "Picture Url")]
         public string ProfilePictureUrl { get; set; }
 
-        public long SubscribersCount { get; set; }
+        public string RegistrationDateString { get { return RegistrationDate.ToShortDateString(); } }
+
+        public long SubscribersCount { get { return Subscribers.Count(); } }
+
+        public static SelectList usersSortOrderSelectList = new SelectList(new List<SelectListItem>
+        {
+            new SelectListItem { Selected = true, Text = "Username Asc", Value = "username_asc"},
+            new SelectListItem { Selected = true, Text = "Username Desc", Value = "username_desc"},
+            new SelectListItem { Selected = true, Text = "Firstname Asc", Value = "firstname_asc"},
+            new SelectListItem { Selected = true, Text = "Firstname Desc", Value = "firstname_desc"},
+            new SelectListItem { Selected = true, Text = "Lastname Asc", Value = "lastname_asc"},
+            new SelectListItem { Selected = true, Text = "Lastname Desc", Value = "lastname_desc"},
+            new SelectListItem { Selected = true, Text = "Email Asc", Value = "email_asc"},
+            new SelectListItem { Selected = true, Text = "Email Desc", Value = "email_desc"},
+            new SelectListItem { Selected = true, Text = "User Type Asc", Value = "user_type_asc"},
+            new SelectListItem { Selected = true, Text = "User Type Desc", Value = "user_type_desc"},
+            new SelectListItem { Selected = true, Text = "Status Asc", Value = "status_asc"},
+            new SelectListItem { Selected = true, Text = "Status Desc", Value = "status_desc"},
+        }, "Value", "Text", 1);
+
+        public static SelectList UsersSortOrderSelectList() { return usersSortOrderSelectList; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CommentRating> CommentRatings { get; set; }
@@ -77,23 +97,5 @@ namespace MyTube.Models
         public virtual ICollection<VideoRating> VideoRatings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Video> Videos { get; set; }
-
-        private static SelectList usersSortOrder = new SelectList(new List<SelectListItem>
-            {
-                new SelectListItem { Selected = true, Text = "Username ASC", Value = "username_asc"},
-                new SelectListItem { Selected = false, Text = "Username DESC", Value = "username_desc"},
-                new SelectListItem { Selected = false, Text = "First Name ASC", Value = "firstname_asc"},
-                new SelectListItem { Selected = false, Text = "First Name DESC", Value = "firstname_desc"},
-                new SelectListItem { Selected = false, Text = "Last Name ASC", Value = "lastname_asc"},
-                new SelectListItem { Selected = false, Text = "Last Name DESC", Value = "lastname_desc"},
-                new SelectListItem { Selected = false, Text = "Email ASC", Value = "email_asc"},
-                new SelectListItem { Selected = false, Text = "Email DESC", Value = "email_desc"},
-                new SelectListItem { Selected = false, Text = "User type ASC", Value = "user_type_asc"},
-                new SelectListItem { Selected = false, Text = "User type DESC", Value = "user_type_desc"},
-                new SelectListItem { Selected = false, Text = "Status ASC", Value = "status_asc"},
-                new SelectListItem { Selected = false, Text = "Status DESC", Value = "status_desc"}
-            }, "Value", "Text", 1);
-        public static SelectList UsersSortOrder() { return usersSortOrder; }
-
     }
 }

@@ -25,6 +25,7 @@
     float: left;
     width: 430px;
     margin-left: 20%;
+    padding-right: 0;
     margin-top: 35px;
 }
 .row{
@@ -233,14 +234,13 @@
     font-size: 15px;
 }
 
-#infoDiv{
+#infoDiv {
     height: auto;
+    margin-top: 15px;
     margin-bottom: 15px;
+    padding-left: 2%;
     margin-left: 8%;
     border-radius: 10px;
-}
-#infoDivHeader{
-    padding-left: 7%;
 }
 .thumbnail{
     margin: 0 1px;

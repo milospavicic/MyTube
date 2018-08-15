@@ -31,7 +31,7 @@
                         </div>
                     </div>
                 </form>
-                @Html.Action("Navbar","Home")
+                @Html.Action("Navbar", "Home")
             </div>
         </div>
     </nav>
@@ -48,22 +48,11 @@
                     <img alt="loginImg" draggable="false" src="http://www.smartprint4u.com/images/profile-icon.png" id="loginImage" />
                 </div>
                 <div id="loginFormContent">
-
-                    @Html.Action("LoginModal","Users")
-                    @*<form role="form">
-                            <div class="form-group">
-                                <input type="text" name="uname" id="usernamelogin" class="form-control" placeholder="username" maxlength="15" required />
-                                <input type="password" name="passw" id="passwordlogin" class="form-control" placeholder="password" maxlength="15" required />
-                            </div>
-                        </form>*@
+                    @Html.Action("LoginModal", "Users")
                 </div>
-
-
             </div>
         </div>
     </div>
-
-    @*@RenderPage("~/Views/Shared/LoginModal.cshtml")*@
     <div class="modal fade" id="register-modal">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -106,6 +95,19 @@
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     @Html.ActionLink("Logout", "Logout", "Users", null, new { @class = "btn btn-danger" })
                     @*<a class="btn btn-danger" href="index.html" onclick="logout()">Logout</a>*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="blockedUserModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Action unavaiable.</h5>
+                </div>
+                <div class="modal-body">You can't perform this action because your account is blocked. </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

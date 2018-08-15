@@ -21,7 +21,7 @@
                         <p id="titleBar">@video.VideoName</p>
                     </div>
                 </a>
-                <p id="videoInfo"><a href="@Url.Action("ChannelPage/"+video.VideoOwner+"", "Home")" id="channelName">@video.VideoOwner</a><br>@video.ViewsCount views<br>Posted on: @video.DatePosted</p>
+                <p id="videoInfo"><a href="@Url.Action("ChannelPage/"+video.VideoOwner+"", "Home")" id="channelName">@video.VideoOwner</a><br>@video.ViewsCount views<br>Posted on: @video.DatePostedString</p>
             </div>
             }
         </div>

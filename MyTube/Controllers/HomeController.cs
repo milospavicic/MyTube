@@ -9,11 +9,13 @@ namespace MyTube.Controllers
 
         private VideosRepository videosRepository;
         private UsersRepository usersRepository;
+        private SubscribeRepository subscribeRepository;
 
         public HomeController()
         {
             this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
         }
         public ActionResult Index()
         {
@@ -30,34 +32,32 @@ namespace MyTube.Controllers
         }
         public ActionResult VideoPage(long? id)
         {
-            return View(videosRepository.GetVideoById(id));
+            if (id == null)
+            {
+                return View("Error");
+            }
+            Video currentVideo = videosRepository.GetVideoById(id);
+            currentVideo.ViewsCount += 1;
+            videosRepository.UpdateVideo(currentVideo);
+            return View(currentVideo);
         }
         public ActionResult ChannelPage(string id)
         {
-            return View(usersRepository.GetUserByUsername(id));
-        }
-        public ActionResult AdminPage()
-        {
-            if (!CheckIfPermited()) { return RedirectToAction("Index"); }
-
-            ViewBag.Values = MyTube.Models.User.UsersSortOrder();
-            return View(usersRepository.GetUsers());
-        }
-        public bool CheckIfPermited()
-        {
-            if (Session["loggedInUserUsername"] == null)
+            if (id == null)
             {
-                return false;
+                return View("Error");
             }
-            else
+            var user = usersRepository.GetUserByUsername(id);
+            if (user == null)
             {
-                var loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                if (loggedInUser.UserType != "ADMIN")
-                {
-                    return false;
-                }
+                return View("Error");
             }
-            return true;
+            if (Session["loggedInUserUsername"] != null)
+            {
+                bool exists = subscribeRepository.SubscriptionExists(id, Session["loggedInUserUsername"].ToString());
+                ViewBag.Subbed = exists;
+            }
+            return View(user);
         }
         [ChildActionOnly]
         public ActionResult Navbar()
@@ -68,6 +68,10 @@ namespace MyTube.Controllers
                 return PartialView(usersRepository.GetUserByUsername(loggedInUser.ToString()));
             }
             return PartialView();
+        }
+        public ActionResult Error()
+        {
+            return View();
         }
     }
 }

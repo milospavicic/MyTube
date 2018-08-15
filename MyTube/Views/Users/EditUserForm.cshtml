@@ -3,7 +3,7 @@
     ViewBag.Title = "EditUserForm";
 }
 
-@using (Html.BeginForm("EditUserForm", "Users", FormMethod.Post, new { id = "userEditForm" }))
+@using (Html.BeginForm("EditUserForm/"+Model.Username, "Users", FormMethod.Post, new { id = "userEditForm" }))
 {
     @Html.AntiForgeryToken()
     <div class="modal-header">
@@ -22,7 +22,7 @@
             @Html.EditorFor(model => model.Lastname, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Last Name" } })
             @Html.ValidationMessageFor(model => model.Lastname, "", new { @class = "text-danger" })
         </div>
-        @if (@ViewBag.CurrentUserUserType == "ADMIN" && Session["loggedInUserUsername"].ToString() != Model.Username)
+        @if ((string)Session["loggedInUserUserType"] == "ADMIN" && (string)Session["loggedInUserUsername"] != Model.Username)
         {
             @Html.LabelFor(model => model.UserType, "UserType", htmlAttributes: new { @class = "control-label col-md-12" })
             <div class="col-md-12">
