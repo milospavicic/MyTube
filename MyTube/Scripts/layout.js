@@ -3,7 +3,7 @@ $('document').ready(function (e) {
     console.log("layout.js file start");
     $('#login-modal').on('hidden.bs.modal', function () {
         console.log(loggedInStatus);
-        if (loggedInStatus == true)
+        if (loggedInStatus === true)
             location.reload();
     });
 });
@@ -29,4 +29,11 @@ function loginSubmit(event) {
 }
 function refreshPage(){
     location.reload();
+}
+function searchSubmit(event) {
+    event.preventDefault();
+    var searchParameter = $("#searchParameter").val();
+    var url = "/Home/SearchPage/" + searchParameter;
+    console.log(url);
+    window.location.href = url;
 }

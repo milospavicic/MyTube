@@ -9,17 +9,20 @@
 @foreach (var item in Model)
 {
     <div class="col-md-4">
-        <a href="@Url.Action("VideoPage/"+item.VideoID,"Videos")" target="_self">
+        <a href="@Url.Action("VideoPage/"+item.VideoID,"Home")" target="_self">
             <img id="videoImage" src="@item.ThumbnailUrl" alt="video" style="width:100%">
             <div class="caption">
                 <p id="titleBar">@item.VideoName</p>
             </div>
         </a>
-        <p id="videoInfo">
-            <a href="@Url.Action("UsersVideos/"+item.User.Username,"Videos")" id="channelName">@item.User.Username</a>
-            <br>@item.ViewsCount views
-            <br>Posted on: @item.DatePostedString
-        </p>
+        <div id="videoInfo">
+            @if (ViewBag.SelectedView != "PostedVideos")
+            {
+                <a href="@Url.Action("UsersVideos/"+item.User.Username,"Videos")" id="channelName">@item.User.Username</a>
+            }
+            <p>@item.ViewsCount views</p>
+            <p>Posted on: @item.DatePostedString</p>
+        </div>
     </div>
 }
 

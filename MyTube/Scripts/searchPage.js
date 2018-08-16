@@ -1,13 +1,13 @@
 var parameter="";
 $('document').ready(function(e){
-	parameter = window.location.search.slice(1).split('&')[0].split('=')[1];
-	parameter = parameter.replace("%20","%");
-	console.log(parameter);
-    searchVideos(1);
+	//parameter = window.location.search.slice(1).split('&')[0].split('=')[1];
+	//parameter = parameter.replace("%20","%");
+	//console.log(parameter);
+ //   searchVideos(1);
     
-    $(':checkbox').change(function() {
-    	refreshVideos();
-    }); 
+ //   $(':checkbox').change(function() {
+ //   	refreshVideos();
+ //   }); 
 });
 function errorPage(){
     var errorDiv = $('<div class="row"><div class="col-md-12 col-sm-12"><div class="videoAndControl thumbnail"><img id="videoPlayer" style="width=100%; height=430" src="pictures/errorPic.jpg"></img></div></div></div>')

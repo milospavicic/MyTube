@@ -1,50 +1,37 @@
-﻿
+﻿@model IEnumerable<MyTube.Models.Video>
 @{
     ViewBag.Title = "SearchPage";
 }
 <html>
 <head>
     <script src="~/Scripts/index.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="~/Content/index.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/searchPage.css">
 </head>
 <body>
     <button data-toggle="collapse" class="btn btn-default" data-target="#filter" id="btnFilter">Filter</button>
     <div id="filter" class="collapse">
-        <p class="editVideoTitle">Order by: </p>
-        <select name="visibility" form="visibilityForm" class="editOption" id="selectOne" onchange="refreshVideos()">
-            <option value="1">Title desc</option>
-            <option value="2">Title asc</option>
-            <option value="3">Owner desc</option>
-            <option value="4">Owner asc</option>
-            <option value="5">Views desc</option>
-            <option value="6">Views asc</option>
-            <option value="7">Date Posted desc</option>
-            <option value="8">Date Posted asc</option>
-        </select>
-        <label for="Checkbox1">Search by:</label>
-        <input type="checkbox" id="videoNameSearch" checked="checked">
-        <label for="videoNameSearch">Video Name</label>
-        <input type="checkbox" id="ownerSearch" checked="checked">
-        <label for="ownerSearch">Owner</label>
-        <input type="checkbox" id="viewCountSearch" checked="checked">
-        <label for="viewCountSearch">View Count</label>
-        <input type="checkbox" id="dateSearch" checked="checked">
-        <label for="dateSearch">Date</label>
-        <input type="checkbox" id="commentSearch" checked="checked">
-        <label for="commentSearch">Comments</label>
+        <div class="col-md-12">
+            @using (Html.BeginForm("SearchPage/"+Url.RequestContext.RouteData.Values["id"], "Home", FormMethod.Post, new { id = "SortSearchVideosForm" }))
+            {
+                <h4 class="orderVideos" id="h4Tittle">Order videos by: </h4>
+                @Html.DropDownList("sortOrder", new SelectList(ViewBag.SortValues, "Value", "Text"), new { onchange = "this.form.submit();" })
+            }
+        </div>
     </div>
     <div class="row">
-        <!--
-        <div class="col-md-12 col-sm-12 col-xs-12">
-            <a href="videoPage.html" id="picDiv"><img src="pictures/1.jpg" alt="Lights" style="width:190px;height: 150px">
-            <ul id="videoInfo">
-                <li><h3>Video title</h3></li>
-                <li id="videoUserViewsDate"><p><a href="channelPage.html">User</a> - 123.123 views - on 21.5.2007.</p></li>
-                <li><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque eleifend volutpat turpis.</p></li>
-            </ul>
-            </a>
-        </div>
-        -->
+        @foreach (var item in Model)
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <a href="@Url.Action("VideoPage/"+item.VideoID,"Home")" id="picDiv">
+                    <img src="@item.ThumbnailUrl" alt="Lights" style="width:190px;height: 150px">
+                </a>
+                <ul id="videoInfo">
+                    <li><h3>@item.VideoName</h3></li>
+                    <li id="videoUserViewsDate"><p><b><a href="@Url.Action("ChannelPage/"+item.User.Username,"Home")">@item.User.Username </a></b> - @item.ViewsCount views - on @item.DatePostedString</p></li>
+                    <li><p>@item.VideoDescription</p></li>
+                </ul>
+            </div>
+        }
     </div>
 </body>
 </html>

@@ -228,8 +228,9 @@
     padding: 0;
     width: auto;
 }
-#titleBar{
+#titleBar {
     margin-top: 5px;
+    margin-bottom: 5px;
     font-weight: 500;
     font-size: 15px;
 }
@@ -282,4 +283,10 @@
 }
 #lou{
 	padding-top: 1%;
+}
+#videoInfo p {
+    margin-bottom: 0;
+}
+#followingInfo{
+    margin-bottom: 3px;
 }

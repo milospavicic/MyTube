@@ -60,7 +60,11 @@
     clear: right;
     float: left;
 }
-#videoInfo p{
+#channelName{
+    font-weight: 500;
+
+}
+#videoInfo p {
     color: dimgray;
 }
 #videoUserViewsDate a{

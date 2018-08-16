@@ -61,7 +61,7 @@ namespace MyTube.Models
 
         public string DatePostedString { get { return DatePosted.ToShortDateString(); } }
 
-        public static SelectList videosSortOrderSelectList = new SelectList(new List<SelectListItem>
+        private static SelectList videosSortOrderSelectList = new SelectList(new List<SelectListItem>
         {
             new SelectListItem { Selected = true, Text = "Latest", Value = "latest"},
             new SelectListItem { Selected = true, Text = "Oldest", Value = "oldest"},

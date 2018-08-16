@@ -2,7 +2,7 @@
 @foreach (var item in Model)
 {
     <div class="col-md-4">
-        <a href="@Url.Action("ChannelPage/"+item.Username,"Users")" target="_self">
+        <a href="@Url.Action("ChannelPage/"+item.Username,"Home")" target="_self">
             <img id="videoImage" src="@item.ProfilePictureUrl" alt="video" style="width:100%">
             <div class="caption">
                 <p id="titleBar">@item.Username</p>

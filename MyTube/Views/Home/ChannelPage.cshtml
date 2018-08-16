@@ -73,20 +73,23 @@
                 <li id="subscribers">Subscribers: @Model.SubscribersCount</li>      <!-- FOLLOWERS -->
             </ul>
             <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
-                @if (Session["loggedInUserUsername"] == null)
+                @if (LoggedInUserExists())
+                {
+                    if (!LoggedInUserIsOnHisPage())
+                    {
+                        if (ViewBag.Subbed != true)
+                        {
+                            <button id="subButton" class="btn btn-danger" onclick="subUser()">Subscribe</button>
+                        }
+                        else
+                        {
+                            <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
+                        }
+                    }
+                }
+                else
                 {
                     <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
-                }
-                else if ((string)Session["loggedInUserUsername"] != Model.Username)
-                {
-                    if (ViewBag.Subbed != true)
-                    {
-                        <button id="subButton" class="btn btn-danger" onclick="subUser()">Subscribe</button>
-                    }
-                    else
-                    {
-                        <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
-                    }
                 }
 
                 <button id="userVideos" type="button" class="btn btn-default active changeActive">Videos</button>
@@ -95,7 +98,7 @@
                 <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                     <ul class="dropdown-menu" role="menu" id="optionsDropdown">
-                        @if ((string)Session["loggedInUserUserType"] == "ADMIN" && (string)Session["loggedInUserUsername"] != Model.Username)
+                        @if (LoggedInUserIsAdmin() && !LoggedInUserIsOnHisPage())
                         {
                             <li id="deleteOptionChannel"><a href="#deleteModal" data-toggle="modal" id="deleteOptionBlocked">Delete user</a></li>
                             if (Model.Blocked != true)
@@ -107,7 +110,7 @@
                                 <li id="unblockOptionChannel"><a href="#unblockModal" data-toggle="modal" id="unblockOptionBlocked">Unblock user</a></li>
                             }
                         }
-                        @if ((string)Session["loggedInUserUserType"] == "ADMIN" || (string)Session["loggedInUserUsername"] == Model.Username)
+                        @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                         {
                             <li id="editChannelOption"><a href="#" onclick="loadEditModal(event)" id="editOptionBlocked">Edit user</a></li>
                         }
@@ -131,9 +134,43 @@
     </div>
 </body>
 </html>
-@if (Session["loggedInUserStatus"]!=null && Session["loggedInUserStatus"].ToString() == "true")
+@if (Session["loggedInUserStatus"] != null && Session["loggedInUserStatus"].ToString() == "true")
 {
     <script>
         blockAll();
     </script>
+}
+@functions{
+    public bool LoggedInUserExists()
+    {
+        if (Session["loggedInUserStatus"] != null){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+    public bool LoggedInUserIsAdmin()
+    {
+        if ((string)Session["loggedInUserUserType"] == "ADMIN")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsOnHisPage()
+    {
+        if ((string)Session["loggedInUserUsername"] == Model.Username)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

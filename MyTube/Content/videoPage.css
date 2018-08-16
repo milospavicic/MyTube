@@ -1,33 +1,37 @@
-.mainDiv{
+.mainDiv {
     width: 95%;
     margin-top: 70px;
     display: inline-block;
-    text-align: left; 
+    text-align: left;
     margin-bottom: 30px;
     min-height: 800px;
 }
-.mainDiv h3{
+
+.mainDiv h3 {
     margin: 0;
     padding: 0;
 }
-.controlBar{
+
+.controlBar {
     width: 100%;
     height: 20px;
     background-color: red;
     border-radius: 5px;
-    
 }
+
 .videoAndControl {
     width: 100%;
     border-radius: 5px;
     margin: 0;
     margin-bottom: 5px;
 }
+
 #videoPlayer {
     width: 100%;
-    height: 430px ;
+    height: 430px;
 }
-.videoAndControl iframe{
+
+.videoAndControl iframe {
     border-radius: 5px;
     margin: 0;
     padding: 0;
@@ -36,101 +40,115 @@
 
 
 @media only screen and (max-width: 815px) {
-    .videoAndControl iframe{
+    .videoAndControl iframe {
         height: 350px;
     }
 }
+
 @media only screen and (max-width: 620px) {
-    .videoAndControl iframe{
+    .videoAndControl iframe {
         height: 300px;
     }
 }
+
 @media only screen and (max-width: 560px) {
-    .videoAndControl iframe{
+    .videoAndControl iframe {
         height: 250px;
     }
 }
+
 @media only screen and (max-width: 460px) {
-    .videoAndControl iframe{
+    .videoAndControl iframe {
         height: 225px;
     }
 }
 
-.videoInfo h4,p{
-    margin-top: 7px;
-}
-.videoInfo{
-    margin-left: 1%;
-}
-
-.statsBar{
-    display:inline-block;
+.statsBar {
+    display: inline-block;
     vertical-align: middle;
     clear: right;
 }
 
-.description{
-    margin-top: 15px;
-    margin-bottom: 15px;
+.videoInfo h4, p {
+    margin-top: 7px;
 }
-.description a img{
+
+.videoInfo {
+    margin-left: 1%;
+}
+.description {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.description a img {
     float: left;
     padding: 0;
     margin: 0 1%;
     border-radius: 50%;
 }
-.description p{
+
+.description p {
     clear: left;
     max-height: 100px;
     overflow-y: scroll;
 }
-#textDescription{
+
+#textDescription {
     margin-right: 1%;
+    margin-bottom: 0;
 }
-#nameAndDate{
+
+#nameAndDate {
     float: left;
     list-style: none;
     margin: 0;
-    padding:0;
+    padding: 0;
 }
-#nameAndDate a{
+
+#nameAndDate a {
     font-weight: bold;
     text-decoration: none;
-    color: black;    
+    color: black;
 }
-.description button{
+
+.description button {
     width: 120px;
     float: right;
     margin-top: 30px;
 }
 
-.viewsAndButton{
+.viewsAndButton {
     display: inline-block;
-    vertical-align: middle; 
+    vertical-align: middle;
     margin-right: 1%;
 }
-#buttonsDiv{
+
+#buttonsDiv {
     float: right;
 }
+
 @media only screen and (max-width: 340px) {
-    #buttonsDiv{
+    #buttonsDiv {
         float: left;
         margin-bottom: 15px;
     }
 }
 
-#commentsDiv{
+#commentsDiv {
     max-height: 735px;
     overflow: scroll;
     width: 100%;
     border-radius: 5px;
 }
-#commHeader{
+
+#commHeader {
     width: 100%;
     text-align: center;
 }
+
 @media only screen and (max-width: 990px) {
-    #commentsDiv{
+    #commentsDiv {
         max-height: none;
         height: auto;
         overflow: auto;
@@ -138,102 +156,138 @@
     }
 }
 
-#comm{
-    display:inline-block;
+#comm {
+    display: inline-block;
     vertical-align: middle;
 }
-#commSelect{
-    display:inline-block;
+
+#commSelect {
+    display: inline-block;
     vertical-align: middle;
 }
-#comment{
+
+#comment {
     width: 100%;
     margin: 0 auto;
     margin-bottom: 7px;
 }
-#comment>p{
-    display:inline-block;   
-}
-#commentOwner{
+
+    #comment > p {
+        display: inline-block;
+    }
+
+#commentOwner {
     font-weight: 600;
     margin-right: 5px;
     text-decoration: none;
     color: dimgray;
 }
-#commentOwner:hover{
+
+#commentOwner:hover {
     color: black;
 }
-#commentDate{
-    font-size: 10px; 
+
+#commentDate {
+    font-size: 10px;
     color: dimgrey;
 }
-.likes{
+
+.likes {
     margin: 0 5px;
 }
-#myCommentText{
+
+#myCommentText {
     max-width: 90%;
-    display:block;
+    display: block;
     width: 90%;
     margin: 10px auto;
 }
-#myFormButton{
-    display:block;
+
+#myFormButton {
+    display: block;
     margin: 0 auto 10px auto;
-    
 }
-#btnFollow{
+
+#subButton {
     margin-right: 1%;
 }
-#myCommentButton,#hideShowBtn{
+
+#myCommentButton, #hideShowBtn {
     display: inline-block;
     vertical-align: middle;
 }
-#centerButtons{
+
+#centerButtons {
     display: block;
     text-align: center;
     margin: 5px 0;
 }
-#recommendedVideos .row{
+
+#recommendedVideos .row {
     max-height: auto;
     margin: 0 auto 10px auto;
-    
 }
-#recommendedVideos .row a{
-    text-decoration: none;
-    color: black;
-}
-#recommendedVideos h4{
+
+    #recommendedVideos .row a {
+        text-decoration: none;
+        color: black;
+    }
+
+#recommendedVideos h4 {
     margin-left: 1%;
 }
-#imgFormat{
+
+#imgFormat {
     height: 140px;
     border-radius: 5px;
     opacity: 0.7;
 }
-#imgFormat:hover{
-    opacity: 1;
-}
-#editVideo-modal,#blockModal,#deleteModal,#editComment-modal,#deleteCommentModal,#unblockModal,#succesEdit,#commentDel,#commEdit,#failModal{
+
+    #imgFormat:hover {
+        opacity: 1;
+    }
+
+#editVideo-modal, #blockModal, #deleteModal, #editComment-modal, #deleteCommentModal, #unblockModal, #succesEdit, #commentDel, #commEdit, #failModal {
     text-align: left;
 }
 
-.editVideoTitle{
-	text-align: left;
-	display:inline-block;
-}
-.editOption{
-	text-align: left;
-	display:inline-block;
-}
-#commentPic{
-	float: left;
-	margin: 3px 5px 5px 5px;
-}
-#commentPic img{
-	border-radius: 50%;
+.editVideoTitle {
+    text-align: left;
+    display: inline-block;
 }
 
-.commentText p{
-	width:100%; 
-	overflow-wrap: break-word;
+.editOption {
+    text-align: left;
+    display: inline-block;
+}
+
+#commentPic {
+    float: left;
+    margin: 3px 5px 5px 5px;
+}
+
+    #commentPic img {
+        border-radius: 50%;
+    }
+
+.commentText p {
+    width: 100%;
+    overflow-wrap: break-word;
+}
+
+#name {
+    margin: 3px 0 0 0;
+    color: black;
+}
+
+#datePosted {
+    color: black;
+}
+
+#name :hover {
+    opacity: 0.7;
+}
+
+#videoOwnerChannelImage:hover {
+    opacity: 0.7;
 }

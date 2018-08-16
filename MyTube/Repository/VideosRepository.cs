@@ -1,4 +1,5 @@
 ﻿using MyTube.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -24,6 +25,31 @@ namespace MyTube.Repository
         {
             return db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.VideoType == PUBLIC_VIDEO);
         }
+
+        public IEnumerable<Video> GetVideosAllAndSearch(string searchString)
+        {
+            var videos = GetVideosAll();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                videos = videos.Where(s => s.VideoName.Contains(searchString)
+                                       || s.VideoDescription.Contains(searchString)
+                                       || s.VideoOwner.Contains(searchString));
+            }
+            return videos;
+        }
+        public IEnumerable<Video> GetVideosPublicAndSearch(string searchString)
+        {
+            var videos = GetVideosPublic();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                videos = videos.Where(s => s.VideoName.Contains(searchString)
+                                       || s.VideoDescription.Contains(searchString)
+                                       || s.VideoOwner.Contains(searchString));
+            }
+            return videos;
+        }
+
+
         public IEnumerable<Video> GetVideosAllOwnedByUser(string username)
         {
             return db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Username == username);

@@ -5,7 +5,7 @@
 
 <html>
 <head>
-    @*<script src="~/Scripts/videoPage.js" type="text/javascript"></script>*@
+    <script src="~/Scripts/videoPage.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/videoPage.css">
 </head>
 <body>
@@ -29,25 +29,67 @@
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
                         <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                         <ul class="dropdown-menu">
-                            <li id="deleteOptionVideo"><a onclick="deleteVideoModal()" href="#" data-toggle="modal">Delete video</a></li>
-                            <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
-                            <li id="unblockOptionVideo"><a href="#unblockModal" data-toggle="modal">Unblock video</a></li>
-                            <li id="editVideoOption"><a onclick="fillEditVideo()" href="#">Edit video</a></li>
+                            @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                            {
+                                <li id="editVideoOption"><a onclick="fillEditVideo()" href="#">Edit video</a></li>
+                            }
+                            @if (LoggedInUserIsAdmin())
+                            {
+                                if (Model.Blocked != true)
+                                {
+                                    <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
+                                }
+                                else
+                                {
+                                    <li id="unblockOptionVideo"><a href="#unblockModal" data-toggle="modal">Unblock video</a></li>
+                                }
+                            }
+                            @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                            {
+                                <li id="deleteOptionVideo"><a onclick="deleteVideoModal()" href="#" data-toggle="modal">Delete video</a></li>
+
+                            }
+
                             <li><a href="#">Add to playlist</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="description" id="desc">
-                    
-                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
+
+                    @*<a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
                     <ul id="nameAndDate">
-                        <li><a href="channelPage.html">@Model.User.Username</a></li>
+                        <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
                         <li><p>Published on<br>@Model.DatePostedString</p></li>
-                    </ul>
-                    <button id="btnFollow" type="button" class="btn btn-danger">Follow</button>
+                    </ul>*@
+
+                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")" >
+                        <img src="@Model.User.ProfilePictureUrl" alt="Channel image" id="videoOwnerChannelImage" style="width:70px;height: 70px">
+                        <ul id="nameAndDate">
+                            <li><p id="name"><b>@Model.User.Username</b></p></li>
+                            <li><p id="datePosted">Published on<br>@Model.DatePostedString</p></li>
+                        </ul>
+                    </a>
+                    @if (LoggedInUserExists())
+                    {
+                        if (!LoggedInUserIsOnHisPage())
+                        {
+                            if (ViewBag.Subbed != true)
+                            {
+                            <button id="subButton" class="btn btn-danger" onclick="subUser()">Subscribe</button>
+                            }
+                            else
+                            {
+                            <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
+                    }
 
                     <p class="thumbnail" id="textDescription">@Model.VideoDescription</p>
-                    
+
                 </div>
             </div>
         </div>
@@ -74,24 +116,24 @@
                 </div>
                 <div class="collapse" id="commentSection">
                     <div class="commentRow">
-                        
-                            <div class="col-md-12 col-sm-12">
-                                <div class="thumbnail" id="comment">
-                                    <p id="commentOwner">Name</p>
-                                    <p id="commentDate">Posted on:</p>
-                                    <div class="commentText">
-                                        <p>audantium enim quasi est quid em magnam voluptate ipsam eosntempora quo necessitatibusndolor</p>
-                                    </div>
 
-                                    <button type="button" class="btn btn-default">Reply</button>
-                                    <p>123</p>
-                                    <div class="btn-group" id="commLDBtnGroup">
-                                        <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-                                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> </button>
-                                    </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="thumbnail" id="comment">
+                                <p id="commentOwner">Name</p>
+                                <p id="commentDate">Posted on:</p>
+                                <div class="commentText">
+                                    <p>audantium enim quasi est quid em magnam voluptate ipsam eosntempora quo necessitatibusndolor</p>
+                                </div>
+
+                                <button type="button" class="btn btn-default">Reply</button>
+                                <p>123</p>
+                                <div class="btn-group" id="commLDBtnGroup">
+                                    <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+                                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> </button>
+                                </div>
                             </div>
                         </div>
-                            
+
                     </div>
                 </div>
             </div>
@@ -104,3 +146,39 @@
     </div>
 </body>
 </html>
+@functions{
+    public bool LoggedInUserExists()
+    {
+        if (Session["loggedInUserStatus"] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    public bool LoggedInUserIsAdmin()
+    {
+        if ((string)Session["loggedInUserUserType"] == "ADMIN")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsOnHisPage()
+    {
+        if ((string)Session["loggedInUserUsername"] == Model.User.Username)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}

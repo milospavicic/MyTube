@@ -129,7 +129,7 @@ namespace MyTube.Controllers
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
             ViewBag.SearchString = searchString;
 
-            var users = SearchUsers(usersRepository.GetUsers(), searchString);
+            var users = usersRepository.SearchUsers(searchString);
             users = SortUsers(users, sortOrder);
 
             ViewBag.Values = Models.User.UsersSortOrderSelectList();
@@ -142,18 +142,6 @@ namespace MyTube.Controllers
                 return false;
             }
             return true;
-        }
-        public IEnumerable<User> SearchUsers(IEnumerable<User> users, string searchString)
-        {
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                users = users.Where(s => s.Username.Contains(searchString)
-                                       || s.Firstname.Contains(searchString)
-                                       || s.Lastname.Contains(searchString)
-                                       || s.Email.Contains(searchString)
-                                       || s.UserType.Contains(searchString));
-            }
-            return users;
         }
         public IEnumerable<User> SortUsers(IEnumerable<User> users, string sortOrder)
         {
@@ -206,8 +194,6 @@ namespace MyTube.Controllers
         {
             return View(usersRepository.GetUsers());
         }
-
-
 
         // GET: Users
         public ActionResult ChannelPageUsersPartial(string id)

@@ -1,4 +1,5 @@
 ﻿using MyTube.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -46,6 +47,19 @@ namespace MyTube.Repository
         public IEnumerable<User> GetUsers()
         {
             return db.Users.Where(x => x.Deleted == false);
+        }
+        public IEnumerable<User> SearchUsers(string searchString)
+        {
+            var users = db.Users.Where(x => x.Deleted == false);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(s => s.Username.Contains(searchString)
+                                       || s.Firstname.Contains(searchString)
+                                       || s.Lastname.Contains(searchString)
+                                       || s.Email.Contains(searchString)
+                                       || s.UserType.Contains(searchString));
+            }
+            return users;
         }
 
         public User GetUserByUsername(string username)
