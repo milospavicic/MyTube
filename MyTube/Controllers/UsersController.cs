@@ -20,6 +20,14 @@ namespace MyTube.Controllers
             this.userTypesRepository = new UserTypesRepository(new MyTubeDBEntities());
             this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
         }
+        public JsonResult IndexPageChannels()
+        {
+            var currentUserUsername = (string)Session["loggedInUserUsername"];
+            var channels = usersRepository.GetNRandomUsers(6, currentUserUsername);
+
+            return Json(channels, JsonRequestBehavior.AllowGet);
+        }
+
 
         [ChildActionOnly]
         public ActionResult LoginModal()
@@ -68,7 +76,7 @@ namespace MyTube.Controllers
                 return View();
             }
             usersRepository.InsertUser(user);
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Index", "Home");
         }
         public ActionResult Logout()
         {

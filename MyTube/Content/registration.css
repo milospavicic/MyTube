@@ -1,0 +1,17 @@
+﻿#registrationDiv {
+    text-align: left;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#regSuccDiv {
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+#loginModalButton {
+    margin-top:35px;
+}

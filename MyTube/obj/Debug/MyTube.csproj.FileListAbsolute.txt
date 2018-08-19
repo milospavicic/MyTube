@@ -93,3 +93,5 @@ D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\obj\Debug\MyTube.csproj.CopyCo
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\obj\Debug\MyTube.dll
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\obj\Debug\MyTube.pdb
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\obj\Debug\MyTube.csprojAssemblyReference.cache
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\System.ValueTuple.dll
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\System.ValueTuple.xml

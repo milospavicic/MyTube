@@ -98,16 +98,16 @@
                     </ul>
                 </a>
                 <div class="btn-group">
-                    <button type="button" onclick="editModal('@item.Username')" class="btn btn-default" title="Edit channel."><span class="glyphicon glyphicon-edit"></span></button>
+                    <button onclick="editModal('@item.Username')" class="btn btn-default" title="Edit channel."><span class="glyphicon glyphicon-edit"></span></button>
                     @if (item.Blocked == true)
                     {
-                        <button type="button" onclick="unblockModal('@item.Username')" class="btn btn-default" title="Unblock channel."><span class="glyphicon glyphicon-ok-circle"></span></button>
+                        <button onclick="unblockModal('@item.Username')" class="btn btn-default" title="Unblock channel."><span class="glyphicon glyphicon-ok-circle"></span></button>
                     }
                     else
                     {
-                        <button type="button" onclick="blockModal('@item.Username')" class="btn btn-default" title="Block channel."><span class="glyphicon glyphicon-ban-circle"></span></button>
+                        <button onclick="blockModal('@item.Username')" class="btn btn-default" title="Block channel."><span class="glyphicon glyphicon-ban-circle"></span></button>
                     }
-                    <button type="button" onclick="deleteModal('@item.Username')" class="btn btn-default" title="Delete channel."><span class="glyphicon glyphicon-trash"></span></button>
+                    <button onclick="deleteModal('@item.Username')" class="btn btn-default" title="Delete channel."><span class="glyphicon glyphicon-trash"></span></button>
                 </div>
             </div>
         }

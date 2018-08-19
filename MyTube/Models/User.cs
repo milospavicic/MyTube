@@ -9,6 +9,7 @@
 
 namespace MyTube.Models
 {
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
@@ -42,7 +43,6 @@ namespace MyTube.Models
         [Display(Name = "Lastname")]
         public string Lastname { get; set; }
 
-        [Required]
         [Display(Name = "Type")]
         public string UserType { get; set; }
 
@@ -57,7 +57,6 @@ namespace MyTube.Models
         public System.DateTime RegistrationDate { get; set; }
         public bool Blocked { get; set; }
         public bool Deleted { get; set; }
-
         [Required]
         [Display(Name = "Picture Url")]
         public string ProfilePictureUrl { get; set; }
@@ -85,16 +84,28 @@ namespace MyTube.Models
         public static SelectList UsersSortOrderSelectList() { return usersSortOrderSelectList; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<CommentRating> CommentRatings { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Comment> Comments { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<Subscriber> Subscribers { get; set; }
+
+        [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Subscriber> Subscribers1 { get; set; }
+
+        [JsonIgnore]
         public virtual UserType UserType1 { get; set; }
+
+        [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VideoRating> VideoRatings { get; set; }
+        [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Video> Videos { get; set; }
     }

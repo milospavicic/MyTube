@@ -57,6 +57,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -155,10 +158,16 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CommentRatingsController.cs" />
+    <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Controllers\VideoRatingsController.cs" />
     <Compile Include="Controllers\VideosController.cs" />
+    <Compile Include="DTO\CommentRatingsDTO.cs" />
+    <Compile Include="DTO\UsersDTO.cs" />
+    <Compile Include="DTO\VideoDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -184,6 +193,7 @@
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\EditUserModel.cs" />
+    <Compile Include="Models\EditVideoModel.cs" />
     <Compile Include="Models\Subscriber.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -203,18 +213,26 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\CommentRatingsRepository.cs" />
+    <Compile Include="Repository\CommentsRepository.cs" />
+    <Compile Include="Repository\ICommentRatingsRepository.cs" />
+    <Compile Include="Repository\ICommentsRepository.cs" />
     <Compile Include="Repository\ISubscribeRepository.cs" />
     <Compile Include="Repository\IUsersRepository.cs" />
     <Compile Include="Repository\IUserTypesRepository.cs" />
+    <Compile Include="Repository\IVideoRatingRepository.cs" />
     <Compile Include="Repository\IVideosRepository.cs" />
     <Compile Include="Repository\IVideoTypesRepository.cs" />
     <Compile Include="Repository\SubscribeRepository.cs" />
     <Compile Include="Repository\UsersRepository.cs" />
     <Compile Include="Repository\UserTypesRepository.cs" />
+    <Compile Include="Repository\VideoRatingRepository.cs" />
     <Compile Include="Repository\VideosRepository.cs" />
     <Compile Include="Repository\VideoTypesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\newVideo.css" />
+    <Content Include="Content\registration.css" />
     <Content Include="Pictures\errorPic.jpg" />
     <Content Include="Scripts\adminPage.js" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -313,6 +331,27 @@
     <Content Include="Views\Subscribers\Details.cshtml" />
     <Content Include="Views\Subscribers\Edit.cshtml" />
     <Content Include="Views\Subscribers\Index.cshtml" />
+    <Content Include="Views\VideoRatings\Create.cshtml" />
+    <Content Include="Views\VideoRatings\Delete.cshtml" />
+    <Content Include="Views\VideoRatings\Details.cshtml" />
+    <Content Include="Views\VideoRatings\Edit.cshtml" />
+    <Content Include="Views\VideoRatings\Index.cshtml" />
+    <Content Include="Views\Shared\CommentSection.cshtml" />
+    <Content Include="Views\Comments\Create.cshtml" />
+    <Content Include="Views\Comments\Delete.cshtml" />
+    <Content Include="Views\Comments\Details.cshtml" />
+    <Content Include="Views\Comments\Edit.cshtml" />
+    <Content Include="Views\Comments\Index.cshtml" />
+    <Content Include="Views\Shared\EditVideoForm.cshtml" />
+    <Content Include="Views\CommentRatings\Create.cshtml" />
+    <Content Include="Views\CommentRatings\Delete.cshtml" />
+    <Content Include="Views\CommentRatings\Details.cshtml" />
+    <Content Include="Views\CommentRatings\Edit.cshtml" />
+    <Content Include="Views\CommentRatings\Index.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
+    <Content Include="Views\Shared\RegistrationSuccess.cshtml" />
+    <Content Include="Views\Home\NewVideo.cshtml" />
+    <Content Include="Views\Comments\SingleComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

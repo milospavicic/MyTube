@@ -1,4 +1,5 @@
-﻿using MyTube.Models;
+﻿using MyTube.DTO;
+using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,20 @@ namespace MyTube.Controllers
             this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities());
         }
+        public JsonResult IndexPageVideos()
+        {
+            IEnumerable<Video> videos = null;
+            var userType = (string)Session["loggedInUserUserType"];
+            if (userType == "ADMIN")
+                videos = videosRepository.GetNRandomVideos(6);
+            else
+                videos = videosRepository.GetNPublicRandomVideos(6);
+
+            List<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
+
+            return Json(vdto, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult ChannelPageVideosPartial(string channelName, bool? ownedOrLikedVideos, string sortOrder)
         {
             IEnumerable<Video> videos = null;
@@ -75,6 +90,52 @@ namespace MyTube.Controllers
                     break;
             }
             return videos;
+        }
+
+        public ActionResult BlockVideo(long? id)
+        {
+            videosRepository.BlockVideo(id);
+            ViewBag.Message = "Video has been successfully blocked.";
+            return PartialView("MessageModal");
+        }
+
+        [HttpPost]
+        public ActionResult UnblockVideo(long? id)
+        {
+            videosRepository.UnblockVideo(id);
+            ViewBag.Message = "Video has been successfully unblocked.";
+            return PartialView("MessageModal");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteVideo(long? id)
+        {
+            videosRepository.DeleteVideo(id);
+            ViewBag.Message = "Video has been successfully deleted.";
+            return PartialView("MessageModal");
+        }
+        public ActionResult EditVideoForm(long? id)
+        {
+            var video = videosRepository.GetVideoById(id);
+            EditVideoModel evm = EditVideoModel.EditVideoModalFromVideo(video);
+            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(evm.VideoType);
+
+            return PartialView(evm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoUrl,ThumbnailUrl,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
+        {
+            if (ModelState.IsValid)
+            {
+                var video = videosRepository.GetVideoById(evm.VideoID);
+                video.UpdateVideoFromEditVideoModel(evm);
+                videosRepository.UpdateVideo(video);
+                ViewBag.Message = "Video has been successfully edited.";
+                return PartialView("MessageModal");
+            }
+            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(evm.VideoType);
+            return PartialView(evm);
         }
         //-------------------------------------------------------------------
         // GET: Videos

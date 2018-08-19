@@ -9,6 +9,7 @@
 
 namespace MyTube.Models
 {
+    using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Web.Mvc;
@@ -25,10 +26,12 @@ namespace MyTube.Models
         public long VideoID { get; set; }
 
         [Required]
+        [Url]
         [Display(Name = "Video Url")]
         public string VideoUrl { get; set; }
 
         [Required]
+        [Url]
         [Display(Name = "Thumbnail Url")]
         public string ThumbnailUrl { get; set; }
 
@@ -58,7 +61,8 @@ namespace MyTube.Models
         public long ViewsCount { get; set; }
         public System.DateTime DatePosted { get; set; }
         public string VideoOwner { get; set; }
-
+        //public string VideoOwnerUserType { get { return User.UserType; } }
+        //public bool VideoOwnerIsBlocked { get { return User.Blocked; } }
         public string DatePostedString { get { return DatePosted.ToShortDateString(); } }
 
         private static SelectList videosSortOrderSelectList = new SelectList(new List<SelectListItem>
@@ -71,11 +75,30 @@ namespace MyTube.Models
 
         public static SelectList VideosSortOrderSelectList() { return videosSortOrderSelectList; }
 
+        [JsonIgnore]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Comment> Comments { get; set; }
+
+        [JsonIgnore]
         public virtual User User { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
         public virtual ICollection<VideoRating> VideoRatings { get; set; }
+
+        [JsonIgnore]
         public virtual VideoType VideoType1 { get; set; }
+
+        public Video UpdateVideoFromEditVideoModel(EditVideoModel evm)
+        {
+            this.VideoUrl = evm.VideoUrl;
+            this.ThumbnailUrl = evm.ThumbnailUrl;
+            this.VideoName = evm.VideoName;
+            this.VideoDescription = evm.VideoDescription;
+            this.VideoType = evm.VideoType;
+            this.CommentsEnabled = evm.CommentsEnabled;
+            this.RatingEnabled = evm.RatingEnabled;
+            return this;
+        }
     }
 }

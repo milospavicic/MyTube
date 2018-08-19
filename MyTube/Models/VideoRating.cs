@@ -9,18 +9,15 @@
 
 namespace MyTube.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
     public partial class VideoRating
     {
         public long LikeID { get; set; }
-        public Nullable<long> VideoID { get; set; }
+        public long VideoID { get; set; }
         public string LikeOwner { get; set; }
         public bool IsLike { get; set; }
         public System.DateTime LikeDate { get; set; }
         public bool Deleted { get; set; }
-    
+
         public virtual User User { get; set; }
         public virtual Video Video { get; set; }
     }

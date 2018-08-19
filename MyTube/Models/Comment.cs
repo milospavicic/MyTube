@@ -10,6 +10,7 @@
 namespace MyTube.Models
 {
     using System.Collections.Generic;
+    using System.Web.Mvc;
 
     public partial class Comment
     {
@@ -32,5 +33,15 @@ namespace MyTube.Models
         public virtual ICollection<CommentRating> CommentRatings { get; set; }
         public virtual User User { get; set; }
         public virtual Video Video { get; set; }
+
+        private static SelectList commentsSortOrderSelectList = new SelectList(new List<SelectListItem>
+        {
+            new SelectListItem { Selected = true, Text = "Latest", Value = "latest"},
+            new SelectListItem { Selected = true, Text = "Oldest", Value = "oldest"},
+            new SelectListItem { Selected = true, Text = "Most popular", Value = "most_popular"},
+            new SelectListItem { Selected = true, Text = "Least popular", Value = "least_popular"},
+        }, "Value", "Text", 1);
+
+        public static SelectList CommentsSortOrderSelectList() { return commentsSortOrderSelectList; }
     }
 }

@@ -1,277 +1,55 @@
-var loggedInUser = "";
-var editCommentId = 0;
-var editVideoId = 0;
-var deleteCommentId = 0;
-var blocked = false;
-var videoBlocked = false;
-var currentVideo = null;
+//var loggedInUser = "";
+//var editCommentId = 0;
+//var editVideoId = 0;
+//var deleteCommentId = 0;
+//var blocked = false;
+//var videoBlocked = false;
+//var currentVideo = null;
+modalCloseReloadPage = false;
 $(document).ready(function (e) {
-    //var videoId = window.location.search.slice(1).split('&')[0].split('=')[1];
-    //if (typeof videoId == 'undefined') {
-    //    errorPage();
-    //    return;
-    //}
-    //editVideoId = videoId.replace('#', '').trim();
-    //console.log("start of videoPage.js : " + editVideoId);
-    //$.get('FollowUserServlet', {}, function (dataOne) {
-    //    $.get('VideoServlet', { "videoId": editVideoId }, function (data) {
-    //        if (data.video == null) {
-    //            console.log("nullerino");
-    //            errorPage();
-    //            return;
-    //        } else {
-    //            currentVideo = data.video;
-    //        }
-    //        if (data.loggedInUser != null) {
-    //            loggedInUser = data.loggedInUser;
-    //            if (data.loggedInUser.blocked == true) {
-    //                $('#uploadVideo').attr("href", "#blockedModal");
-    //                blocked = data.loggedInUser.blocked;
-    //            }
-    //        } else {
-    //            loggedInUser = "false";
-    //        }
-    //        if (data.loggedInUser == null) {
-    //            if (data.video.visibility == "PRIVATE") {
-    //                errorPage();
-    //                return;
-    //            }
-
-    //            if (data.video.owner.blocked) {
-    //                errorPage();
-    //                return;
-    //            }
-    //            if (data.video.blocked == true) {
-    //                errorPage();
-    //                return;
-    //            }
-    //            if (data.video.ratingEnabled == false) {
-    //                $('#ldBtnGroup').hide();
-    //            }
-    //            if (data.video.commentsEnabled == false) {
-    //                $('#myCommentButton').prop('disabled', true);
-    //                $('#hideShowBtn').prop('disabled', true);
-    //            }
-    //        } else {
-    //            if (data.video.visibility == "PRIVATE") {
-    //                if (data.video.owner.userName != data.loggedInUser.userName) {
-    //                    if (data.loggedInUser.userType != "ADMIN" || data.loggedInUser.blocked == true) {
-    //                        errorPage();
-    //                        return;
-    //                    }
-    //                }
-    //            }
-    //            if (data.video.owner.blocked) {
-    //                console.log("userBlocked");
-    //                if (data.video.owner.userName != data.loggedInUser.userName) {
-    //                    if (data.loggedInUser.userType != "ADMIN" || data.loggedInUser.blocked == true) {
-    //                        errorPage();
-    //                        return;
-    //                    }
-    //                }
-    //            }
-    //            if (data.video.blocked == true) {
-    //                $('#blockOptionVideo').hide();
-    //                videoBlocked = true;
-    //                if (data.video.owner.userName != data.loggedInUser.userName) {
-    //                    if (data.loggedInUser.userType != "ADMIN" || data.loggedInUser.blocked == true) {
-    //                        errorPage();
-    //                        return;
-    //                    } else {
-    //                        $('#unblockOptionVideo').show();
-    //                    }
-    //                }
-    //            } else {
-    //                $('#unblockOptionVideo').hide();
-    //            }
-    //            if (data.video.ratingEnabled == false) {
-    //                if (data.loggedInUser.userType != "ADMIN" || data.loggedInUser.blocked == true)
-    //                    $('#ldBtnGroup').hide();
-    //            }
-    //            if (data.video.commentsEnabled == false) {
-    //                if (data.loggedInUser.userType != "ADMIN" || data.loggedInUser.blocked == true) {
-    //                    $('#myCommentButton').prop('disabled', true);
-    //                    $('#hideShowBtn').prop('disabled', true);
-    //                }
-    //            }
-
-    //            console.log(data.video.owner.userName + "  " + data.loggedInUser.userName)
-
-
-    //            if (data.video.owner.userName == data.loggedInUser.userName) {
-    //                $('#editVideoOption').show();
-    //                $('#deleteOptionVideo').show();
-    //                $('#myCommentButton').prop('disabled', false);
-    //                $('#hideShowBtn').prop('disabled', false);
-    //                $('#ldBtnGroup').show();
-    //            }
-
-    //        }
-    //        document.title = '' + data.video.videoName + ' - MyTube';
-    //        var videoName = $('#videoName');
-    //        var vCounter = $('#vCounter');
-    //        var desc = $('#desc');
-    //        var likeButton = $('#likeButton');
-    //        var dislikeButton = $('#dislikeButton');
-    //        var channelsDiv = $('#recommendedVideos .row');
-    //        var videoDiv = $('#videoDiv');
-
-    //        videoDiv.append('<iframe id="videoPlayer" width="100%" height="430" src="' + data.video.videoUrl + "?autoplay=1" + '" frameborder="0" allowfullscreen></iframe>')
-
-
-    //        if (data.video.blocked == true) {
-    //            videoName.html(data.video.videoName + " <i>( Blocked )</i>")
-    //        } else {
-    //            videoName.text(data.video.videoName);//works
-    //        }
-
-    //        vCounter.text("Views: " + data.video.views);
-    //        likeButton.html('<span class="glyphicon glyphicon-thumbs-up"></span>' + ' ' + data.video.numberOfLikes);
-    //        dislikeButton.html('<span class="glyphicon glyphicon-thumbs-down"></span>' + ' ' + data.video.numberOfDislikes);
-    //        if (data.likedVideo != null) {
-    //            if (data.likedVideo.likeOrDislike == true) {
-    //                setVideoLikeActive();
-    //            } else {
-    //                setVideoDislikeActive();
-    //            }
-    //        }
-    //        if (data.video.owner.lol == true) {
-    //            var profilePic = "pictures/" + data.video.owner.profileUrl;
-    //        } else {
-    //            var profilePic = data.video.owner.profileUrl;
-    //        }
-    //        desc.append(
-    //            '<a href="channelPage.html?channel=' + data.video.owner.userName + '"><img src="' + profilePic + '" alt="Lights" style="width:70px;height: 70px"></a>' +
-    //            '<ul id="nameAndDate">' +
-    //            '<li><a href="channelPage.html?channel=' + data.video.owner.userName + '">' + data.video.owner.userName + '</a></li>' +
-    //            '<li><p>Published on<br>' + data.video.datePosted + '</p></li>' +
-    //            '</ul>');
-
-    //        var status = "false";
-    //        for (temp in dataOne.userSubs) {
-    //            var stringOne = "";
-    //            var stringTwo = "";
-    //            stringOne = dataOne.userSubs[temp];
-    //            stringTwo = data.video.owner.userName;
-    //            if (stringOne == stringTwo) {
-    //                status = "true";
-    //                break;
-    //            }
-    //        }
-    //        if (data.loggedInUser != null && data.video.owner.userName != data.loggedInUser.userName) {
-    //            console.log(status);
-    //            if (status == "false") {
-    //                desc.append(
-    //                    '<button id="btnFollow" type="button" class="btn btn-danger" onclick="follow(this,\'' + data.video.owner.userName + '\')">Follow</button>');
-    //            } else {
-    //                desc.append(
-    //                    '<button id="btnFollow" type="button" class="btn btn-default" onclick="follow(this,\'' + data.video.owner.userName + '\')">Unfollow</button>');
-    //            }
-    //        }
-    //        desc.append('<p class="thumbnail" id="textDescription">' + data.video.description + '</p>');
-
-    //        for (it in data.recommended) {
-    //            if (data.recommended[it].blocked == true) {
-    //                var videoName = data.recommended[it].videoName + ' - <i>Blocked</i>';
-    //            } else {
-    //                var videoName = data.recommended[it].videoName;
-    //            }
-    //            channelsDiv.append('<div class="col-md-2 col-sm-4 col-xs-6" id="test">' +
-    //                '<a href="videoPage.html?id=' + data.recommended[it].id + '" target="_self">' +
-    //                '<img id="imgFormat" src="' + data.recommended[it].pictureUrl + '" alt="video" style="width:100%">' +
-    //                '<div class="caption"><p id="titleBar">' + videoName + '</p></div>' +
-    //                '<p id="stats">' + data.recommended[it].owner.userName + '<br>' + data.recommended[it].views + '<br>' + data.recommended[it].datePosted + '</p></a></div>');
-
-    //        }
-    //        loadComments(editVideoId, "id", "DESC");
-    //    });
-    //});
-
-
-    //$('#likeButton').click(function () {
-    //    console.log("likeButtonClick");
-    //    if (loggedInUser == "false") {
-    //        $("#login-modal").modal('toggle');
-    //        return;
-    //    }
-    //    if (blocked == true) {
-    //        $("#blockedModal").modal('toggle');
-    //        return;
-    //    }
-    //    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-    //        $("#blockedVideoModal").modal('toggle');
-    //        return;
-    //    }
-    //    $.get('LikeVideoServlet', { "videoId": videoId, "status": "liked" }, function (data) {
-    //        setVideoLikeDislikeNumbers(data.video);
-    //        if (data.status == "neutral") {
-    //            setVideoButtonsDefault();
-    //        } else if (data.status == "like") {
-    //            setVideoLikeActive();
-    //        } else if (data.status == "failed") {
-    //            console.log("failedLike");
-    //            $('#failModal').modal();
-    //        } else {
-    //            console.log("failedLikeWTF");
-    //            setVideoDislikeActive();
-    //        }
-    //    });
-    //});
-    //$('#dislikeButton').click(function () {
-    //    if (loggedInUser == "false") {
-    //        $("#login-modal").modal('toggle');
-    //        return;
-    //    }
-    //    if (blocked == true) {
-    //        $("#blockedModal").modal('toggle');
-    //        return;
-    //    }
-    //    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-    //        $("#blockedVideoModal").modal('toggle');
-    //        return;
-    //    }
-    //    $.get('LikeVideoServlet', { "videoId": videoId, "status": "dislike" }, function (data) {
-    //        setVideoLikeDislikeNumbers(data.video);
-    //        if (data.status == "neutral") {
-    //            setVideoButtonsDefault();
-    //        } else if (data.status == "like") {
-    //            setVideoLikeActive();
-    //        } else if (data.status == "failed") {
-    //            console.log("failedLike1");
-    //            $('#failModal').modal();
-    //        } else {
-    //            console.log("failedLikeWTF1");
-    //            setVideoDislikeActive();
-    //        }
-    //    });
-    //});
-    ////NEW COMMENT
-    //$('#myFormButton').click(function () {
-    //    if (loggedInUser == "false") {
-    //        $("#login-modal").modal('toggle');
-    //        return;
-    //    }
-    //    if (blocked == true) {
-    //        $("#blockedModal").modal('toggle');
-    //        return;
-    //    }
-    //    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-    //        $("#blockedVideoModal").modal('toggle');
-    //        return;
-    //    }
-    //    var commentText = $('#myCommentText').val().trim();
-    //    if (commentText == "") return;
-    //    $.post('CommentsServlet', { "status": "new", "videoId": videoId, "commentText": commentText }, function (data) {
-    //        if (data.endStatus == "newSuccess") {
-    //            $('#myCommentText').val("");
-    //            $('#myComment').collapse("hide");
-    //            refreshComments();
-    //        } else {
-    //            $('#failModal').modal();
-    //        }
-    //    });
-    //});
+    loadCommentsLikes();
+    console.log("video.js file start");
+    $('#blockVideoModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshPage();
+    });
+    $('#unblockVideoModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshPage();
+    });
+    $('#deleteVideoModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshPage();
+    });
+    $('#editVideoModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshPage();
+    });
+    $('#deleteCommentModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshDeleteCommentModal();
+    });
+    $('#editCommentModal').on('hidden.bs.modal', function () {
+        if (modalCloseReloadPage === true)
+            refreshEditCommentModal();
+    });
 });
+function sortComments() {
+    event.preventDefault();  // prevent standard form submission
+    var form = $("#SortCommetsForm");
+    $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method"),  // post
+        data: form.serialize(),
+        success: function (partialResult) {
+            console.log("return value");
+            if (partialResult!==null) {
+                $("#commentsDiv").html(partialResult);
+                loadCommentsLikes();
+                $('#hideShowBtn').click();
+            }}
+    });
+}
 function subUser() {
     var channelName = $('#name').text();
     $.ajax({
@@ -302,299 +80,391 @@ function unsub() {
     tempName.text("Subscribe");
     tempName.attr('class', 'btn btn-danger');
 }
-//function errorPage() {
-//    var errorDiv = $('<div class="row"><div class="col-md-12 col-sm-12"><div class="videoAndControl thumbnail"><img id="videoPlayer" style="width=100%; height=430" src="pictures/errorPic.jpg"></img></div></div></div>')
-//    $('.mainDiv').empty();
-//    $('.mainDiv').append(errorDiv);
-//    $('.mainDiv').css("width", "95%");
-//}
-//function follow(btn, userName) {
-//    if (loggedInUser == "false") {
-//        $("#login-modal").modal('toggle');
-//        return;
-//    }
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    var tempName = $("#" + btn.id).text();
-//    if (tempName == "Follow") {
-//        $.post('FollowUserServlet', { "userName": userName, "status": "follow" }, function (data) {
-//            if (data.endStatus == "Success") {
-//                $("#" + btn.id).text("Unfollow");
-//                $("#" + btn.id).attr('class', 'btn btn-default');
-//            } else {
-//                $('#failModal').modal();
-//            }
-//        });
-//    } else {
-//        $.post('FollowUserServlet', { "userName": userName, "status": "unfollow" }, function (data) {
-//            if (data.endStatus == "Success") {
-//                $("#" + btn.id).text("Follow");
-//                $("#" + btn.id).attr('class', 'btn btn-danger');
-//            } else {
-//                $('#failModal').modal();
-//            }
-//        });
-//    }
-//}
+function videoLiked(videoId) {
+    var data = {
+        "videoId": videoId,
+        "newRating": true
+    };
+    $.ajax({
+        url: "/VideoRatings/CreateVideoRating",
+        type: 'post',
+        data: data,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            changeButtonsActive(data.returnMessage);
+            changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+        }
+    });
+}
+function videoDisliked(videoId) {
 
-//function loadComments(videoId, column, ascDsc) {
-//    console.log("loadingComments");
-//    var commentsDiv = $('.commentRow');
-//    commentsDiv.empty();
-//    $.get('CommentsServlet', { "videoId": videoId, "columnName": column, "ascDes": ascDsc }, function (data) {
-//        for (it in data.comments) {
-//            var rating = 0;
-//            rating = data.comments[it].likeNumber - data.comments[it].dislikeNumber;
-//            var newComment = "";
-//            if (data.comments[it].user.lol == true) {
-//                var profilePic = "pictures/" + data.comments[it].user.profileUrl;
-//            } else {
-//                var profilePic = data.comments[it].user.profileUrl;
-//            }
-//            //newComment+='<a href="channelPage.html?channel='+data.comments[it].user.userName+'"><img src="'+profilePic+'" alt="Lights" style="width:20px;height: 20px"></a>';
-//            newComment += '<div class="col-md-12 col-sm-12" id="div' + data.comments[it].id + '">' +
-//                '<div class="thumbnail" id="comment">';
-//            newComment += '<a href="channelPage.html?channel=' + data.comments[it].user.userName + '" id="commentPic"><img src="' + profilePic + '" alt="Lights" style="width:20px;height: 20px"></a>';
-//            newComment += '<a href="channelPage.html?channel=' + data.comments[it].user.userName + '" id="commentOwner">' + data.comments[it].user.userName + '</a>' +
-//                '<p id="commentDate">' + data.comments[it].datePosted + '</p>' +
-//                '<div class="commentText"><p id="commentEdit' + data.comments[it].id + '">' + data.comments[it].text + '</p></div>' +
-//                '<div class="btn-group" id="commLDBtnGroup">' +
-//                '<button type="button" class="btn btn-default" id="like' + data.comments[it].id + '" onclick="commLike(' + data.comments[it].id + ')"><span class="glyphicon glyphicon-thumbs-up"></span> ' + data.comments[it].likeNumber + '</button>' +
-//                '<button type="button" class="btn btn-default" id="dislike' + data.comments[it].id + '" onclick="commDislike(' + data.comments[it].id + ')"><span class="glyphicon glyphicon-thumbs-down"></span> ' + data.comments[it].dislikeNumber + '</button>';
-//            if (loggedInUser != "false" && loggedInUser.blocked != true) {
-//                if (loggedInUser.userType == "ADMIN" || data.comments[it].user.userName == loggedInUser.userName) {
-//                    newComment += '<button type="button" class="btn btn-default" id="edit' + data.comments[it].id + '" onclick="editComment(' + data.comments[it].id + ',\'' + data.comments[it].text + '\')"><span class="glyphicon glyphicon-edit"></span></button>' +
-//                        '<button type="button" class="btn btn-default" id="delete' + data.comments[it].id + '" onclick="deleteComment(' + data.comments[it].id + ')"><span class="glyphicon glyphicon-trash"></span></button>' +
-//                        '</div></div></div>';
-//                }
-//            } else {
-//                newComment += '</div></div></div>';
-//            }
+    var data = {
+        "videoId": videoId,
+        "newRating": false
+    };
+    $.ajax({
+        url: "/VideoRatings/CreateVideoRating",
+        type: 'post',
+        data: data,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            changeButtonsActive(data.returnMessage);
+            changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+        }
+    });
+}
+function changeButtonsActive(returnMessage) {
+    switch (returnMessage) {
+        case "like":
+            likeButtonOn();
+            break;
+        case "dislike":
+            dislikeButtonOn();
+            break;
+        case "neutral":
+            bothButtonsOff();
+            break;
+    }
+}
+function likeButtonOn() {
+    $('#likeButton').removeClass();
+    $('#dislikeButton').removeClass();
 
-//            commentsDiv.append(newComment);
+    $('#likeButton').addClass("btn btn-danger");
+    $('#dislikeButton').addClass("btn btn-default");
+}
+function dislikeButtonOn() {
+    $('#likeButton').removeClass();
+    $('#dislikeButton').removeClass();
 
-//            for (temp in data.likes) {
-//                if (data.comments[it].id == data.likes[temp].comment.id) {
-//                    if (data.likes[temp].likeOrDislike == true)
-//                        setCommentLikeActive(data.comments[it].id);
-//                    else
-//                        setCommentDislikeActive(data.comments[it].id);
-//                }
-//            }
-//        }
-//    });
-//}
-//function editComment(commentId, commentText) {
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $('#editCommentText').val(commentText);
-//    editCommentId = commentId;
-//    $('#editComment-modal').modal('show');
-//}
-//function editCommentButton() {
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    var commentText = $('#editCommentText').val().trim();
-//    $.post('CommentsServlet', { "status": "edit", "commentText": commentText, "commentId": editCommentId }, function (data) {
-//        if (data.endStatus == "editSuccess") {
-//            $('#editComment-modal').modal('hide');
-//            $('#commentEdit' + editCommentId + '').text(commentText);
-//            $('#commEdit').modal();
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
+    $('#likeButton').addClass("btn btn-default");
+    $('#dislikeButton').addClass("btn btn-danger");
+}
 
-//function refreshComments() {
-//    var videoId = window.location.search.slice(1).split('&')[0].split('=')[1];
-//    var option = commSelect.options[commSelect.selectedIndex].value;
-//    if (option == "MP") {
-//        loadComments(videoId, "(likeNumber-dislikeNumber)", "DESC");
-//    }
-//    else if (option == "LP") {
-//        loadComments(videoId, "(likeNumber-dislikeNumber)", "ASC");
-//    } else {
-//        loadComments(videoId, "id", option);
-//    }
-//}
-//function commLike(commId) {
-//    if (loggedInUser == "false") {
-//        $("#login-modal").modal('toggle');
-//        return;
-//    }
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $.get('LikeCommentServlet', { "commentId": commId, "status": "liked" }, function (data) {
-//        if (data.status == "failed") {
-//            $('#failModal').modal();
-//        } else if (data.status == "neutral") {
-//            setCommentButtonsDefault(data.comment.id);
-//            setCommentRating(data.comment);
-//        } else if (data.status == "like") {
-//            setCommentLikeActive(data.comment.id);
-//            setCommentRating(data.comment);
-//        } else {
-//            setCommentDislikeActive(data.comment.id);
-//            setCommentRating(data.comment);
-//        }
-//    });
-//}
-//function commDislike(commId) {
-//    if (loggedInUser == "false") {
-//        $("#login-modal").modal('toggle');
-//        return;
-//    }
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $.get('LikeCommentServlet', { "commentId": commId, "status": "disliked" }, function (data) {
-//        setCommentRating(data.comment);
-//        if (data.status == "failed") {
-//            $('#failModal').modal();
-//        } else if (data.status == "neutral") {
-//            setCommentButtonsDefault(data.comment.id);
-//        } else if (data.status == "like") {
-//            setCommentLikeActive(data.comment.id);
-//        } else {
-//            setCommentDislikeActive(data.comment.id);
-//        }
-//    });
+function bothButtonsOff() {
+    $('#likeButton').removeClass();
+    $('#dislikeButton').removeClass();
 
-//}
-//function fillEditVideo() {
-//    console.log("fillEditVideo")
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    var video = currentVideo;
-//    $('#editDescription').val(video.description);
-//    if (video.pictureUrl != "pictures/noimage.jpg") {
-//        $('#editPicUrl').val(video.pictureUrl);
-//    }
-//    if (video.visibility == ("PUBLIC")) {
-//        console.log("its public");
-//        $('#selectOne option[value=1]').attr('selected', true);
-//    }
-//    if (video.visibility == ("PRIVATE")) {
-//        console.log("its private");
-//        $('#selectOne option[value=2]').attr('selected', true);
-//    }
-//    if (video.visibility == ("UNLISTED")) {
-//        console.log("its unlisted");
-//        $('#selectOne option[value=3]').attr('selected', true);
-//    }
+    $('#likeButton').addClass("btn btn-default");
+    $('#dislikeButton').addClass("btn btn-default");
+}
+function changeLikeDislikeCount(likeCount, dislikeCount) {
+    console.log("changeCount()");
+    var likes = '<span class="glyphicon glyphicon-thumbs-up"></span> ' + likeCount;
+    var dislikes = '<span class="glyphicon glyphicon-thumbs-down"></span> ' + dislikeCount;
+    $('#likeButton').html(likes);
+    $('#dislikeButton').html(dislikes);
+}
+function createNewComment(videoId) {
+    var commentText = $('#myCommentText').val();
+    var data = {
+        "CommentText": commentText,
+        "VideoID": videoId
+    };
+    $.ajax({
+        url: "/Comments/CreateComment",
+        type: 'post',
+        data: data,
+        success: function (data) {
+            console.log("createNewCommentReturnData");
+            if (data !== null) {
+                $(data).insertAfter('#commHeader');
+                clearAndHideNewCommentSection();
+            }
 
-//    if (video.commentsEnabled == true) {
-//        $('#selectTwo option[value=3]').attr('selected', true);
-//    } else {
-//        $('#selectTwo option[value=2]').attr('selected', true);
-//    }
+        }
+    });
+}
+function clearAndHideNewCommentSection() {
+    $('#myCommentText').val("");
+    $('#myComment').collapse("hide");
+}
+function fillEditVideo(event, id) {
+    event.preventDefault();
+    console.log(id);
+}
+function videoEditSubmit(event) {
+    event.preventDefault();  // prevent standard form submission
+    var form = $("#videoEditForm");
+    $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method"),  // post
+        data: form.serialize(),
+        success: function (partialResult) {
+            console.log("return value");
+            var page = 'Video has been successfully edited';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#editVideoModal").html(partialResult);
+            } else {
 
-//    if (video.ratingEnabled == true) {
-//        $('#selectThree option[value=3]').attr('selected', true);
-//    } else {
-//        $('#selectThree option[value=2]').attr('selected', true);
-//    }
-//    $("#editVideo-modal").modal('toggle');
-//}
-//function saveEditVideo() {
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    var desc = $('#editDescription').val().trim();
-//    var picurl = $('#editPicUrl').val().trim();
-//    var visib = $('#selectOne').val();
-//    var comm = $('#selectTwo').val();
-//    var rating = $('#selectThree').val();
-//    console.log(editVideoId);
-//    //	$.post('VideoServlet',{"status":"edit","videoId":editVideoId,"desc":desc,"picurl":picurl,"visib":visib,"comm":comm,"rating":rating},function(data){location.reload();});
-//    console.log(picurl);
-//    $.post('VideoServlet', { "status": "edit", "videoId": editVideoId, "desc": desc, "picurl": picurl, "visib": visib, "comm": comm, "rating": rating }, function (data) {
-//        if (data.endStatus == "editSuccess") {
-//            $('#editVideo-modal').hide()
-//            $('#succesEdit').modal()
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
-//function setVideoButtonsDefault() {
-//    $('#likeButton').removeClass();
-//    $('#dislikeButton').removeClass();
+                $("#videoEditFormContainer").html(partialResult);
+            }
 
-//    $('#likeButton').addClass("btn btn-default");
-//    $('#dislikeButton').addClass("btn btn-default");
-//}
-//function setVideoLikeActive() {
-//    $('#likeButton').removeClass();
-//    $('#dislikeButton').removeClass();
+        }
+    });
+}
 
-//    $('#likeButton').addClass("btn btn-danger");
-//    $('#dislikeButton').addClass("btn btn-default");
-//}
-//function setVideoDislikeActive() {
-//    console.log("dislikeActive()");
-//    $('#likeButton').removeClass();
-//    $('#dislikeButton').removeClass();
+function deleteVideo(event) {
+    event.preventDefault();
+    url = $("#DeleteModalYesButton").attr("href");
+    $.ajax({
+        url: url,
+        type: 'post',
+        success: function (partialResult) {
+            var page = 'Video has been successfully deleted';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#deleteVideoModal").html(partialResult);
+            }
+        }
+    });
+}
 
-//    $('#likeButton').addClass("btn btn-default");
-//    $('#dislikeButton').addClass("btn btn-danger");
-//}
-//function setVideoLikeDislikeNumbers(video) {
-//    var likes = '<span class="glyphicon glyphicon-thumbs-up"></span> ' + video.numberOfLikes;
-//    var dislikes = '<span class="glyphicon glyphicon-thumbs-down"></span> ' + video.numberOfDislikes;
-//    $('#likeButton').html(likes);
-//    $('#dislikeButton').html(dislikes);
-//}
-//function setCommentButtonsDefault(commId) {
-//    $('#like' + commId + '').removeClass();
-//    $('#dislike' + commId + '').removeClass();
+function blockVideo(event) {
+    event.preventDefault();
+    url = $("#BlockModalYesButton").attr("href");
+    $.ajax({
+        url: url,
+        type: 'post',
+        success: function (partialResult) {
+            var page = 'Video has been successfully blocked';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#blockVideoModal").html(partialResult);
+            }
+        }
+    });
+}
 
-//    $('#like' + commId + '').addClass("btn btn-default");
-//    $('#dislike' + commId + '').addClass("btn btn-default");
-//}
-//function setCommentLikeActive(commId) {
-//    $('#like' + commId + '').removeClass();
-//    $('#dislike' + commId + '').removeClass();
+function unblockVideo(event) {
+    event.preventDefault();
+    url = $("#UnblockModalYesButton").attr("href");
+    $.ajax({
+        url: url,
+        type: 'post',
+        success: function (partialResult) {
+            var page = 'Video has been successfully unblocked';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#unblockVideoModal").html(partialResult);
+            }
+        }
+    });
+}
 
-//    $('#like' + commId + '').addClass("btn btn-danger");
-//    $('#dislike' + commId + '').addClass("btn btn-default");
-//}
-//function setCommentDislikeActive(commId) {
-//    $('#like' + commId + '').removeClass();
-//    $('#dislike' + commId + '').removeClass();
+function editCommentModal(commentId) {
+    fillEditCommentModal(commentId);
+    resetModalReloadPageComparator();
+    $("#EditCommentModalYesButton").attr("href", "/Comments/EditComment/" + commentId);
+    $('#editCommentModal').modal();
 
-//    $('#like' + commId + '').addClass("btn btn-default");
-//    $('#dislike' + commId + '').addClass("btn btn-danger");
-//}
+}
+function fillEditCommentModal(commentId) {
+    var text = $('#text-' + commentId).text();
+    $('#editCommentText').text(text);
+}
+function deleteCommentModal(commentId) {
+    resetModalReloadPageComparator();
+    $("#DeleteCommentModalYesButton").attr("href", "/Comments/DeleteComment/" + commentId);
+    $('#deleteCommentModal').modal();
+}
+
+
+function commentEditSubmit(event) {
+    event.preventDefault();  // prevent standard form submission
+    var newText = $("#editCommentText").val();
+    var url = $("#EditCommentModalYesButton").attr("href");
+    var commentId = GetIdFromUrl(url);
+    data = {
+        "text": newText
+    };
+    $.ajax({
+        url: url,
+        method: 'post',  // post
+        data: data,
+        success: function (partialResult) {
+            console.log("return value");
+            var page = 'Comment has been successfully edited';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#editCommentModal").html(partialResult);
+                loadEditedComment(commentId, newText);
+            } else {
+
+                $("#videoEditFormContainer").html(partialResult);
+            }
+
+        }
+    });
+}
+function GetIdFromUrl(url) {
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    return id;
+}
+function loadEditedComment(commentId, newText) {
+    $('#text-' + commentId).text(newText);
+}
+function deleteComment(event) {
+    event.preventDefault();
+    url = $("#DeleteCommentModalYesButton").attr("href");
+    var commentId = GetIdFromUrl(url);
+    console.log(url);
+    $.ajax({
+        url: url,
+        type: 'post',
+        success: function (partialResult) {
+            var page = 'Comment has been successfully deleted';
+            if (partialResult.includes(page)) {
+                $("#deleteCommentModal").html(partialResult);
+                $("#comment-" + commentId).hide();
+                modalCloseReloadPage = true;
+            }
+        }
+    });
+}
+
+function resetModalReloadPageComparator() {
+    modalCloseReloadPage = false;
+}
+function refreshPage() {
+    location.reload();
+}
+function refreshDeleteCommentModal() {
+    var newModal = '<div class="modal-dialog" role="document">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>' +
+        '</div>' +
+        '<div class="modal-body">Select "Delete" below if you are want to delete this comment.</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>' +
+        '<a href="@Url.Action(" DeleteComment /","Comments")" class="btn btn-danger" onclick="deleteComment(event)" id="DeleteCommentModalYesButton">Delete comment.</a>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    $("#deleteCommentModal").html(newModal);
+}
+function refreshEditCommentModal() {
+    var newModal = '<div class="modal-dialog">' +
+        '<div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">' +
+        '<div class="modal-header">' +
+        '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
+        '<h3 class="modal-title">Edit comment</h3>' +
+        '</div>' +
+        '<div class="modal-header">' +
+        '<div class="form-group">' +
+        '<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" maxlength="500" rows="4"></textarea>' +
+        '</div>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>' +
+        '<a href="@Url.Action(" EditComment /","Comments")" class="btn btn-danger" onclick="commentEditSubmit(event)" id="EditCommentModalYesButton">Edit comment.</a>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    $("#editCommentModal").html(newModal);
+}
+function loadCommentsLikes() {
+    var url = window.location.href;
+    console.log(url);
+    var id = GetIdFromUrl(url);
+    $.get('/CommentRatings/CommentRatingsForVideo/' + id, {}, function (data) {
+        if (data === null) {
+            return;
+        }
+        for (it in data) {
+            var like = data[it];
+            console.log(like);
+            if (like.IsLike) {
+                console.log("commentLike" + like.CommentId);
+                setCommentLikeActive(like.CommentId);
+            } else {
+                console.log("commentDislike" + like.CommentId);
+                setCommentDislikeActive(like.CommentId);
+            }
+        }
+
+    });
+}
+
+function commentLiked(commId) {
+    var data = {
+        "commentId": commId,
+        "newRating": true
+    };
+    $.ajax({
+        url: "/CommentRatings/CreateCommentRating",
+        type: 'post',
+        data: data,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            changeCommentButtonsActive(data.returnMessage, commId);
+            changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount, commId);
+        }
+    });
+}
+function commentDisliked(commId) {
+    var data = {
+        "commentId": commId,
+        "newRating": false
+    };
+    $.ajax({
+        url: "/CommentRatings/CreateCommentRating",
+        type: 'post',
+        data: data,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            changeCommentButtonsActive(data.returnMessage, commId);
+            changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount,commId);
+        }
+    });
+}
+function changeCommentButtonsActive(message, commId) {
+    switch (message) {
+        case "like":
+            setCommentLikeActive(commId);
+            break;
+        case "dislike":
+            setCommentDislikeActive(commId);
+            break;
+        case "neutral":
+            setCommentButtonsDefault(commId);
+            break;
+    }
+}
+function changeCommentLikeDislikeCount(likeCount, dislikeCount, commId) {
+    console.log("changeCommentLikeDislikeCount(" + likeCount + " " + dislikeCount + " " + commId);
+    var likes = '<span class="glyphicon glyphicon-thumbs-up"></span> ' + likeCount;
+    var dislikes = '<span class="glyphicon glyphicon-thumbs-down"></span> ' + dislikeCount;
+    $('#likeBtn-' + commId + '').html(likes);
+    $('#dislikeBtn-' + commId + '').html(dislikes);
+}
+function setCommentButtonsDefault(commId) {
+    $('#likeBtn-' + commId + '').removeClass();
+    $('#dislikeBtn-' + commId + '').removeClass();
+
+    $('#likeBtn-' + commId + '').addClass("btn btn-default");
+    $('#dislikeBtn-' + commId + '').addClass("btn btn-default");
+}
+function setCommentLikeActive(commId) {
+    $('#likeBtn-' + commId + '').removeClass();
+    $('#dislikeBtn-' + commId + '').removeClass();
+
+    $('#likeBtn-' + commId + '').addClass("btn btn-danger");
+    $('#dislikeBtn-' + commId + '').addClass("btn btn-default");
+}
+function setCommentDislikeActive(commId) {
+    $('#likeBtn-' + commId + '').removeClass();
+    $('#dislikeBtn-' + commId + '').removeClass();
+
+    $('#likeBtn-' + commId + '').addClass("btn btn-default");
+    $('#dislikeBtn-' + commId + '').addClass("btn btn-danger");
+}
 //function setCommentRating(comment) {
 //    console.log("setCommentRating, before if");
 //    if (comment != null) {
@@ -603,76 +473,3 @@ function unsub() {
 //        $('#like' + comment.id + '').html(likes);
 //        $('#dislike' + comment.id + '').html(dislikes);
 //    }
-
-//}
-//function deleteComment(id) {
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $('#deleteCommentModal').modal();
-//    deleteCommentId = id;
-//}
-//function deleteCommentById() {
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $.post('CommentsServlet', { "status": "delete", "commentId": deleteCommentId }, function (data) {
-//        if (data.endStatus == "deleteSuccess") {
-//            $('#deleteCommentModal').modal('hide');
-//            $('#div' + deleteCommentId + '').hide();
-//            console.log('hiden');
-//            $('#commentDel').modal();
-//            refreshComments();
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
-//function blockVideo() {
-//    $.post('VideoServlet', { "status": "block", "videoId": editVideoId }, function (data) {
-//        if (data.endStatus == "blockSuccess") {
-//            location.reload();
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
-//function unblockVideo() {
-//    $.post('VideoServlet', { "status": "unblock", "videoId": editVideoId }, function (data) {
-//        if (data.endStatus == "unblockSuccess") {
-//            location.reload();
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
-//function deleteVideo() {
-//    $.post('VideoServlet', { "status": "delete", "videoId": editVideoId }, function (data) {
-//        if (data.endStatus == "deleteSuccess") {
-//            location.reload();
-//        } else {
-//            $('#failModal').modal();
-//        }
-//    });
-//}
-//function deleteVideoModal() {
-//    if (blocked == true) {
-//        $("#blockedModal").modal('toggle');
-//        return;
-//    }
-//    if (videoBlocked == true && (loggedInUser != false && loggedInUser.userType != "ADMIN")) {
-//        $("#blockedVideoModal").modal('toggle');
-//        return;
-//    }
-//    $("#deleteModal").modal('toggle');
-//}

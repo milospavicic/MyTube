@@ -1,0 +1,58 @@
+﻿@model MyTube.Models.VideoRating
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>VideoRating</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.IsLike)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsLike)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LikeDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LikeDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Deleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Deleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Pass)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.Pass)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Video.VideoUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Video.VideoUrl)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LikeID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -13,6 +13,14 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
+        public IEnumerable<User> GetNRandomUsers(int n, string currentUserUsername)
+        {
+            Random r = new Random();
+
+            var users = db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
+            return users;
+        }
+
         public bool Login(User user)
         {
             bool userExists = db.Users.Any(u => u.Username == user.Username && u.Pass == user.Pass && u.Deleted == false);
@@ -64,12 +72,14 @@ namespace MyTube.Repository
 
         public User GetUserByUsername(string username)
         {
-            User foundUser = db.Users.Find(username);
-            if (foundUser != null && foundUser.Deleted == true)
+            try
+            {
+                return db.Users.Single(x => x.Username == username && x.Deleted == false);
+            }
+            catch
             {
                 return null;
             }
-            return foundUser;
         }
 
         public void InsertUser(User user)
@@ -123,5 +133,6 @@ namespace MyTube.Repository
         {
             db.Dispose();
         }
+
     }
 }

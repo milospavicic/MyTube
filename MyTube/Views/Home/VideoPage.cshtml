@@ -9,6 +9,98 @@
     <link rel="stylesheet" type="text/css" href="~/Content/videoPage.css">
 </head>
 <body>
+    <div class="modal fade" id="blockVideoModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Block" below if you are want to block this video.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("BlockVideo/"+Model.VideoID,"Videos")" class="btn btn-danger" onclick="blockVideo(event)" id="BlockModalYesButton">Block Video.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="unblockVideoModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Unblock" below if you are want to unblock this video.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("UnblockVideo/"+Model.VideoID,"Videos")" class="btn btn-danger" onclick="unblockVideo(event)" id="UnblockModalYesButton">Unblock Video.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteVideoModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Delete" below if you are want to delete this video.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("DeleteVideo/"+Model.VideoID,"Videos")" class="btn btn-danger" onclick="deleteVideo(event)" id="DeleteModalYesButton">Delete Video.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editVideoModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Edit video</h3>
+                </div>
+                <!-- body -->
+                <div id="videoEditFormContainer">
+                    @Html.Action("EditVideoForm", "Videos");
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteCommentModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                </div>
+                <div class="modal-body">Select "Delete" below if you are want to delete this comment.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("DeleteComment/","Comments")" class="btn btn-danger" onclick="deleteComment(event)" id="DeleteCommentModalYesButton">Delete comment.</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editCommentModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Edit comment</h3>
+                </div>
+                <!-- body -->
+                <div class="modal-header">
+                    <div class="form-group">
+                        <textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" maxlength="500" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a href="@Url.Action("EditComment/","Comments")" class="btn btn-danger" onclick="commentEditSubmit(event)" id="EditCommentModalYesButton">Edit comment.</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-8 col-sm-12 thumbnail">
             <div class="videoAndControl thumbnail" id="videoDiv">
@@ -21,8 +113,27 @@
                 </div>
                 <div class="viewsAndButton" id="buttonsDiv">
                     <div class="btn-group" id="ldBtnGroup">
-                        <button type="button" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
-                        <button type="button" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                        @if (ViewBag.Rating != null)
+                        {
+                            if (ViewBag.Rating == true)
+                            {
+                                <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                                <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                            }
+                            else
+                            {
+                                <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                                <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                            }
+
+
+                        }
+                        else
+                        {
+                            <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                            <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                        }
+
                     </div>
                     <div class="btn-group" id="optionsBtnGroup">
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Share</button>
@@ -31,22 +142,22 @@
                         <ul class="dropdown-menu">
                             @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                             {
-                                <li id="editVideoOption"><a onclick="fillEditVideo()" href="#">Edit video</a></li>
+                                <li id="editVideoOption"><a href="#editVideoModal" data-toggle="modal">Edit video</a></li>
                             }
                             @if (LoggedInUserIsAdmin())
                             {
                                 if (Model.Blocked != true)
                                 {
-                                    <li id="blockOptionVideo"><a href="#blockModal" data-toggle="modal">Block video</a></li>
+                                    <li id="blockOptionVideo"><a href="#blockVideoModal" data-toggle="modal">Block video</a></li>
                                 }
                                 else
                                 {
-                                    <li id="unblockOptionVideo"><a href="#unblockModal" data-toggle="modal">Unblock video</a></li>
+                                    <li id="unblockOptionVideo"><a href="#unblockVideoModal" data-toggle="modal">Unblock video</a></li>
                                 }
                             }
                             @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                             {
-                                <li id="deleteOptionVideo"><a onclick="deleteVideoModal()" href="#" data-toggle="modal">Delete video</a></li>
+                                <li id="deleteOptionVideo"><a href="#deleteVideoModal" data-toggle="modal">Delete video</a></li>
 
                             }
 
@@ -57,12 +168,12 @@
                 <div class="description" id="desc">
 
                     @*<a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
-                    <ul id="nameAndDate">
-                        <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
-                        <li><p>Published on<br>@Model.DatePostedString</p></li>
-                    </ul>*@
+                        <ul id="nameAndDate">
+                            <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
+                            <li><p>Published on<br>@Model.DatePostedString</p></li>
+                        </ul>*@
 
-                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")" >
+                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")">
                         <img src="@Model.User.ProfilePictureUrl" alt="Channel image" id="videoOwnerChannelImage" style="width:70px;height: 70px">
                         <ul id="nameAndDate">
                             <li><p id="name"><b>@Model.User.Username</b></p></li>
@@ -75,11 +186,11 @@
                         {
                             if (ViewBag.Subbed != true)
                             {
-                            <button id="subButton" class="btn btn-danger" onclick="subUser()">Subscribe</button>
+                                <button id="subButton" class="btn btn-danger" onclick="subUser()">Subscribe</button>
                             }
                             else
                             {
-                            <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
+                                <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
                             }
                         }
                     }
@@ -93,49 +204,35 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-sm-12">
+        <div class="col-md-4 col-sm-12" id="sideSectionDiv">
             <!--COMMENTS -->
             <div class="thumbnail" id="commentsDiv">
-                <div id="commHeader">
-                    <!-- ZAMENITI SA ORDER BY -->
-                    <p id="comm">Order by: </p>
-                    <select id="commSelect" onchange="refreshComments()">
-                        <option value="DESC">Newest</option>
-                        <option value="ASC">Oldest</option>
-                        <option value="MP">Most popular</option>
-                        <option value="LP">Least popular</option>
-                    </select>
-                </div>
-                <div id="centerButtons">
-                    <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment">Comment</button>
-                    <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
-                </div>
-                <div class="collapse" id="myComment">
-                    <textarea id="myCommentText" rows="4" maxlength="500" cols="50"></textarea>
-                    <button id="myFormButton" class="btn btn-default">Submit</button>
-                </div>
-                <div class="collapse" id="commentSection">
-                    <div class="commentRow">
+                @*<div id="commHeader">
+                        <!-- ZAMENITI SA ORDER BY -->
+                        @using (Html.BeginForm("VideoPage" + Model.VideoID, "Home", FormMethod.Post, new { id = "SortCommetsForm" }))
+                        {
+                            <p id="comm">Order by: </p>
+                            <select id="commSelect" onchange="refreshComments()">
+                                <option value="DESC">Newest</option>
+                                <option value="ASC">Oldest</option>
+                                <option value="MP">Most popular</option>
+                                <option value="LP">Least popular</option>
+                            </select>
+                            @Html.DropDownList("sortOrder", new SelectList(ViewBag.SortOrder, "Value", "Text"), new { onchange = "this.form.submit();" })
+                        }
+                    </div>*@
+                @*<div id="centerButtons">
+                        <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment">Comment</button>
+                        <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
+                    </div>*@
+                @*<div class="collapse" id="myComment">
+                        <textarea id="myCommentText" rows="4" maxlength="500" cols="50"></textarea>
+                        <button id="myFormButton" onclick="createNewComment(@Model.VideoID)" class="btn btn-default">Submit</button>
+                    </div>*@
+                @Html.Action("CommentSection", "Comments")
+                @*<div class="collapse" id="commentSection">
 
-                        <div class="col-md-12 col-sm-12">
-                            <div class="thumbnail" id="comment">
-                                <p id="commentOwner">Name</p>
-                                <p id="commentDate">Posted on:</p>
-                                <div class="commentText">
-                                    <p>audantium enim quasi est quid em magnam voluptate ipsam eosntempora quo necessitatibusndolor</p>
-                                </div>
-
-                                <button type="button" class="btn btn-default">Reply</button>
-                                <p>123</p>
-                                <div class="btn-group" id="commLDBtnGroup">
-                                    <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-                                    <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+                    </div>*@
             </div>
         </div>
         <div class="col-md-12 col-sm-12" id="recommendedVideos">

@@ -175,11 +175,13 @@
         height: 20vh;
     }
 }
-
-#videoInfo{
+.thumbnail .caption{
+    padding-top: 2px;
+}
+#videoInfo {
     color: black;
     text-decoration: none;
-    margin-left: 4%;
+    padding: 9px;
 }
 .row a{
     color: black;

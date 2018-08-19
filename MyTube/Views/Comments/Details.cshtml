@@ -1,0 +1,74 @@
+﻿@model MyTube.Models.Comment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Comment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DatePosted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DatePosted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LikesCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LikesCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DislikesCount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DislikesCount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Deleted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Deleted)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.User.Pass)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.User.Pass)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Video.VideoUrl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Video.VideoUrl)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CommentID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

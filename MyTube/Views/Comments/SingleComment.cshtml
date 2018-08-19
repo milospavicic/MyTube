@@ -1,0 +1,62 @@
+﻿@model MyTube.Models.Comment
+@{
+    ViewBag.Title = "SingleComment";
+}
+
+<div class="commentRow" id="comment-@Model.CommentID">
+    <div class="col-md-12 col-sm-12">
+        <div class="thumbnail" id="comment">
+            <p id="commentOwner">@Model.CommentOwner</p>
+            <p id="commentDate">@Model.DatePosted</p>
+            <div>
+                <p class="commentText" id="text-@Model.CommentID">@Model.CommentText</p>
+            </div>
+            <div class="btn-group" id="commLDBtnGroup">
+                <button class="btn btn-default" id="likeBtn-@Model.CommentID" onclick="commentLiked(@Model.CommentID)"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                <button class="btn btn-default" id="dislikeBtn-@Model.CommentID" onclick="commentDisliked(@Model.CommentID)"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+            </div> 
+                @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage(Model.CommentOwner))
+                {
+                    <button onclick="editCommentModal(@Model.CommentID)" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></button>
+                    <button onclick="deleteCommentModal(@Model.CommentID)" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+                }
+        </div>
+    </div>
+</div>
+
+@functions{
+    public bool LoggedInUserExists()
+    {
+        if (Session["loggedInUserStatus"] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    public bool LoggedInUserIsAdmin()
+    {
+        if ((string)Session["loggedInUserUserType"] == "ADMIN")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsOnHisPage(string username)
+    {
+        if ((string)Session["loggedInUserUsername"] == username)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}

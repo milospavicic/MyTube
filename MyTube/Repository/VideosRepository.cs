@@ -15,6 +15,20 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
+        public IEnumerable<Video> GetNRandomVideos(int n)
+        {
+            Random r = new Random();
+
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false).Take(n);
+            return videos;
+        }
+        public IEnumerable<Video> GetNPublicRandomVideos(int n)
+        {
+            Random r = new Random();
+
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.VideoType == PUBLIC_VIDEO).Take(n);
+            return videos;
+        }
 
         public IEnumerable<Video> GetVideosAll()
         {
@@ -81,7 +95,16 @@ namespace MyTube.Repository
 
         public Video GetVideoById(long? id)
         {
-            return db.Videos.Find(id);
+            try
+            {
+                return db.Videos.Single(x => x.VideoID == id && x.Deleted == false);
+            }
+            catch
+            {
+                return null;
+            }
+
+
         }
 
         public void InsertVideo(Video video)
@@ -107,6 +130,15 @@ namespace MyTube.Repository
             if (video != null)
             {
                 video.Blocked = true;
+                db.SaveChanges();
+            }
+        }
+        public void UnblockVideo(long? id)
+        {
+            Video video = GetVideoById(id);
+            if (video != null)
+            {
+                video.Blocked = false;
                 db.SaveChanges();
             }
         }
