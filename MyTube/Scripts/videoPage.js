@@ -7,6 +7,7 @@
 //var currentVideo = null;
 modalCloseReloadPage = false;
 $(document).ready(function (e) {
+    $('#upload').hide();
     loadCommentsLikes();
     console.log("video.js file start");
     $('#blockVideoModal').on('hidden.bs.modal', function () {
@@ -465,11 +466,23 @@ function setCommentDislikeActive(commId) {
     $('#likeBtn-' + commId + '').addClass("btn btn-default");
     $('#dislikeBtn-' + commId + '').addClass("btn btn-danger");
 }
-//function setCommentRating(comment) {
-//    console.log("setCommentRating, before if");
-//    if (comment != null) {
-//        var likes = '<span class="glyphicon glyphicon-thumbs-up"></span> ' + comment.likeNumber;
-//        var dislikes = '<span class="glyphicon glyphicon-thumbs-down"></span> ' + comment.dislikeNumber;
-//        $('#like' + comment.id + '').html(likes);
-//        $('#dislike' + comment.id + '').html(dislikes);
-//    }
+
+function toggleUrlUpload() {
+    $('#link').toggle();
+    $('#upload').toggle();
+}
+
+function submitPicture() {
+    if ($('#linkOrLocalPicture').prop('checked')) {
+        uploadPicture();
+    } else {
+        urlPicture();
+    }
+}
+function uploadPicture() {
+    $("#uploadPicForm").submit();
+}
+function urlPicture() {
+    $("#uploadPicForm").attr("action", "/Videos/ChangePictureUrl/");
+    $("#uploadPicForm").submit();
+}

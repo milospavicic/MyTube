@@ -101,6 +101,40 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="changeThumbnailModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change Thumbnail</h3>
+                </div>
+                <!-- body -->
+                <form action="@Url.Action("ChangePictureUpload","Videos")" method="post" enctype="multipart/form-data" id="uploadPicForm">
+                    <div>
+                        <div class="col-md-12" id="changeThubnailCheckBoxDiv">
+                            <input type="checkbox" id="linkOrLocalPicture" onclick="toggleUrlUpload()" data-val="true" />
+                            <label for="linkOrLocalPicture"> Upload file instead of link?</label>
+                        </div>
+                        <div id="link" class="modal-header">
+                            <div class="col-md-12">
+                                <input type="text" name="ThumbnailUrl" id="ThumbnailUrl" class="form-control" />
+                            </div>
+                        </div>
+                        <div id="upload" class="modal-header col-md-offset-2 col-md-8">
+                            <input type="hidden" name="videoId" id="videoId" value="@Model.VideoID" />
+                            <input type="file" name="image" id="image" style="display: none;" />
+                            <input type="button" class="btn btn-default" value="Browse..." onclick="document.getElementById('image').click();" />
+                        </div>
+                        <div class="col-md-12" id="changeThumbnailModalFooter">
+                            <input class="btn btn-danger" type="button" value="Submit" onclick="submitPicture()" />
+                            <button class="btn btn-default" data-toggle="modal" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-8 col-sm-12 thumbnail">
             <div class="videoAndControl thumbnail" id="videoDiv">
@@ -125,8 +159,6 @@
                                 <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
                                 <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
                             }
-
-
                         }
                         else
                         {
@@ -143,6 +175,7 @@
                             @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                             {
                                 <li id="editVideoOption"><a href="#editVideoModal" data-toggle="modal">Edit video</a></li>
+                                <li id="editVideoOption"><a href="#changeThumbnailModal" data-toggle="modal">Change Thumbnail</a></li>
                             }
                             @if (LoggedInUserIsAdmin())
                             {

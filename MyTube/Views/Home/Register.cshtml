@@ -44,11 +44,6 @@
                     @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Email" } })
                     @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                 </div>
-                @Html.LabelFor(model => model.ProfilePictureUrl, htmlAttributes: new { @class = "control-label col-md-12" })
-                <div class="col-md-12">
-                    @Html.EditorFor(model => model.ProfilePictureUrl, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Picture Url" } })
-                    @Html.ValidationMessageFor(model => model.ProfilePictureUrl, "", new { @class = "text-danger" })
-                </div>
             </div>
             <!-- footer -->
             <div class="modal-footer">

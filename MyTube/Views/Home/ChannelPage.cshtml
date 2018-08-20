@@ -9,6 +9,37 @@
     <link rel="stylesheet" type="text/css" href="~/Content/channelPage.css">
 </head>
 <body>
+    <div class="modal fade" id="changeModalMenu" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Menu</h5>
+                </div>
+                <div class="modal-footer" id="menuButtonsDiv">
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" onclick="loadEditModal(event)" data-toggle="modal">Edit User</button>
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" href="#changeThumbnailModal" data-toggle="modal">Change profile picture</button>
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" href="#newPasswordModal" data-toggle="modal">Change password</button>
+                    <button class="btn btn-default col-md-12 col-sm-12 col-xs-12" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="newPasswordModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change Password</h3>
+                </div>
+                <!-- body -->
+                <div id="newPasswordModalContainer">
+                    @Html.Action("NewPassword", "Users");
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="editUserModal">
         <div class="modal-dialog">
             <div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">
@@ -65,6 +96,41 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="changeThumbnailModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change Profile Picture</h3>
+                </div>
+                <!-- body -->
+                <form action="@Url.Action("ChangePictureUpload","Users")" method="post" enctype="multipart/form-data" id="uploadPicForm">
+                    <div>
+                        <div class="col-md-12" id="changeThubnailCheckBoxDiv">
+                            <input type="checkbox" id="linkOrLocalPicture" onclick="toggleUrlUpload()" data-val="true" />
+                            <label for="linkOrLocalPicture"> Upload file instead of link?</label>
+                        </div>
+                        <div id="link" class="modal-header">
+                            <div class="col-md-12">
+                                <input type="text" name="ProfilePictureUrl" id="ProfilePictureUrl" class="form-control" />
+                            </div>
+                        </div>
+                        <div id="upload" class="modal-header col-md-offset-2 col-md-8">
+                            <input type="hidden" name="username" id="username" value="@Model.Username" />
+                            <input type="file" name="image" id="image" style="display: none;" />
+                            <input type="button" class="btn btn-default" value="Browse..." onclick="document.getElementById('image').click();" />
+                        </div>
+                        <div class="col-md-12" id="changeThumbnailModalFooter">
+                            <input class="btn btn-danger" type="button" value="Submit" onclick="submitPicture()" />
+                            <button class="btn btn-default" data-toggle="modal" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 thumbnail" id="infoAndOptions">
             <img id="profileImage" src="@Model.ProfilePictureUrl" alt="Profile Picture" style="width:80px;height: 80px">
@@ -112,7 +178,7 @@
                         }
                         @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                         {
-                            <li id="editChannelOption"><a href="#" onclick="loadEditModal(event)" id="editOptionBlocked">Edit user</a></li>
+                            <li id="editChannelOption"><a href="#changeModalMenu" data-toggle="modal" id="editOptionBlocked">Edit menu</a></li>
                         }
                         <li><a id="userInfo" href="#" onclick="loadInfo(event)">Info</a></li>
                         <li><a href="#">Send message</a></li>

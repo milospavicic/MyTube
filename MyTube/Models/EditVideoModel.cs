@@ -11,10 +11,6 @@ namespace MyTube.Models
         public string VideoUrl { get; set; }
 
         [Required]
-        [Display(Name = "Thumbnail Url")]
-        public string ThumbnailUrl { get; set; }
-
-        [Required]
         [Display(Name = "Video Name")]
         public string VideoName { get; set; }
 
@@ -41,7 +37,6 @@ namespace MyTube.Models
             {
                 VideoID = video.VideoID,
                 VideoUrl = video.VideoUrl,
-                ThumbnailUrl = video.ThumbnailUrl,
                 VideoName = video.VideoName,
                 VideoDescription = video.VideoDescription,
                 VideoType = video.VideoType,

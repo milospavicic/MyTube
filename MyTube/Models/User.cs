@@ -57,7 +57,7 @@ namespace MyTube.Models
         public System.DateTime RegistrationDate { get; set; }
         public bool Blocked { get; set; }
         public bool Deleted { get; set; }
-        [Required]
+
         [Display(Name = "Picture Url")]
         public string ProfilePictureUrl { get; set; }
 

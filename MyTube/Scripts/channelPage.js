@@ -1,7 +1,7 @@
 var modalCloseReloadPage = false;
 $('document').ready(function (e) {
     loadVideos(true);
-
+    $('#upload').hide();
     $('.changeActive').click(function () {
         $('.active').removeClass('active');
         $(this).addClass('active');
@@ -30,7 +30,10 @@ $('document').ready(function (e) {
             refreshPage();
     });
     $('#editUserModal').on('hidden.bs.modal', function () {
-        console.log(modalCloseReloadPage);
+        if (modalCloseReloadPage === true)
+            refreshPage();
+    });
+    $('#newPasswordModal').on('hidden.bs.modal', function () {
         if (modalCloseReloadPage === true)
             refreshPage();
     });
@@ -77,7 +80,7 @@ function loadInfo(event) {
         }
     });
 }
-function loadEditModal() {
+function loadEditModal(event) {
     event.preventDefault();
     var channelName = $('#name').text();
     $.ajax({
@@ -205,6 +208,44 @@ function blockAll() {
     $("#unblockOptionBlocked").attr("href", "#blockedUserModal");
     $("#editOptionBlocked").attr("onclick", "blockedUserModal()");
 }
+function toggleUrlUpload() {
+    $('#link').toggle();
+    $('#upload').toggle();
+}
+
+function submitPicture() {
+    if ($('#linkOrLocalPicture').prop('checked')) {
+        uploadPicture();
+    } else {
+        urlPicture();
+    }
+}
+function uploadPicture() {
+    $("#uploadPicForm").submit();
+}
+function urlPicture() {
+    $("#uploadPicForm").attr("action", "/Users/ChangePictureUrl/");
+    $("#uploadPicForm").submit();
+}
+function newPassword() {
+    var channelName = $('#name').text();
+    var form = $("#newPasswordForm");
+    $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method"),  // post
+        data: form.serialize(),
+        success: function (partialResult) {
+            var page = 'Password has been successfully changed.';
+            if (partialResult.includes(page)) {
+                modalCloseReloadPage = true;
+                $("#newPasswordModal").html(partialResult);
+            } else {
+                $('#newPasswordModalContainer').html(partialResult);
+            }
+        }
+    });
+}
+
 //function saveEditUser(){
 //	var firstName = $('#editFirstName').val().trim();
 //	var lastName = $('#editLastName').val().trim();

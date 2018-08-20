@@ -298,3 +298,16 @@
 #videoOwnerChannelImage:hover {
     opacity: 0.7;
 }
+#changeThumbnailModalFooter {
+    padding: 10px 0 10px 0;
+    text-align: center;
+}
+#link, #upload {
+    padding: 0 0 10px 0;
+    text-align: center;
+}
+
+#changeThubnailCheckBoxDiv {
+    padding:10px 0 5px 0;
+    text-align: center;
+}

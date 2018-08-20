@@ -194,6 +194,7 @@
     </Compile>
     <Compile Include="Models\EditUserModel.cs" />
     <Compile Include="Models\EditVideoModel.cs" />
+    <Compile Include="Models\NewPasswordModel.cs" />
     <Compile Include="Models\Subscriber.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -288,6 +289,7 @@
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\nav.js" />
+    <Content Include="Scripts\newVideo.js" />
     <Content Include="Scripts\searchPage.js" />
     <Content Include="Scripts\usersPage.js" />
     <Content Include="Scripts\videoPage.js" />
@@ -352,9 +354,14 @@
     <Content Include="Views\Shared\RegistrationSuccess.cshtml" />
     <Content Include="Views\Home\NewVideo.cshtml" />
     <Content Include="Views\Comments\SingleComment.cshtml" />
+    <Content Include="Views\Shared\NewVideoSuccess.cshtml" />
+    <Content Include="Views\Users\NewPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Pictures\uploads\" />
+    <Folder Include="Pictures\users\" />
+    <Folder Include="Pictures\videos\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

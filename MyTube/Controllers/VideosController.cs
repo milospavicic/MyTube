@@ -3,8 +3,10 @@ using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -124,7 +126,7 @@ namespace MyTube.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoUrl,ThumbnailUrl,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
+        public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoUrl,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
         {
             if (ModelState.IsValid)
             {
@@ -137,6 +139,48 @@ namespace MyTube.Controllers
             ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(evm.VideoType);
             return PartialView(evm);
         }
+
+        [HttpPost]
+        public ActionResult ChangePictureUpload(HttpPostedFileBase image, long? videoId)
+        {
+            if (image == null)
+            {
+                return View(videosRepository.GetVideoById(videoId));
+            }
+            if (image.ContentLength > 0)
+            {
+                var extension = Path.GetExtension(image.FileName);
+                var path = Path.Combine(Server.MapPath("~/Pictures/videos"), videoId + extension);
+                var finalUrl = "/Pictures/videos/" + videoId + extension;
+                var video = videosRepository.GetVideoById(videoId);
+                video.ThumbnailUrl = finalUrl;
+                videosRepository.UpdateVideo(video);
+                image.SaveAs(path);
+            }
+            return RedirectToAction("VideoPage/" + videoId, "Home");
+        }
+        [HttpPost]
+        public ActionResult ChangePictureUrl(long? videoId, string ThumbnailUrl)
+        {
+            if (videoId == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            var video = videosRepository.GetVideoById(videoId);
+            video.ThumbnailUrl = ThumbnailUrl;
+            videosRepository.UpdateVideo(video);
+            return RedirectToAction("VideoPage/" + videoId, "Home");
+        }
+
+
+
+
+
+
+
+
+
+
         //-------------------------------------------------------------------
         // GET: Videos
         public ActionResult Index()

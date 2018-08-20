@@ -2,8 +2,10 @@
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -115,7 +117,7 @@ namespace MyTube.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUserForm([Bind(Include = "Pass,Firstname,Lastname,UserType,Email,UserDescription,ProfilePictureUrl")] EditUserModel eum, string id)
+        public ActionResult EditUserForm([Bind(Include = "Firstname,Lastname,UserType,Email,UserDescription")] EditUserModel eum, string id)
         {
 
             if (ModelState.IsValid)
@@ -241,6 +243,70 @@ namespace MyTube.Controllers
             return Json(new { subStatus = exists, subCount = userSubscribedTo.SubscribersCount }, JsonRequestBehavior.AllowGet);
 
         }
+
+
+        [HttpPost]
+        public ActionResult ChangePictureUpload(HttpPostedFileBase image, string username)
+        {
+            if (image == null)
+            {
+                return null;
+            }
+            if (image.ContentLength > 0)
+            {
+                var extension = Path.GetExtension(image.FileName);
+                var path = Path.Combine(Server.MapPath("~/Pictures/users"), username + extension);
+                var finalUrl = "/Pictures/users/" + username + extension;
+                var user = usersRepository.GetUserByUsername(username);
+                user.ProfilePictureUrl = finalUrl;
+                usersRepository.UpdateUser(user);
+                image.SaveAs(path);
+            }
+            return RedirectToAction("ChannelPage/" + username, "Home");
+        }
+        [HttpPost]
+        public ActionResult ChangePictureUrl(string username, string ProfilePictureUrl)
+        {
+            if (ProfilePictureUrl == null)
+            {
+                return null;
+            }
+            var user = usersRepository.GetUserByUsername(username);
+            user.ProfilePictureUrl = ProfilePictureUrl;
+            usersRepository.UpdateUser(user);
+            return RedirectToAction("ChannelPage/" + username, "Home");
+
+        }
+        public ActionResult NewPassword()
+        {
+            NewPasswordModel npm = new NewPasswordModel();
+            return PartialView(npm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult NewPassword([Bind(Include = "OldPassword,NewPassword,ConfirmNewPassword")] NewPasswordModel npm, string id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView(npm);
+            }
+            var user = usersRepository.GetUserByUsername(id);
+            if (npm.OldPassword != user.Pass)
+            {
+                ViewBag.Message = "Old password is incorrect";
+                return PartialView(npm);
+            }
+            if (npm.NewPassword != npm.ConfirmNewPassword)
+            {
+                ViewBag.Message = "New passwords don't match.";
+                return PartialView(npm);
+            }
+            user.Pass = npm.NewPassword;
+            usersRepository.UpdateUser(user);
+            ViewBag.Message = "Password has been successfully changed.";
+            return PartialView("MessageModal");
+        }
+
         //--------------------------------------------------------------------------------
         // GET: Users/Details/5
         public ActionResult Details(string id)

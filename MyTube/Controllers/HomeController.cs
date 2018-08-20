@@ -3,7 +3,9 @@ using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -17,6 +19,7 @@ namespace MyTube.Controllers
         private UserTypesRepository userTypesRepository;
         private SubscribeRepository subscribeRepository;
         private VideoRatingRepository videoRatingRepository;
+        private readonly string BASIC_PICTURE = "https://blog.stylingandroid.com/wp-content/themes/lontano-pro/images/no-image-slide.png";
 
         public HomeController()
         {
@@ -157,7 +160,7 @@ namespace MyTube.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register([Bind(Include = "Username,Pass,Firstname,Lastname,Email,ProfilePictureUrl")] User user)
+        public ActionResult Register([Bind(Include = "Username,Pass,Firstname,Lastname,Email")] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -196,9 +199,33 @@ namespace MyTube.Controllers
             }
             video.VideoOwner = loggedInUser;
             video.DatePosted = DateTime.Now;
+            video.ThumbnailUrl = BASIC_PICTURE;
             videosRepository.InsertVideo(video);
-            //return VideoPage(video.VideoID);
-            return RedirectToAction("VideoPage/" + video.VideoID, "Home");
+            ViewBag.VideoId = video.VideoID;
+            ViewBag.VideoName = video.VideoName;
+            return View("NewVideoSuccess");
+        }
+        public ActionResult TestPage()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult TestPage(HttpPostedFileBase file, long? videoId, string ThumbnailUrl)
+        {
+            if (file == null)
+            {
+                return View();
+            }
+            if (file.ContentLength > 0)
+            {
+                var extension = Path.GetExtension(file.FileName);
+                Console.WriteLine(extension);
+                var path = Path.Combine(Server.MapPath("~/Pictures/uploads"), videoId + extension);
+                var finalUrl = "~/Pictures/uploads/" + videoId + extension;
+                Console.WriteLine(path);
+                file.SaveAs(path);
+            }
+            return RedirectToAction("Index");
         }
     }
 }

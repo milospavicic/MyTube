@@ -30,8 +30,6 @@ namespace MyTube.Models
         [Display(Name = "Video Url")]
         public string VideoUrl { get; set; }
 
-        [Required]
-        [Url]
         [Display(Name = "Thumbnail Url")]
         public string ThumbnailUrl { get; set; }
 
@@ -92,7 +90,6 @@ namespace MyTube.Models
         public Video UpdateVideoFromEditVideoModel(EditVideoModel evm)
         {
             this.VideoUrl = evm.VideoUrl;
-            this.ThumbnailUrl = evm.ThumbnailUrl;
             this.VideoName = evm.VideoName;
             this.VideoDescription = evm.VideoDescription;
             this.VideoType = evm.VideoType;
