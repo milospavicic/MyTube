@@ -11,11 +11,36 @@ namespace MyTube.Controllers
         private MyTubeDBEntities db = new MyTubeDBEntities();
         private CommentRatingsRepository commentRatingsRepository;
         private CommentsRepository commentsRepository;
+        private UsersRepository usersRepository;
 
         public CommentRatingsController()
         {
             this.commentRatingsRepository = new CommentRatingsRepository(new MyTubeDBEntities());
             this.commentsRepository = new CommentsRepository(new MyTubeDBEntities());
+            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+
+            CheckLoggedInUser();
+        }
+        private void CheckLoggedInUser()
+        {
+            if (Session == null)
+            {
+                return;
+            }
+            else
+            {
+                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                if (loggedInUser == null)
+                {
+                    Session.Abandon();
+                }
+                else
+                {
+                    Session.Add("loggedInUserUsername", loggedInUser.Username);
+                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
+                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
+                }
+            }
         }
         public JsonResult CommentRatingsForVideo(long? id)
         {

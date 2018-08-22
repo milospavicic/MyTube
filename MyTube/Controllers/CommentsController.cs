@@ -13,11 +13,35 @@ namespace MyTube.Controllers
         private MyTubeDBEntities db = new MyTubeDBEntities();
         private VideosRepository videosRepository;
         private CommentsRepository commentsRepository;
+        private UsersRepository usersRepository;
 
         public CommentsController()
         {
             this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.commentsRepository = new CommentsRepository(new MyTubeDBEntities());
+            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            CheckLoggedInUser();
+        }
+        private void CheckLoggedInUser()
+        {
+            if (Session == null)
+            {
+                return;
+            }
+            else
+            {
+                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                if (loggedInUser == null)
+                {
+                    Session.Abandon();
+                }
+                else
+                {
+                    Session.Add("loggedInUserUsername", loggedInUser.Username);
+                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
+                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
+                }
+            }
         }
         public ActionResult CommentSection(long? id, string sortOrder)
         {

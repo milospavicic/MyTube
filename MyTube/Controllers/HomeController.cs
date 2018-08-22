@@ -29,6 +29,31 @@ namespace MyTube.Controllers
 
             this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
             this.videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities());
+
+            CheckLoggedInUser();
+
+        }
+
+        private void CheckLoggedInUser()
+        {
+            if (Session == null)
+            {
+                return;
+            }
+            else
+            {
+                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                if (loggedInUser == null)
+                {
+                    Session.Abandon();
+                }
+                else
+                {
+                    Session.Add("loggedInUserUsername", loggedInUser.Username);
+                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
+                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
+                }
+            }
         }
         public ActionResult Index()
         {

@@ -161,7 +161,6 @@
     <Compile Include="Controllers\CommentRatingsController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\VideoRatingsController.cs" />
     <Compile Include="Controllers\VideosController.cs" />
