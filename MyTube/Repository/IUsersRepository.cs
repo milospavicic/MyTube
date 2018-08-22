@@ -6,11 +6,10 @@ namespace MyTube.Repository
 {
     interface IUsersRepository : IDisposable
     {
-        IEnumerable<User> GetUsers();
-        IEnumerable<User> GetNMostPopularUsers(int n, string currentUserUsername);
-        IEnumerable<User> GetNRandomUsers(int n, string currentUserUsername);
+        IEnumerable<User> GetNUsersWithout(int n, string currentUserUsername);
         IEnumerable<User> GetAllUsersFollowedBy(string username);
         IEnumerable<User> GetAllAvaiableUsersFollowedBy(string username);
+        IEnumerable<User> GetAndSearchUsers(string searchString);
         User GetUserByUsername(string username);
         void InsertUser(User user);
         void UpdateUser(User user);

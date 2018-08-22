@@ -15,7 +15,6 @@ namespace MyTube.Repository
             this.db = db;
         }
 
-
         public IEnumerable<Comment> GetAllCommentsForVideo(long id)
         {
             return db.Comments.Where(x => x.VideoID == id && x.Deleted == false);
@@ -23,24 +22,40 @@ namespace MyTube.Repository
 
         public Comment GetCommentById(long id)
         {
-            return db.Comments.Find(id);
+            try
+            {
+                return db.Comments.Single(x => x.CommentID == id && x.Deleted == false);
+            }
+            catch
+            {
+                return null;
+            }
         }
         public void CreateComment(Comment comment)
         {
-            db.Comments.Add(comment);
-            db.SaveChanges();
+            if (comment != null)
+            {
+                db.Comments.Add(comment);
+                db.SaveChanges();
+            }
         }
         public void UpdateComment(Comment comment)
         {
-            db.Entry(comment).State = EntityState.Modified;
-            db.SaveChanges();
+            if (comment != null)
+            {
+                db.Entry(comment).State = EntityState.Modified;
+                db.SaveChanges();
+            }
         }
 
         public void DeleteComment(long id)
         {
             Comment comment = GetCommentById(id);
-            comment.Deleted = true;
-            db.SaveChanges();
+            if (comment != null)
+            {
+                comment.Deleted = true;
+                db.SaveChanges();
+            }
         }
 
         public void Dispose()

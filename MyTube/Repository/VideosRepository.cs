@@ -15,29 +15,34 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
-        public IEnumerable<Video> GetNRandomVideos(int n)
+        public IEnumerable<Video> GetNVideos(int n)
         {
-            Random r = new Random();
-
-            var videos = db.Videos.Where(x => x.Deleted == false).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false).Take(n);
             return videos;
         }
-        public IEnumerable<Video> GetNPublicRandomVideos(int n)
+        public IEnumerable<Video> GetNVideosWithout(int n, long videoId)
         {
-            Random r = new Random();
-
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.VideoType == PUBLIC_VIDEO).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.VideoID != videoId).Take(n);
             return videos;
         }
-
+        public IEnumerable<Video> GetNPublicVideos(int n)
+        {
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO).Take(n);
+            return videos;
+        }
+        public IEnumerable<Video> GetNPublicVideosWithout(int n, long videoId)
+        {
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO && x.VideoID != videoId).Take(n);
+            return videos;
+        }
         public IEnumerable<Video> GetVideosAll()
         {
-            return db.Videos.Where(x => x.Deleted == false && x.Blocked == false);
+            return db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false);
         }
 
         public IEnumerable<Video> GetVideosPublic()
         {
-            return db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.VideoType == PUBLIC_VIDEO);
+            return db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO);
         }
 
         public IEnumerable<Video> GetVideosAllAndSearch(string searchString)

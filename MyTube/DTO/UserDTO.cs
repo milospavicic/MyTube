@@ -63,7 +63,7 @@ namespace MyTube.DTO
                 Blocked = user.Blocked,
                 Deleted = user.Deleted,
                 ProfilePictureUrl = user.ProfilePictureUrl,
-                SubscribersCount = user.SubscribersCount,
+                SubscribersCount = user.Subscribers.Count(),
                 VideosCount = user.Videos.Count()
             };
             return newUDTO;

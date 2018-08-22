@@ -34,9 +34,9 @@ namespace MyTube.Controllers
         {
             IEnumerable<Video> videos = null;
             if (LoggedInUserIsAdmin())
-                videos = videosRepository.GetNRandomVideos(6);
+                videos = videosRepository.GetNVideos(6);
             else
-                videos = videosRepository.GetNPublicRandomVideos(6);
+                videos = videosRepository.GetNPublicVideos(6);
 
             IEnumerable<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
@@ -109,7 +109,7 @@ namespace MyTube.Controllers
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
             ViewBag.SearchString = searchString;
 
-            var users = usersRepository.SearchUsers(searchString);
+            var users = usersRepository.GetAndSearchUsers(searchString);
             users = SortUsers(users, sortOrder);
 
             ViewBag.Values = Models.User.UsersSortOrderSelectList();

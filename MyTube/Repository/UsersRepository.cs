@@ -13,20 +13,9 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
-        public IEnumerable<User> GetNMostPopularUsers(int n, string currentUserUsername)
+        public IEnumerable<User> GetNUsersWithout(int n, string currentUserUsername)
         {
-            Random r = new Random();
-
-            var users = db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
-            users = users.OrderBy(x => x.SubscribersCount);
-            return users;
-        }
-        public IEnumerable<User> GetNRandomUsers(int n, string currentUserUsername)
-        {
-            Random r = new Random();
-
-            var users = db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
-            return users;
+            return db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
         }
 
         public bool Login(User user)
@@ -60,11 +49,7 @@ namespace MyTube.Repository
 
             return foundUsers;
         }
-        public IEnumerable<User> GetUsers()
-        {
-            return db.Users.Where(x => x.Deleted == false);
-        }
-        public IEnumerable<User> SearchUsers(string searchString)
+        public IEnumerable<User> GetAndSearchUsers(string searchString)
         {
             var users = db.Users.Where(x => x.Deleted == false);
             if (!String.IsNullOrEmpty(searchString))

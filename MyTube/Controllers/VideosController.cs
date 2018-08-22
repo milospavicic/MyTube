@@ -80,7 +80,19 @@ namespace MyTube.Controllers
             }
             return videos;
         }
+        public ActionResult VideoPageRecommended(long? id)
+        {
+            IEnumerable<Video> videos = null;
+            var userType = (string)Session["loggedInUserUserType"];
+            if (userType == "ADMIN")
+                videos = videosRepository.GetNVideosWithout(6, (long)id);
+            else
+                videos = videosRepository.GetNPublicVideosWithout(6, (long)id);
 
+            IEnumerable<VideoDTO> videosDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
+
+            return PartialView(videosDTO);
+        }
         public ActionResult BlockVideo(long? id)
         {
             videosRepository.BlockVideo(id);

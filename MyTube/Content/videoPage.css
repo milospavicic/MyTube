@@ -157,9 +157,13 @@
 
 @media only screen and (max-width: 990px) {
     #commentsDiv {
+        
         max-height: none;
         height: auto;
         overflow: auto;
+    }
+    #sideSectionDiv {
+        padding: 0;
     }
 }
 
@@ -230,10 +234,12 @@
     text-align: center;
     margin: 5px 0;
 }
-
+#recommendedVideos{
+    padding: 0;
+}
 #recommendedVideos .row {
     max-height: auto;
-    margin: 0 auto 10px auto;
+    margin: 20px auto 10px auto;
 }
 
     #recommendedVideos .row a {

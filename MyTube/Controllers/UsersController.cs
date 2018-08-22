@@ -24,7 +24,8 @@ namespace MyTube.Controllers
         public ActionResult IndexPageUsers()
         {
             var currentUserUsername = (string)Session["loggedInUserUsername"];
-            var users = usersRepository.GetNRandomUsers(6, currentUserUsername);
+            var users = usersRepository.GetNUsersWithout(6, currentUserUsername);
+            users = users.OrderBy(x => x.SubscribersCount);
             var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
             return PartialView(usersDTO);

@@ -203,10 +203,10 @@
                 <div class="description" id="desc">
 
                     @*<a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
-        <ul id="nameAndDate">
-            <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
-            <li><p>Published on<br>@Model.DatePostedString</p></li>
-        </ul>*@
+                        <ul id="nameAndDate">
+                            <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
+                            <li><p>Published on<br>@Model.DatePostedString</p></li>
+                        </ul>*@
 
                     <a href="@Url.Action("ChannelPage/"+Model.VideoOwner,"Home")">
                         <img src="@Model.VideoOwnerDTO.ProfilePictureUrl" alt="Channel image" id="videoOwnerChannelImage" style="width:70px;height: 70px">
@@ -271,9 +271,7 @@
             </div>
         </div>
         <div class="col-md-12 col-sm-12" id="recommendedVideos">
-            <h4>Recommended</h4>
-            <div class="row">
-            </div>
+            @Html.Action("VideoPageRecommended", "Videos")
         </div>
     </div>
 </body>

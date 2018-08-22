@@ -13,12 +13,20 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
-
-
+        public Subscriber GetSubscription(string channelSubscribedTo, string subscriber)
+        {
+            try
+            {
+                return db.Subscribers.Single(x => x.ChannelSubscribed == channelSubscribedTo && x.Subscriber1 == subscriber);
+            }
+            catch
+            {
+                return null;
+            }
+        }
         public bool SubscriptionExists(string channelSubscribedTo, string subscriber)
         {
-            bool subExists = db.Subscribers.Any(u => u.ChannelSubscribed == channelSubscribedTo && u.Subscriber1 == subscriber);
-            return subExists;
+            return db.Subscribers.Any(u => u.ChannelSubscribed == channelSubscribedTo && u.Subscriber1 == subscriber);
         }
 
         public IEnumerable<Subscriber> GetSubscribersForUser(string subscriber)
@@ -40,10 +48,12 @@ namespace MyTube.Repository
 
         public void DeleteSubscription(string channelSubscribedTo, string subscriber)
         {
-            Subscriber sub = db.Subscribers.Single(x => x.ChannelSubscribed == channelSubscribedTo && x.Subscriber1 == subscriber);
-            db.Subscribers.Remove(sub);
-
-            db.SaveChanges();
+            Subscriber sub = GetSubscription(channelSubscribedTo, subscriber);
+            if (sub != null)
+            {
+                db.Subscribers.Remove(sub);
+                db.SaveChanges();
+            }
         }
 
         public void Dispose()

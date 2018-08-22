@@ -52,20 +52,29 @@ namespace MyTube.Repository
 
         public void CreateCommentRating(CommentRating cr)
         {
-            db.CommentRatings.Add(cr);
-            db.SaveChanges();
+            if (cr != null)
+            {
+                db.CommentRatings.Add(cr);
+                db.SaveChanges();
+            }
         }
 
         public void UpdateCommentRating(CommentRating cr)
         {
-            db.Entry(cr).State = EntityState.Modified;
-            db.SaveChanges();
+            if (cr != null)
+            {
+                db.Entry(cr).State = EntityState.Modified;
+                db.SaveChanges();
+            }
         }
         public void DeleteCommentRating(long ratingId)
         {
             var cr = GetCommentRatingById(ratingId);
-            cr.Deleted = true;
-            db.SaveChanges();
+            if (cr != null)
+            {
+                cr.Deleted = true;
+                db.SaveChanges();
+            }
         }
 
         public void Dispose()

@@ -328,6 +328,7 @@
     <Content Include="Views\Users\NewPassword.cshtml" />
     <Content Include="Views\Users\OneUserForAdminPage.cshtml" />
     <Content Include="Views\Users\IndexPageUsers.cshtml" />
+    <Content Include="Views\Videos\VideoPageRecommended.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
