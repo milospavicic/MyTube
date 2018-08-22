@@ -83,7 +83,7 @@ namespace MyTube.Repository
         {
             var likedVideos = from videos in db.Videos
                               join likes in db.VideoRatings on videos.VideoID equals likes.VideoID
-                              where videos.Deleted == false && videos.Blocked == false && likes.Deleted == false && likes.LikeOwner == username
+                              where videos.Deleted == false && videos.User.Deleted == false && likes.Deleted == false && likes.LikeOwner == username
                               select videos;
             return likedVideos;
         }
@@ -92,7 +92,7 @@ namespace MyTube.Repository
         {
             var likedVideos = from videos in db.Videos
                               join likes in db.VideoRatings on videos.VideoID equals likes.VideoID
-                              where videos.Deleted == false && videos.Blocked == false && likes.Deleted == false && likes.LikeOwner == username && videos.VideoType == PUBLIC_VIDEO
+                              where videos.Deleted == false && videos.Blocked == false && videos.User.Deleted == false && videos.User.Blocked == false && likes.Deleted == false && likes.LikeOwner == username && videos.VideoType == PUBLIC_VIDEO
                               select videos;
 
             return likedVideos;

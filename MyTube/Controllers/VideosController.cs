@@ -44,7 +44,10 @@ namespace MyTube.Controllers
         public IEnumerable<Video> VideosPostedBy(string username)
         {
             var userType = (string)Session["loggedInUserUserType"];
-            if (userType == "ADMIN")
+            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            if (loggedInUserUsername == username)
+                return videosRepository.GetVideosAllOwnedByUser(username);
+            else if (userType == "ADMIN")
                 return videosRepository.GetVideosAllOwnedByUser(username);
             else
                 return videosRepository.GetVideosPublicOwnedByUser(username);
@@ -52,7 +55,10 @@ namespace MyTube.Controllers
         public IEnumerable<Video> VideosLikedBy(string username)
         {
             var userType = (string)Session["loggedInUserUserType"];
-            if (userType == "ADMIN")
+            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            if (loggedInUserUsername == username)
+                return videosRepository.GetVideosAllLikedByUser(username);
+            else if (userType == "ADMIN")
                 return videosRepository.GetVideosAllLikedByUser(username);
             else
                 return videosRepository.GetVideosPublicLikedByUser(username);

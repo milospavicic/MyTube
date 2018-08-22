@@ -35,7 +35,7 @@ namespace MyTube.Repository
         {
             IEnumerable<User> foundUsers = from users in db.Users
                                            join subs in db.Subscribers on users.Username equals subs.ChannelSubscribed
-                                           where subs.Subscriber1 == username && users.Deleted == false && users.Blocked == false
+                                           where subs.Subscriber1 == username && users.Deleted == false
                                            select users;
             return foundUsers;
         }
@@ -44,7 +44,7 @@ namespace MyTube.Repository
         {
             IEnumerable<User> foundUsers = from users in db.Users
                                            join subs in db.Subscribers on users.Username equals subs.ChannelSubscribed
-                                           where subs.Subscriber1 == username && users.Deleted == false
+                                           where subs.Subscriber1 == username && users.Deleted == false && users.Blocked == false
                                            select users;
 
             return foundUsers;

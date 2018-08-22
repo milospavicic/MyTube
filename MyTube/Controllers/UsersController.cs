@@ -25,7 +25,7 @@ namespace MyTube.Controllers
         {
             var currentUserUsername = (string)Session["loggedInUserUsername"];
             var users = usersRepository.GetNUsersWithout(6, currentUserUsername);
-            users = users.OrderBy(x => x.SubscribersCount);
+            users = users.OrderByDescending(x => x.SubscribersCount);
             var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
             return PartialView(usersDTO);
@@ -131,7 +131,10 @@ namespace MyTube.Controllers
         public IEnumerable<User> UsersFollowedBy(string username)
         {
             var userType = (string)Session["loggedInUserUserType"];
-            if (userType == "ADMIN")
+            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            if (loggedInUserUsername == username)
+                return usersRepository.GetAllUsersFollowedBy(username);
+            else if (userType == "ADMIN")
                 return usersRepository.GetAllUsersFollowedBy(username);
             else
                 return usersRepository.GetAllAvaiableUsersFollowedBy(username);
