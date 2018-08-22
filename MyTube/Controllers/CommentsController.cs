@@ -1,10 +1,9 @@
-﻿using MyTube.Models;
+﻿using MyTube.DTO;
+using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -12,15 +11,20 @@ namespace MyTube.Controllers
     public class CommentsController : Controller
     {
         private MyTubeDBEntities db = new MyTubeDBEntities();
+        private VideosRepository videosRepository;
         private CommentsRepository commentsRepository;
 
         public CommentsController()
         {
+            this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.commentsRepository = new CommentsRepository(new MyTubeDBEntities());
         }
         public ActionResult CommentSection(long? id, string sortOrder)
         {
             ViewBag.VideoId = id;
+            var video = videosRepository.GetVideoById(id);
+            ViewBag.VideoOwner = video.VideoOwner;
+            ViewBag.CommentsEnabled = video.CommentsEnabled;
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "latest" : "";
             ViewBag.Values = Comment.CommentsSortOrderSelectList();
             if (id == null)
@@ -29,7 +33,8 @@ namespace MyTube.Controllers
             }
             var comments = commentsRepository.GetAllCommentsForVideo((long)id);
             comments = SortComments(comments, sortOrder);
-            return PartialView(comments);
+            var commentsDTO = CommentDTO.ConvertCollectionCommentToDTO(comments);
+            return PartialView(commentsDTO);
         }
         public IEnumerable<Comment> SortComments(IEnumerable<Comment> comments, string sortOrder)
         {
@@ -66,8 +71,8 @@ namespace MyTube.Controllers
             commentsRepository.CreateComment(comment);
 
             ViewBag.Values = Comment.CommentsSortOrderSelectList();
-
-            return PartialView("SingleComment", comment);
+            var cdto = CommentDTO.ConvertCommentToDTO(comment);
+            return PartialView("SingleComment", cdto);
 
         }
         [HttpPost]
@@ -94,115 +99,6 @@ namespace MyTube.Controllers
             ViewBag.Message = "Comment has been successfully deleted.";
             return PartialView("MessageModal");
 
-        }
-        // GET: Comments
-        public ActionResult Index()
-        {
-            var comments = db.Comments.Include(c => c.User).Include(c => c.Video);
-            return View(comments.ToList());
-        }
-
-        // GET: Comments/Details/5
-        public ActionResult Details(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comment);
-        }
-
-        // GET: Comments/Create
-        public ActionResult Create()
-        {
-            ViewBag.CommentOwner = new SelectList(db.Users, "Username", "Pass");
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl");
-            return View();
-        }
-
-        // POST: Comments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CommentID,VideoID,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted")] Comment comment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Comments.Add(comment);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.CommentOwner = new SelectList(db.Users, "Username", "Pass", comment.CommentOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", comment.VideoID);
-            return View(comment);
-        }
-
-        // GET: Comments/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CommentOwner = new SelectList(db.Users, "Username", "Pass", comment.CommentOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", comment.VideoID);
-            return View(comment);
-        }
-
-        // POST: Comments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CommentID,VideoID,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted")] Comment comment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(comment).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.CommentOwner = new SelectList(db.Users, "Username", "Pass", comment.CommentOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", comment.VideoID);
-            return View(comment);
-        }
-
-        // GET: Comments/Delete/5
-        public ActionResult Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(comment);
-        }
-
-        // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
-        {
-            Comment comment = db.Comments.Find(id);
-            db.Comments.Remove(comment);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,19 +21,6 @@ namespace MyTube.Controllers
             this.videosRepository = new VideosRepository(new MyTubeDBEntities());
             this.videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities());
         }
-        public JsonResult IndexPageVideos()
-        {
-            IEnumerable<Video> videos = null;
-            var userType = (string)Session["loggedInUserUserType"];
-            if (userType == "ADMIN")
-                videos = videosRepository.GetNRandomVideos(6);
-            else
-                videos = videosRepository.GetNPublicRandomVideos(6);
-
-            List<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
-
-            return Json(vdto, JsonRequestBehavior.AllowGet);
-        }
 
         public ActionResult ChannelPageVideosPartial(string channelName, bool? ownedOrLikedVideos, string sortOrder)
         {
@@ -49,9 +35,10 @@ namespace MyTube.Controllers
             }
             else
                 videos = VideosLikedBy(channelName);
+            var videosDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
 
-            return PartialView(videos);
+            return PartialView(videosDTO);
         }
 
         public IEnumerable<Video> VideosPostedBy(string username)
@@ -170,130 +157,6 @@ namespace MyTube.Controllers
             video.ThumbnailUrl = ThumbnailUrl;
             videosRepository.UpdateVideo(video);
             return RedirectToAction("VideoPage/" + videoId, "Home");
-        }
-
-
-
-
-
-
-
-
-
-
-        //-------------------------------------------------------------------
-        // GET: Videos
-        public ActionResult Index()
-        {
-            var userType = Session["loggedInUserUserType"];
-            if (userType != null)
-            {
-                if (userType.ToString() == "ADMIN")
-                    return View(videosRepository.GetVideosAll());
-                else
-                    return View(videosRepository.GetVideosPublic());
-            }
-
-            return View(videosRepository.GetVideosPublic());
-        }
-
-        // GET: Videos/Details/5
-        public ActionResult Details(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Video video = videosRepository.GetVideoById(id);
-            if (video == null)
-            {
-                return HttpNotFound();
-            }
-            return View(video);
-        }
-
-        // GET: Videos/Create
-        public ActionResult Create()
-        {
-            ViewBag.VideoOwner = new SelectList(db.Users, "Username", "Pass");
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
-            return View(new Video());
-        }
-
-        // POST: Videos/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "VideoID,VideoUrl,ThumbnailUrl,VideoName,VideoDescription,VideoType,Blocked,Deleted,CommentsEnabled,RatingEnabled,LikesCount,DislikesCount,ViewsCount,DatePosted,VideoOwner")] Video video)
-        {
-            if (ModelState.IsValid)
-            {
-                videosRepository.InsertVideo(video);
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.VideoOwner = new SelectList(db.Users, "Username", "Pass", video.VideoOwner);
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(video.VideoType);
-            return View(video);
-        }
-
-        // GET: Videos/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Video video = videosRepository.GetVideoById(id);
-            if (video == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.VideoOwner = new SelectList(db.Users, "Username", "Pass", video.VideoOwner);
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(video.VideoType);
-            return View(video);
-        }
-
-        // POST: Videos/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "VideoID,VideoUrl,ThumbnailUrl,VideoName,VideoDescription,VideoType,Blocked,Deleted,CommentsEnabled,RatingEnabled,LikesCount,DislikesCount,ViewsCount,DatePosted,VideoOwner")] Video video)
-        {
-            if (ModelState.IsValid)
-            {
-                videosRepository.UpdateVideo(video);
-                return RedirectToAction("Index");
-            }
-            ViewBag.VideoOwner = new SelectList(db.Users, "Username", "Pass", video.VideoOwner);
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(video.VideoType);
-            return View(video);
-        }
-
-        // GET: Videos/Delete/5
-        public ActionResult Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Video video = videosRepository.GetVideoById(id);
-            if (video == null)
-            {
-                return HttpNotFound();
-            }
-            return View(video);
-        }
-
-        // POST: Videos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
-        {
-            videosRepository.DeleteVideo(id);
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

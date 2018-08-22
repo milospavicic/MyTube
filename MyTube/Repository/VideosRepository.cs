@@ -19,7 +19,7 @@ namespace MyTube.Repository
         {
             Random r = new Random();
 
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false).Take(n);
             return videos;
         }
         public IEnumerable<Video> GetNPublicRandomVideos(int n)

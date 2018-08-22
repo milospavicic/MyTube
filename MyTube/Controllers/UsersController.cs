@@ -1,10 +1,8 @@
-﻿using MyTube.Models;
+﻿using MyTube.DTO;
+using MyTube.Models;
 using MyTube.Repository;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -22,20 +20,21 @@ namespace MyTube.Controllers
             this.userTypesRepository = new UserTypesRepository(new MyTubeDBEntities());
             this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
         }
-        public JsonResult IndexPageChannels()
+        public ActionResult IndexPageUsers()
         {
             var currentUserUsername = (string)Session["loggedInUserUsername"];
-            var channels = usersRepository.GetNRandomUsers(6, currentUserUsername);
+            var users = usersRepository.GetNRandomUsers(6, currentUserUsername);
+            var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
-            return Json(channels, JsonRequestBehavior.AllowGet);
+            return PartialView(usersDTO);
         }
-
 
         [ChildActionOnly]
         public ActionResult LoginModal()
         {
             return PartialView("LoginForm");
         }
+
         public ActionResult Login(User user)
         {
             if (usersRepository.Login(user))
@@ -53,7 +52,6 @@ namespace MyTube.Controllers
             {
                 ViewBag.Message = "Incorrect username or password.";
             }
-
         }
         public void StoreInSession(string username)
         {
@@ -62,23 +60,11 @@ namespace MyTube.Controllers
             Session.Add("loggedInUserUserType", loggedInUser.UserType);
             Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
         }
-        public ActionResult Register()
+        public ActionResult OneUserForAdminPage(string id)
         {
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectList();
-            return View();
-        }
-        [HttpPost]
-        public ActionResult Register(User user)
-        {
-            bool usernameTaken = usersRepository.UsernameTaken(user.Username);
-            if (usernameTaken)
-            {
-                ViewBag.Message = "Username taken";
-                ViewBag.UserType = userTypesRepository.GetUserTypesSelectList();
-                return View();
-            }
-            usersRepository.InsertUser(user);
-            return RedirectToAction("Index", "Home");
+            var user = usersRepository.GetUserByUsername(id);
+            var userDTO = UserDTO.ConvertUserToDTO(user);
+            return PartialView(userDTO);
         }
         public ActionResult Logout()
         {
@@ -132,84 +118,14 @@ namespace MyTube.Controllers
             return PartialView(eum);
 
         }
-        public ActionResult AdminPage(string sortOrder, string searchString)
-        {
-            if (!CheckIfPermited()) { return RedirectToAction("Index", "Home"); }
 
-            ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
-            ViewBag.SearchString = searchString;
-
-            var users = usersRepository.SearchUsers(searchString);
-            users = SortUsers(users, sortOrder);
-
-            ViewBag.Values = Models.User.UsersSortOrderSelectList();
-            return View("~/Views/Home/AdminPage.cshtml", users);
-        }
-        public bool CheckIfPermited()
-        {
-            if (Session["loggedInUserUsername"] == null || Session["loggedInUserUserType"].ToString() != "ADMIN")
-            {
-                return false;
-            }
-            return true;
-        }
-        public IEnumerable<User> SortUsers(IEnumerable<User> users, string sortOrder)
-        {
-            switch (sortOrder)
-            {
-                case "username_asc":
-                    users = users.OrderBy(s => s.Username);
-                    break;
-                case "username_desc":
-                    users = users.OrderByDescending(s => s.Username);
-                    break;
-                case "firstname_asc":
-                    users = users.OrderBy(s => s.Firstname);
-                    break;
-                case "firstname_desc":
-                    users = users.OrderByDescending(s => s.Firstname);
-                    break;
-                case "lastname_asc":
-                    users = users.OrderBy(s => s.Lastname);
-                    break;
-                case "lastname_desc":
-                    users = users.OrderByDescending(s => s.Lastname);
-                    break;
-                case "email_asc":
-                    users = users.OrderBy(s => s.Email);
-                    break;
-                case "email_desc":
-                    users = users.OrderByDescending(s => s.Email);
-                    break;
-                case "user_type_asc":
-                    users = users.OrderBy(s => s.UserType);
-                    break;
-                case "user_type_desc":
-                    users = users.OrderByDescending(s => s.UserType);
-                    break;
-                case "status_asc":
-                    users = users.OrderBy(s => s.Blocked);
-                    break;
-                case "status_desc":
-                    users = users.OrderByDescending(s => s.Blocked);
-                    break;
-
-                default:
-                    users = users.OrderBy(s => s.Username);
-                    break;
-            }
-            return users;
-        }
-        public ActionResult Index()
-        {
-            return View(usersRepository.GetUsers());
-        }
-
-        // GET: Users
         public ActionResult ChannelPageUsersPartial(string id)
         {
-            return PartialView(UsersFollowedBy(id));
+            var users = UsersFollowedBy(id);
+            var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
+            return PartialView(usersDTO);
         }
+
         public IEnumerable<User> UsersFollowedBy(string username)
         {
             var userType = (string)Session["loggedInUserUserType"];
@@ -221,12 +137,13 @@ namespace MyTube.Controllers
         }
         public ActionResult ChannelPageInfoPartial(string id)
         {
-            return PartialView(usersRepository.GetUserByUsername(id));
+            var user = usersRepository.GetUserByUsername(id);
+            var userDTO = UserDTO.ConvertUserToDTO(user);
+            return PartialView(userDTO);
         }
         public JsonResult Subscribe(string id)
         {
-            User currentUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-
+            User currentUser = usersRepository.GetUserByUsername((string)Session["loggedInUserUsername"]);
 
             bool exists = subscribeRepository.SubscriptionExists(id, currentUser.Username);
             if (exists)
@@ -241,7 +158,6 @@ namespace MyTube.Controllers
             }
             User userSubscribedTo = usersRepository.GetUserByUsername(id);
             return Json(new { subStatus = exists, subCount = userSubscribedTo.SubscribersCount }, JsonRequestBehavior.AllowGet);
-
         }
 
 
@@ -262,7 +178,7 @@ namespace MyTube.Controllers
                 usersRepository.UpdateUser(user);
                 image.SaveAs(path);
             }
-            return RedirectToAction("ChannelPage/" + username, "Home");
+            return Redirect(Request.UrlReferrer.ToString());
         }
         [HttpPost]
         public ActionResult ChangePictureUrl(string username, string ProfilePictureUrl)
@@ -274,14 +190,16 @@ namespace MyTube.Controllers
             var user = usersRepository.GetUserByUsername(username);
             user.ProfilePictureUrl = ProfilePictureUrl;
             usersRepository.UpdateUser(user);
-            return RedirectToAction("ChannelPage/" + username, "Home");
 
+            return Redirect(Request.UrlReferrer.ToString());
         }
+
         public ActionResult NewPassword()
         {
             NewPasswordModel npm = new NewPasswordModel();
             return PartialView(npm);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult NewPassword([Bind(Include = "OldPassword,NewPassword,ConfirmNewPassword")] NewPasswordModel npm, string id)
@@ -296,6 +214,11 @@ namespace MyTube.Controllers
                 ViewBag.Message = "Old password is incorrect";
                 return PartialView(npm);
             }
+            if (npm.NewPassword == npm.OldPassword)
+            {
+                ViewBag.Message = "New password can't be same as old password.";
+                return PartialView(npm);
+            }
             if (npm.NewPassword != npm.ConfirmNewPassword)
             {
                 ViewBag.Message = "New passwords don't match.";
@@ -305,101 +228,6 @@ namespace MyTube.Controllers
             usersRepository.UpdateUser(user);
             ViewBag.Message = "Password has been successfully changed.";
             return PartialView("MessageModal");
-        }
-
-        //--------------------------------------------------------------------------------
-        // GET: Users/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = usersRepository.GetUserByUsername(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
-        // GET: Users/Create
-        public ActionResult Create()
-        {
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectList();
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                usersRepository.InsertUser(user);
-                return RedirectToAction("Index");
-            }
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(user.UserType);
-            return View(user);
-        }
-
-        // GET: Users/Edit/5
-        public ActionResult Edit(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = usersRepository.GetUserByUsername(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(user.UserType);
-            return View(user);
-        }
-
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                usersRepository.UpdateUser(user);
-                return RedirectToAction("Index");
-            }
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(user.UserType);
-            return View(user);
-        }
-
-        // GET: Users/Delete/5
-        public ActionResult Delete(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            User user = usersRepository.GetUserByUsername(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
-        {
-            usersRepository.DeleteUser(id);
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

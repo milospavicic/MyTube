@@ -1,4 +1,4 @@
-﻿@model MyTube.Models.Video
+﻿@model MyTube.DTO.VideoDTO
 @{
     ViewBag.Title = "VideoPage";
 }
@@ -146,27 +146,29 @@
                     <p class="viewsCounter" id="vCounter">Views: @Model.ViewsCount</p>
                 </div>
                 <div class="viewsAndButton" id="buttonsDiv">
-                    <div class="btn-group" id="ldBtnGroup">
-                        @if (ViewBag.Rating != null)
-                        {
-                            if (ViewBag.Rating == true)
+                    @if (Model.CommentsEnabled != false || LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                    {
+                        <div class="btn-group" id="ldBtnGroup">
+                            @if (ViewBag.Rating != null)
                             {
-                                <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
-                                <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                                if (ViewBag.Rating == true)
+                                {
+                                    <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                                    <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                                }
+                                else
+                                {
+                                    <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
+                                    <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                                }
                             }
                             else
                             {
                                 <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
-                                <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-danger"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
+                                <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
                             }
-                        }
-                        else
-                        {
-                            <button type="button" onclick="videoLiked(@Model.VideoID)" id="likeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-up"></span> @Model.LikesCount</button>
-                            <button type="button" onclick="videoDisliked(@Model.VideoID)" id="dislikeButton" class="btn btn-default"><span class="glyphicon glyphicon-thumbs-down"></span> @Model.DislikesCount</button>
-                        }
-
-                    </div>
+                        </div>
+                    }
                     <div class="btn-group" id="optionsBtnGroup">
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-share-alt"></span> Share</button>
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
@@ -175,7 +177,7 @@
                             @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
                             {
                                 <li id="editVideoOption"><a href="#editVideoModal" data-toggle="modal">Edit video</a></li>
-                                <li id="editVideoOption"><a href="#changeThumbnailModal" data-toggle="modal">Change Thumbnail</a></li>
+                                <li id="changeThubnailOption"><a href="#changeThumbnailModal" data-toggle="modal">Change Thumbnail</a></li>
                             }
                             @if (LoggedInUserIsAdmin())
                             {
@@ -201,19 +203,23 @@
                 <div class="description" id="desc">
 
                     @*<a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")"><img src="@Model.User.ProfilePictureUrl" alt="Lights" style="width:70px;height: 70px"></a>
-                        <ul id="nameAndDate">
-                            <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
-                            <li><p>Published on<br>@Model.DatePostedString</p></li>
-                        </ul>*@
+        <ul id="nameAndDate">
+            <li><a href="channelPage.html" id="name">@Model.User.Username</a></li>
+            <li><p>Published on<br>@Model.DatePostedString</p></li>
+        </ul>*@
 
-                    <a href="@Url.Action("ChannelPage/"+Model.User.Username,"Home")">
-                        <img src="@Model.User.ProfilePictureUrl" alt="Channel image" id="videoOwnerChannelImage" style="width:70px;height: 70px">
+                    <a href="@Url.Action("ChannelPage/"+Model.VideoOwner,"Home")">
+                        <img src="@Model.VideoOwnerDTO.ProfilePictureUrl" alt="Channel image" id="videoOwnerChannelImage" style="width:70px;height: 70px">
                         <ul id="nameAndDate">
-                            <li><p id="name"><b>@Model.User.Username</b></p></li>
+                            <li><p id="name"><b>@Model.VideoOwner</b></p></li>
                             <li><p id="datePosted">Published on<br>@Model.DatePostedString</p></li>
                         </ul>
                     </a>
-                    @if (LoggedInUserExists())
+                    @if (!LoggedInUserExists())
+                    {
+                        <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
+                    }
+                    else
                     {
                         if (!LoggedInUserIsOnHisPage())
                         {
@@ -226,10 +232,6 @@
                                 <button id="subButton" class="btn btn-default" onclick="subUser()">Unsubscribe</button>
                             }
                         }
-                    }
-                    else
-                    {
-                        <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
                     }
 
                     <p class="thumbnail" id="textDescription">@Model.VideoDescription</p>
@@ -302,7 +304,18 @@
     }
     public bool LoggedInUserIsOnHisPage()
     {
-        if ((string)Session["loggedInUserUsername"] == Model.User.Username)
+        if ((string)Session["loggedInUserUsername"] == Model.VideoOwner)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsBlocked()
+    {
+        if ((string)Session["loggedInUserStatus"] == "True")
         {
             return true;
         }

@@ -147,6 +147,7 @@
     overflow: scroll;
     width: 100%;
     border-radius: 5px;
+    margin: 0;
 }
 
 #commHeader {
@@ -159,7 +160,6 @@
         max-height: none;
         height: auto;
         overflow: auto;
-        margin-bottom: 40px;
     }
 }
 
@@ -212,7 +212,7 @@
 
 #myFormButton {
     display: block;
-    margin: 0 auto 10px auto;
+    margin: 15px auto 0 auto;
 }
 
 #subButton {
@@ -222,6 +222,7 @@
 #myCommentButton, #hideShowBtn {
     display: inline-block;
     vertical-align: middle;
+    margin-top: 15px;
 }
 
 #centerButtons {
@@ -310,4 +311,17 @@
 #changeThubnailCheckBoxDiv {
     padding:10px 0 5px 0;
     text-align: center;
+}
+#editVideoModal {
+    height: 100%;
+    margin-top: 10%;
+}
+#editCommentModal {
+    margin-top: 20%;
+}
+#blockVideoModal, #unblockVideoModal, #deleteVideoModal, #deleteCommentModal, #changeThumbnailModal {
+    margin-top: 20%;
+}
+#SortCommetsForm{
+    padding: 5px;
 }

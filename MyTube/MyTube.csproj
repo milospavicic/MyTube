@@ -165,8 +165,9 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\VideoRatingsController.cs" />
     <Compile Include="Controllers\VideosController.cs" />
+    <Compile Include="DTO\CommentDTO.cs" />
     <Compile Include="DTO\CommentRatingsDTO.cs" />
-    <Compile Include="DTO\UsersDTO.cs" />
+    <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\VideoDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -274,6 +275,7 @@
     <Content Include="Models\DBModel.edmx.diagram">
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Content>
+    <Content Include="App_Code\UserStatus.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\channelPage.js" />
     <Content Include="Scripts\index.js" />
@@ -288,10 +290,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\layout.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Scripts\nav.js" />
     <Content Include="Scripts\newVideo.js" />
-    <Content Include="Scripts\searchPage.js" />
-    <Content Include="Scripts\usersPage.js" />
     <Content Include="Scripts\videoPage.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -338,7 +337,7 @@
     <Content Include="Views\VideoRatings\Details.cshtml" />
     <Content Include="Views\VideoRatings\Edit.cshtml" />
     <Content Include="Views\VideoRatings\Index.cshtml" />
-    <Content Include="Views\Shared\CommentSection.cshtml" />
+    <Content Include="Views\Comments\CommentSection.cshtml" />
     <Content Include="Views\Comments\Create.cshtml" />
     <Content Include="Views\Comments\Delete.cshtml" />
     <Content Include="Views\Comments\Details.cshtml" />
@@ -356,6 +355,8 @@
     <Content Include="Views\Comments\SingleComment.cshtml" />
     <Content Include="Views\Shared\NewVideoSuccess.cshtml" />
     <Content Include="Views\Users\NewPassword.cshtml" />
+    <Content Include="Views\Users\OneUserForAdminPage.cshtml" />
+    <Content Include="Views\Users\IndexPageUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

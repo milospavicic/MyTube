@@ -1,9 +1,6 @@
 ﻿using MyTube.Models;
 using MyTube.Repository;
 using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -107,117 +104,6 @@ namespace MyTube.Controllers
             string returnMessage = (newRating == true) ? "like" : "dislike";
 
             return Json(new { returnMessage, video.LikesCount, video.DislikesCount }, JsonRequestBehavior.AllowGet);
-        }
-
-
-        // GET: VideoRatings
-        public ActionResult Index()
-        {
-            var videoRatings = db.VideoRatings.Include(v => v.User).Include(v => v.Video);
-            return View(videoRatings.ToList());
-        }
-
-        // GET: VideoRatings/Details/5
-        public ActionResult Details(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            VideoRating videoRating = db.VideoRatings.Find(id);
-            if (videoRating == null)
-            {
-                return HttpNotFound();
-            }
-            return View(videoRating);
-        }
-
-        // GET: VideoRatings/Create
-        public ActionResult Create()
-        {
-            ViewBag.LikeOwner = new SelectList(db.Users, "Username", "Pass");
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl");
-            return View();
-        }
-
-        // POST: VideoRatings/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "LikeID,VideoID,LikeOwner,IsLike,LikeDate,Deleted")] VideoRating videoRating)
-        {
-            if (ModelState.IsValid)
-            {
-                db.VideoRatings.Add(videoRating);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.LikeOwner = new SelectList(db.Users, "Username", "Pass", videoRating.LikeOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", videoRating.VideoID);
-            return View(videoRating);
-        }
-
-        // GET: VideoRatings/Edit/5
-        public ActionResult Edit(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            VideoRating videoRating = db.VideoRatings.Find(id);
-            if (videoRating == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.LikeOwner = new SelectList(db.Users, "Username", "Pass", videoRating.LikeOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", videoRating.VideoID);
-            return View(videoRating);
-        }
-
-        // POST: VideoRatings/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "LikeID,VideoID,LikeOwner,IsLike,LikeDate,Deleted")] VideoRating videoRating)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(videoRating).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.LikeOwner = new SelectList(db.Users, "Username", "Pass", videoRating.LikeOwner);
-            ViewBag.VideoID = new SelectList(db.Videos, "VideoID", "VideoUrl", videoRating.VideoID);
-            return View(videoRating);
-        }
-
-        // GET: VideoRatings/Delete/5
-        public ActionResult Delete(long? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            VideoRating videoRating = db.VideoRatings.Find(id);
-            if (videoRating == null)
-            {
-                return HttpNotFound();
-            }
-            return View(videoRating);
-        }
-
-        // POST: VideoRatings/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(long id)
-        {
-            VideoRating videoRating = db.VideoRatings.Find(id);
-            db.VideoRatings.Remove(videoRating);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

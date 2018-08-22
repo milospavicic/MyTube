@@ -10,6 +10,7 @@
 namespace MyTube.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Web.Mvc;
 
     public partial class Comment
@@ -23,11 +24,14 @@ namespace MyTube.Models
         public long CommentID { get; set; }
         public long VideoID { get; set; }
         public string CommentOwner { get; set; }
+        [Required]
         public string CommentText { get; set; }
         public System.DateTime DatePosted { get; set; }
         public long LikesCount { get; set; }
         public long DislikesCount { get; set; }
         public bool Deleted { get; set; }
+
+        public string DatePostedString { get { return DatePosted.ToShortDateString(); } }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CommentRating> CommentRatings { get; set; }

@@ -39,7 +39,7 @@ namespace MyTube.Repository
         public void DeleteComment(long id)
         {
             Comment comment = GetCommentById(id);
-            db.Comments.Remove(comment);
+            comment.Deleted = true;
             db.SaveChanges();
         }
 

@@ -1,10 +1,9 @@
-﻿@model IEnumerable<MyTube.Models.Video>
+﻿@model IEnumerable<MyTube.DTO.VideoDTO>
 @{
     ViewBag.Title = "SearchPage";
 }
 <html>
 <head>
-    <script src="~/Scripts/index.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/searchPage.css">
 </head>
 <body>
@@ -27,7 +26,7 @@
                 </a>
                 <ul id="videoInfo">
                     <li><h3>@item.VideoName</h3></li>
-                    <li id="videoUserViewsDate"><p><b><a href="@Url.Action("ChannelPage/"+item.User.Username,"Home")">@item.User.Username </a></b> - @item.ViewsCount views - on @item.DatePostedString</p></li>
+                    <li id="videoUserViewsDate"><p><b><a href="@Url.Action("ChannelPage/"+item.VideoOwner,"Home")">@item.VideoOwner </a></b> - @item.ViewsCount views - on @item.DatePostedString</p></li>
                     <li><p>@item.VideoDescription</p></li>
                 </ul>
             </div>

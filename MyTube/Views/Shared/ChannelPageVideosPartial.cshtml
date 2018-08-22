@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyTube.Models.Video>
+﻿@model IEnumerable<MyTube.DTO.VideoDTO>
 @if (ViewBag.SelectedView != null && ViewBag.SelectedView == "PostedVideos")
 {
     <div class="col-md-12">
@@ -18,7 +18,7 @@
         <div id="videoInfo">
             @if (ViewBag.SelectedView != "PostedVideos")
             {
-                <a href="@Url.Action("UsersVideos/"+item.User.Username,"Videos")" id="channelName">@item.User.Username</a>
+                <a href="@Url.Action("UsersVideos/"+item.VideoOwner,"Videos")" id="channelName">@item.VideoOwner</a>
             }
             <p>@item.ViewsCount views</p>
             <p>Posted on: @item.DatePostedString</p>

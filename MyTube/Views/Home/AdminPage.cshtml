@@ -1,14 +1,83 @@
-﻿@model IEnumerable<MyTube.Models.User>
+﻿@model IEnumerable<MyTube.DTO.UserDTO>
 @{
     ViewBag.Title = "AdminPage";
 }
+@if ((string)Session["loggedInUserUserType"] != "ADMIN" || (string)Session["loggedInUserStatus"] == "True")
+{
+    <script>
+        window.location.href = '/Home/Index/';
+    </script>
+}
 <html>
-
 <head>
     <script src="~/Scripts/adminPage.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="~/Content/usersPage.css">
 </head>
 <body>
+    <div class="modal fade" id="changeModalMenu" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Menu</h5>
+                </div>
+                <div class="modal-footer" id="menuButtonsDiv">
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" onclick="editModal(event)" id="editUserButtonEditMenu">Edit User</button>
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" href="#changeThumbnailModal" data-toggle="modal">Change profile picture</button>
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" href="#newPasswordModal" data-toggle="modal">Change password</button>
+                    <button class="btn btn-default col-md-12 col-sm-12 col-xs-12" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="newPasswordModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change Password</h3>
+                </div>
+                <!-- body -->
+                <div id="newPasswordModalContainer">
+                    @Html.Action("NewPassword", "Users")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="changeThumbnailModal">
+        <div class="modal-dialog">
+            <div class="modal-content col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Change Profile Picture</h3>
+                </div>
+                <!-- body -->
+                <form action="@Url.Action("ChangePictureUpload","Users")" method="post" enctype="multipart/form-data" id="uploadPicForm">
+                    <div>
+                        <div class="col-md-12" id="changeThubnailCheckBoxDiv">
+                            <input type="checkbox" id="linkOrLocalPicture" onclick="toggleUrlUpload()" data-val="true" />
+                            <label for="linkOrLocalPicture"> Upload file instead of link?</label>
+                        </div>
+                        <div id="link" class="modal-header">
+                            <div class="col-md-12">
+                                <input type="text" name="ProfilePictureUrl" id="ProfilePictureUrl" class="form-control" />
+                            </div>
+                        </div>
+                        <div id="upload" class="modal-header col-md-offset-2 col-md-8">
+                            <input type="hidden" name="username" id="username" value="" />
+                            <input type="file" name="image" id="image" style="display: none;" />
+                            <input type="button" class="btn btn-default" value="Browse..." onclick="document.getElementById('image').click();" />
+                        </div>
+                        <div class="col-md-12" id="changeThumbnailModalFooter">
+                            <input class="btn btn-danger" type="button" value="Submit" onclick="submitPicture()" />
+                            <button class="btn btn-default" data-toggle="modal" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="blockModal" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -80,7 +149,7 @@
             if (item.Username == Session["loggedInUserUsername"].ToString()) { continue; }
 
 
-            <div class="col-md-12 col-sm-12 col-xs-12" id="div">
+            <div class="col-md-12 col-sm-12 col-xs-12" id="userDiv-@item.Username">
                 <a href="@Url.Action("ChannelPage/"+@item.Username,"Home")" id="picDiv">
                     <img src="@item.ProfilePictureUrl" alt="Profile picture" style="width:150px;height: 150px">
                     <ul id="channelInfo">
@@ -98,7 +167,7 @@
                     </ul>
                 </a>
                 <div class="btn-group">
-                    <button onclick="editModal('@item.Username')" class="btn btn-default" title="Edit channel."><span class="glyphicon glyphicon-edit"></span></button>
+                    <button onclick="editMenu('@item.Username')" class="btn btn-default" title="Edit Menu."><span class="glyphicon glyphicon-edit"></span></button>
                     @if (item.Blocked == true)
                     {
                         <button onclick="unblockModal('@item.Username')" class="btn btn-default" title="Unblock channel."><span class="glyphicon glyphicon-ok-circle"></span></button>
@@ -114,4 +183,3 @@
     </div>
 </body>
 </html>
-

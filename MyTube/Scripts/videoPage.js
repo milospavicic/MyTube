@@ -10,29 +10,9 @@ $(document).ready(function (e) {
     $('#upload').hide();
     loadCommentsLikes();
     console.log("video.js file start");
-    $('#blockVideoModal').on('hidden.bs.modal', function () {
+    $('#messageModal').on('hidden.bs.modal', function () {
         if (modalCloseReloadPage === true)
             refreshPage();
-    });
-    $('#unblockVideoModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
-            refreshPage();
-    });
-    $('#deleteVideoModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
-            refreshPage();
-    });
-    $('#editVideoModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
-            refreshPage();
-    });
-    $('#deleteCommentModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
-            refreshDeleteCommentModal();
-    });
-    $('#editCommentModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
-            refreshEditCommentModal();
     });
 });
 function sortComments() {
@@ -160,6 +140,7 @@ function changeLikeDislikeCount(likeCount, dislikeCount) {
 }
 function createNewComment(videoId) {
     var commentText = $('#myCommentText').val();
+    console.log(commentText);
     var data = {
         "CommentText": commentText,
         "VideoID": videoId
@@ -198,7 +179,8 @@ function videoEditSubmit(event) {
             var page = 'Video has been successfully edited';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
-                $("#editVideoModal").html(partialResult);
+                messageModal(partialResult);
+                $("#editVideoModal").modal('hide');
             } else {
 
                 $("#videoEditFormContainer").html(partialResult);
@@ -218,7 +200,8 @@ function deleteVideo(event) {
             var page = 'Video has been successfully deleted';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
-                $("#deleteVideoModal").html(partialResult);
+                messageModal(partialResult);
+                $("#deleteVideoModal").modal('hide');
             }
         }
     });
@@ -234,7 +217,8 @@ function blockVideo(event) {
             var page = 'Video has been successfully blocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
-                $("#blockVideoModal").html(partialResult);
+                messageModal(partialResult);
+                $("#blockVideoModal").modal('hide');
             }
         }
     });
@@ -250,7 +234,8 @@ function unblockVideo(event) {
             var page = 'Video has been successfully unblocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
-                $("#unblockVideoModal").html(partialResult);
+                messageModal(partialResult);
+                $("#unblockVideoModal").modal('hide');
             }
         }
     });
@@ -290,8 +275,8 @@ function commentEditSubmit(event) {
             console.log("return value");
             var page = 'Comment has been successfully edited';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
-                $("#editCommentModal").html(partialResult);
+                messageModal(partialResult);
+                $("#editCommentModal").modal('hide');
                 loadEditedComment(commentId, newText);
             } else {
 
@@ -319,9 +304,9 @@ function deleteComment(event) {
         success: function (partialResult) {
             var page = 'Comment has been successfully deleted';
             if (partialResult.includes(page)) {
-                $("#deleteCommentModal").html(partialResult);
+                messageModal(partialResult);
+                $("#deleteCommentModal").modal('hide');
                 $("#comment-" + commentId).hide();
-                modalCloseReloadPage = true;
             }
         }
     });
@@ -332,41 +317,6 @@ function resetModalReloadPageComparator() {
 }
 function refreshPage() {
     location.reload();
-}
-function refreshDeleteCommentModal() {
-    var newModal = '<div class="modal-dialog" role="document">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>' +
-        '</div>' +
-        '<div class="modal-body">Select "Delete" below if you are want to delete this comment.</div>' +
-        '<div class="modal-footer">' +
-        '<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>' +
-        '<a href="@Url.Action(" DeleteComment /","Comments")" class="btn btn-danger" onclick="deleteComment(event)" id="DeleteCommentModalYesButton">Delete comment.</a>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
-    $("#deleteCommentModal").html(newModal);
-}
-function refreshEditCommentModal() {
-    var newModal = '<div class="modal-dialog">' +
-        '<div class="modal-content col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8">' +
-        '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal">&times;</button>' +
-        '<h3 class="modal-title">Edit comment</h3>' +
-        '</div>' +
-        '<div class="modal-header">' +
-        '<div class="form-group">' +
-        '<textarea style="overflow:auto;resize:vertical; max-width: 100%; width: 100%;" id="editCommentText" maxlength="500" rows="4"></textarea>' +
-        '</div>' +
-        '</div>' +
-        '<div class="modal-footer">' +
-        '<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>' +
-        '<a href="@Url.Action(" EditComment /","Comments")" class="btn btn-danger" onclick="commentEditSubmit(event)" id="EditCommentModalYesButton">Edit comment.</a>' +
-        '</div>' +
-        '</div>' +
-        '</div>';
-    $("#editCommentModal").html(newModal);
 }
 function loadCommentsLikes() {
     var url = window.location.href;
@@ -485,4 +435,40 @@ function uploadPicture() {
 function urlPicture() {
     $("#uploadPicForm").attr("action", "/Videos/ChangePictureUrl/");
     $("#uploadPicForm").submit();
+}
+function messageModal(partial) {
+    $("#messageModal").html(partial);
+    $("#messageModal").modal();
+}
+function NotLoggedIn() {
+    console.log("NotLoggedIn");
+    $('#likeButton').attr("onclick", "LoginModal()");
+    $('#dislikeButton').attr("onclick", "LoginModal()");
+    $('#myFormButton').attr("onclick", "LoginModal()");
+    $('.commentLikeButtons').attr("onclick", "LoginModal()");
+    $('.commentDisikeButtons').attr("onclick", "LoginModal()");
+}
+function BlockAll() {
+    console.log("blockAll");
+    $("#subButton").attr("onclick", "blockedUserModal()");
+    $('#likeButton').attr("onclick", "blockedUserModal()");
+    $('#dislikeButton').attr("onclick", "blockedUserModal()");
+    $('#myFormButton').attr("onclick", "blockedUserModal()");
+
+    $('#changeThubnailOption').hide();
+    $('#editVideoOption').hide();
+    $('#blockOptionVideo').hide();
+    $('#unblockOptionVideo').hide();
+    $('#deleteOptionVideo').hide();
+
+    $('.commentEditButtons').hide();
+    $('.commentDeleteButtons').hide();
+    $('.commentLikeButtons').attr("onclick", "blockedUserModal()");
+    $('.commentDisikeButtons').attr("onclick", "blockedUserModal()");
+}
+function blockedUserModal() {
+    $('#blockedUserModal').modal();
+}
+function LoginModal() {
+    $('#login-modal').modal();
 }

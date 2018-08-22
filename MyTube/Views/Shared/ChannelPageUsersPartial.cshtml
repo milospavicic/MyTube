@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyTube.Models.User>
+﻿@model IEnumerable<MyTube.DTO.UserDTO>
 @foreach (var item in Model)
 {
     <div class="col-md-4">
@@ -7,7 +7,7 @@
             <div class="caption">
                 <p id="titleBar">@item.Username</p>
             </div>
-            <p id="followingInfo">Followers: @item.SubscribersCount Videos: @item.Videos.Count()</p>
+            <p id="followingInfo">Followers: @item.SubscribersCount Videos: @item.VideosCount</p>
         </a>
     </div>
 }

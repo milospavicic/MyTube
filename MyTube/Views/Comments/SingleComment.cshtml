@@ -1,4 +1,4 @@
-﻿@model MyTube.Models.Comment
+﻿@model MyTube.DTO.CommentDTO
 @{
     ViewBag.Title = "SingleComment";
 }
@@ -7,7 +7,7 @@
     <div class="col-md-12 col-sm-12">
         <div class="thumbnail" id="comment">
             <p id="commentOwner">@Model.CommentOwner</p>
-            <p id="commentDate">@Model.DatePosted</p>
+            <p id="commentDate">@Model.DatePostedString</p>
             <div>
                 <p class="commentText" id="text-@Model.CommentID">@Model.CommentText</p>
             </div>

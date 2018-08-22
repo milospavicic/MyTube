@@ -18,7 +18,6 @@ function loginSubmit(event) {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
-            console.log("return value");
             $("#loginFormContent").html(partialResult);
             var page = 'Login Successful';
             if (partialResult.includes(page)) {
@@ -33,6 +32,9 @@ function refreshPage(){
 function searchSubmit(event) {
     event.preventDefault();
     var searchParameter = $("#searchParameter").val();
+    if (searchParameter === "") {
+        return;
+    }
     var url = "/Home/SearchPage/" + searchParameter;
     console.log(url);
     window.location.href = url;

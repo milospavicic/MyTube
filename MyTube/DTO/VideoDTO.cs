@@ -10,29 +10,6 @@ namespace MyTube.DTO
         {
 
         }
-        public VideoDTO(long videoID, string videoUrl, string thumbnailUrl, string videoName, string videoDescription,
-                        string videoType, bool blocked, bool deleted, bool commentsEnabled, bool ratingEnabled,
-                        long likesCount, long dislikesCount, long viewsCount, string datePostedString,
-                        string videoOwner, string videoOwnerUserType, bool videoOwnerIsBlocked)
-        {
-            VideoID = videoID;
-            VideoUrl = videoUrl;
-            ThumbnailUrl = thumbnailUrl;
-            VideoName = videoName;
-            VideoDescription = videoDescription;
-            VideoType = videoType;
-            Blocked = blocked;
-            Deleted = deleted;
-            CommentsEnabled = commentsEnabled;
-            RatingEnabled = ratingEnabled;
-            LikesCount = likesCount;
-            DislikesCount = dislikesCount;
-            ViewsCount = viewsCount;
-            DatePostedString = datePostedString;
-            VideoOwner = videoOwner;
-            VideoOwnerUserType = videoOwnerUserType;
-            VideoOwnerIsBlocked = videoOwnerIsBlocked;
-        }
 
         public long VideoID { get; set; }
 
@@ -40,7 +17,6 @@ namespace MyTube.DTO
         [Display(Name = "Video Url")]
         public string VideoUrl { get; set; }
 
-        [Required]
         [Display(Name = "Thumbnail Url")]
         public string ThumbnailUrl { get; set; }
 
@@ -78,9 +54,7 @@ namespace MyTube.DTO
 
         public string VideoOwner { get; set; }
 
-        public string VideoOwnerUserType { get; set; }
-
-        public bool VideoOwnerIsBlocked { get; set; }
+        public UserDTO VideoOwnerDTO { get; set; }
 
 
         public static VideoDTO ConvertVideoToDTO(Video video)
@@ -102,19 +76,19 @@ namespace MyTube.DTO
                 ViewsCount = video.ViewsCount,
                 DatePostedString = video.DatePostedString,
                 VideoOwner = video.VideoOwner,
-                //VideoOwnerUserType = video.VideoOwnerUserType,
-                //VideoOwnerIsBlocked = video.VideoOwnerIsBlocked,
+                VideoOwnerDTO = UserDTO.ConvertUserToDTO(video.User)
             };
             return newVDTO;
         }
-        public static List<VideoDTO> ConvertCollectionVideoToDTO(IEnumerable<Video> videos)
+        public static IEnumerable<VideoDTO> ConvertCollectionVideoToDTO(IEnumerable<Video> videos)
         {
-            List<VideoDTO> videosDTO = new List<VideoDTO>();
+            List<VideoDTO> listDTO = new List<VideoDTO>();
             foreach (var item in videos)
             {
-                videosDTO.Add(ConvertVideoToDTO(item));
+                listDTO.Add(ConvertVideoToDTO(item));
             }
-            return videosDTO;
+            IEnumerable<VideoDTO> iListDTO = listDTO;
+            return iListDTO;
         }
     }
 }

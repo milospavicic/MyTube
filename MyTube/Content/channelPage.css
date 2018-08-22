@@ -30,7 +30,6 @@
 }
 .row{
     padding: 0;
-    margin: 0;
     widows: 100%;
     margin: 0 auto;
 }
@@ -311,4 +310,13 @@
 }
 .newPasswordDivs{
     padding: 10px 0;
+}
+#blockModal, #unblockModal, #deleteModal, #changeModalMenu, #changeThumbnailModal {
+    margin-top: 20%;
+}
+#newPasswordModal{
+    margin-top: 15%;
+}
+#editUserModal {
+    margin-top: 10%;
 }

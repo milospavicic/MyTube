@@ -1,0 +1,120 @@
+﻿@model IEnumerable<MyTube.DTO.CommentDTO>
+
+<div id="centerButtons">
+    @if (ViewBag.CommentsEnabled)
+    {
+        <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment">Comment</button>
+        <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
+    }
+    else
+    {
+        if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage(ViewBag.VideoOwner))
+        {
+            <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment">Comment</button>
+            <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
+        }
+        else
+        {
+            <h4>Comments on this video are disabled.</h4>
+        }
+    }
+</div>
+<div class="collapse" id="myComment">
+    <textarea id="myCommentText" rows="4" maxlength="500" cols="50"></textarea>
+    <button id="myFormButton" onclick="createNewComment(@ViewBag.VideoId)" class="btn btn-default">Submit</button>
+</div>
+<div class="collapse" id="commentSection">
+    <div id="commHeader">
+        <!-- ZAMENITI SA ORDER BY -->
+        @using (Html.BeginForm("CommentSection/" + videoId(), "Comments", FormMethod.Post, new { id = "SortCommetsForm" }))
+        {
+            <p id="comm">Order by: </p>
+            @Html.DropDownList("sortOrder", new SelectList(ViewBag.Values, "Value", "Text"), new { onchange = "sortComments()" })
+        }
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="commentRow" id="comment-@item.CommentID">
+            <div class="col-md-12 col-sm-12">
+                <div class="thumbnail" id="comment">
+                    <p id="commentOwner">@item.CommentOwner</p>
+                    <p id="commentDate">@item.DatePostedString</p>
+                    <div>
+                        <p class="commentText" id="text-@item.CommentID">@item.CommentText</p>
+                    </div>
+                    <div class="btn-group" id="commLDBtnGroup">
+                        <button class="btn btn-default commentLikeButtons" id="likeBtn-@item.CommentID" onclick="commentLiked(@item.CommentID)"><span class="glyphicon glyphicon-thumbs-up"></span> @item.LikesCount</button>
+                        <button class="btn btn-default commentDisikeButtons" id="dislikeBtn-@item.CommentID" onclick="commentDisliked(@item.CommentID)"><span class="glyphicon glyphicon-thumbs-down"></span> @item.DislikesCount</button>
+                    </div>
+                    @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage(item.CommentOwner))
+                    {
+                        <button onclick="editCommentModal(@item.CommentID)" class="btn btn-default commentEditButtons"><span class="glyphicon glyphicon-edit"></span></button>
+                        <button onclick="deleteCommentModal(@item.CommentID)" class="btn btn-default commentDeleteButtons"><span class="glyphicon glyphicon-trash"></span></button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (!LoggedInUserExists())
+{
+    <script>NotLoggedIn()</script>
+}
+else
+{
+    if (LoggedInUserIsBlocked())
+    {
+        <script>BlockAll()</script>
+    }
+}
+@functions{
+    public bool LoggedInUserExists()
+    {
+        if (Session["loggedInUserStatus"] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    public bool LoggedInUserIsAdmin()
+    {
+        if ((string)Session["loggedInUserUserType"] == "ADMIN")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsOnHisPage(string username)
+    {
+        if ((string)Session["loggedInUserUsername"] == username)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public bool LoggedInUserIsBlocked()
+    {
+        if ((string)Session["loggedInUserStatus"] == "True")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public long? videoId()
+    {
+        return ViewBag.VideoId;
+    }
+}

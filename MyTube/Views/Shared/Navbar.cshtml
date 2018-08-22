@@ -1,4 +1,4 @@
-﻿@model MyTube.Models.User
+﻿@model MyTube.DTO.UserDTO
 @{
     ViewBag.Title = "Navbar";
 }
@@ -18,15 +18,23 @@
 else
 {
     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
-        <li><a href="@Url.Action("NewVideo", "Home")" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+        @if (!Model.Blocked)
+        {
+            <li><a href="@Url.Action("NewVideo", "Home")" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+        }
+        else
+        {
+            <li><a data-toggle="modal" href="#blockedUserModal" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
+        }
+
         <li class="dropdown">
             <!-- Link koji otvara dropdown listu -->
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"><span class="glyphicon glyphicon-user"></span> @Model.Username <span class="caret"></span></a>
             <!-- Lista koja se pojavljuje i sakriva na klik -->
             <ul class="dropdown-menu" id="mainDropdown">
-                @if (Model.UserType.ToString() == "ADMIN" && Model.Blocked!=true)
+                @if (Model.UserType == "ADMIN" && Model.Blocked != true)
                 {
-                    <li><a href="@Url.Action("AdminPage", "Users")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+                    <li><a href="@Url.Action("AdminPage", "Home")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
                 }
                 <li><a id="myChannel" href="@Url.Action("ChannelPage/"+Model.Username, "Home")" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
                 <li><a href="searchPage.html" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>

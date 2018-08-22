@@ -1,0 +1,31 @@
+﻿@model MyTube.DTO.UserDTO
+<div class="col-md-12 col-sm-12 col-xs-12" id="userDiv-@Model.Username">
+    <a href="@Url.Action("ChannelPage/"+@Model.Username,"Home")" id="picDiv">
+        <img src="@Model.ProfilePictureUrl" alt="Profile picture" style="width:150px;height: 150px">
+        <ul id="channelInfo">
+            <li><h3>@Model.Username</h3></li>
+            <li><p>Followers: @Model.SubscribersCount</p></li>
+            <li><p>Name: @Model.Firstname @Model.Lastname</p></li>
+            <li><p>Email: @Model.Email</p></li>
+            <li><p>Role: @Model.UserType</p></li>
+            @if (@Model.Blocked == true)
+            {
+                <li><p>Status: Blocked</p></li>}
+            else
+            {
+                <li><p>Status: Normal</p></li>}
+        </ul>
+    </a>
+    <div class="btn-group">
+        <button onclick="editMenu('@Model.Username')" class="btn btn-default" title="Edit Menu."><span class="glyphicon glyphicon-edit"></span></button>
+        @if (Model.Blocked == true)
+        {
+            <button onclick="unblockModal('@Model.Username')" class="btn btn-default" title="Unblock channel."><span class="glyphicon glyphicon-ok-circle"></span></button>
+        }
+        else
+        {
+            <button onclick="blockModal('@Model.Username')" class="btn btn-default" title="Block channel."><span class="glyphicon glyphicon-ban-circle"></span></button>
+        }
+        <button onclick="deleteModal('@Model.Username')" class="btn btn-default" title="Delete channel."><span class="glyphicon glyphicon-trash"></span></button>
+    </div>
+</div>

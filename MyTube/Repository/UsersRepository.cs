@@ -13,6 +13,14 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
+        public IEnumerable<User> GetNMostPopularUsers(int n, string currentUserUsername)
+        {
+            Random r = new Random();
+
+            var users = db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
+            users = users.OrderBy(x => x.SubscribersCount);
+            return users;
+        }
         public IEnumerable<User> GetNRandomUsers(int n, string currentUserUsername)
         {
             Random r = new Random();

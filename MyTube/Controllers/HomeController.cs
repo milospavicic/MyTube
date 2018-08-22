@@ -3,9 +3,7 @@ using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -35,15 +33,14 @@ namespace MyTube.Controllers
         public ActionResult Index()
         {
             IEnumerable<Video> videos = null;
-            var userType = (string)Session["loggedInUserUserType"];
-            if (userType == "ADMIN")
+            if (LoggedInUserIsAdmin())
                 videos = videosRepository.GetNRandomVideos(6);
             else
                 videos = videosRepository.GetNPublicRandomVideos(6);
 
-            List<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
+            IEnumerable<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
-            return View(videos);
+            return View(vdto);
         }
         public ActionResult VideoPage(long? id)
         {
@@ -52,6 +49,17 @@ namespace MyTube.Controllers
                 return View("Error");
             }
             Video currentVideo = videosRepository.GetVideoById(id);
+            if (currentVideo == null)
+            {
+                return View("Error");
+            }
+            if (currentVideo.Blocked == true || currentVideo.User.Blocked == true || currentVideo.VideoType == "PRIVATE")
+            {
+                if (!(LoggedInUserIsAdmin() && !LoggedInUserIsBlocked()) && !LoggedInUserIsOnHisPage(currentVideo.VideoOwner))
+                {
+                    return View("Error");
+                }
+            }
             currentVideo.ViewsCount += 1;
             videosRepository.UpdateVideo(currentVideo);
             if (Session["loggedInUserUsername"] != null)
@@ -61,7 +69,8 @@ namespace MyTube.Controllers
                 ViewBag.Subbed = exists;
                 ViewBag.Rating = rating?.IsLike;
             }
-            return View(currentVideo);
+            var video = VideoDTO.ConvertVideoToDTO(currentVideo);
+            return View(video);
         }
         public ActionResult ChannelPage(string id)
         {
@@ -74,12 +83,103 @@ namespace MyTube.Controllers
             {
                 return View("Error");
             }
+            if (user.Blocked == true)
+            {
+                if (!(LoggedInUserIsAdmin() && !LoggedInUserIsBlocked()) && !LoggedInUserIsOnHisPage(user.Username))
+                {
+                    return View("Error");
+                }
+            }
+            CheckIfSubbed(id);
+            var userDTO = UserDTO.ConvertUserToDTO(user);
+            return View(userDTO);
+        }
+        public void CheckIfSubbed(string id)
+        {
             if (Session["loggedInUserUsername"] != null)
             {
                 bool exists = subscribeRepository.SubscriptionExists(id, Session["loggedInUserUsername"].ToString());
                 ViewBag.Subbed = exists;
             }
-            return View(user);
+        }
+        public ActionResult AdminPage(string sortOrder, string searchString)
+        {
+            if (!CheckIfPermited()) { return RedirectToAction("Index", "Home"); }
+
+            ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
+            ViewBag.SearchString = searchString;
+
+            var users = usersRepository.SearchUsers(searchString);
+            users = SortUsers(users, sortOrder);
+
+            ViewBag.Values = Models.User.UsersSortOrderSelectList();
+
+            var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
+            return View(usersDTO);
+        }
+        public bool CheckIfPermited()
+        {
+            var username = (string)Session["loggedInUserUsername"];
+            if (username == null)
+            {
+                return false;
+            }
+            else
+            {
+                var user = usersRepository.GetUserByUsername(username);
+                if (user == null || user.Blocked == true)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public IEnumerable<User> SortUsers(IEnumerable<User> users, string sortOrder)
+        {
+            switch (sortOrder)
+            {
+                case "username_asc":
+                    users = users.OrderBy(s => s.Username);
+                    break;
+                case "username_desc":
+                    users = users.OrderByDescending(s => s.Username);
+                    break;
+                case "firstname_asc":
+                    users = users.OrderBy(s => s.Firstname);
+                    break;
+                case "firstname_desc":
+                    users = users.OrderByDescending(s => s.Firstname);
+                    break;
+                case "lastname_asc":
+                    users = users.OrderBy(s => s.Lastname);
+                    break;
+                case "lastname_desc":
+                    users = users.OrderByDescending(s => s.Lastname);
+                    break;
+                case "email_asc":
+                    users = users.OrderBy(s => s.Email);
+                    break;
+                case "email_desc":
+                    users = users.OrderByDescending(s => s.Email);
+                    break;
+                case "user_type_asc":
+                    users = users.OrderBy(s => s.UserType);
+                    break;
+                case "user_type_desc":
+                    users = users.OrderByDescending(s => s.UserType);
+                    break;
+                case "status_asc":
+                    users = users.OrderBy(s => s.Blocked);
+                    break;
+                case "status_desc":
+                    users = users.OrderByDescending(s => s.Blocked);
+                    break;
+
+                default:
+                    users = users.OrderBy(s => s.Username);
+                    break;
+            }
+            return users;
         }
         public ActionResult SearchPage(string id, string sortOrder)
         {
@@ -91,7 +191,8 @@ namespace MyTube.Controllers
             var videos = GetVideosAccordingToUserType(id);
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "latest" : "";
             videos = SortVideos(videos, sortOrder);
-            return View(videos);
+            var videoDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
+            return View(videoDTO);
         }
         public IEnumerable<Video> GetVideosAccordingToUserType(string searchString)
         {
@@ -100,21 +201,6 @@ namespace MyTube.Controllers
                 return videosRepository.GetVideosAllAndSearch(searchString);
             else
                 return videosRepository.GetVideosPublicAndSearch(searchString);
-            //if (Session["LoggedInUserUserType"] != null)
-            //{
-            //    if (Session["LoggedInUserUserType"].ToString() == "ADMIN")
-            //    {
-            //        return videosRepository.GetVideosAllAndSearch(searchString);
-            //    }
-            //    else
-            //    {
-            //        return videosRepository.GetVideosPublicAndSearch(searchString);
-            //    }
-            //}
-            //else
-            //{
-            //    return videosRepository.GetVideosPublicAndSearch(searchString);
-            //}
         }
         public IEnumerable<Video> SortVideos(IEnumerable<Video> videos, string sortOrder)
         {
@@ -145,7 +231,9 @@ namespace MyTube.Controllers
             var loggedInUser = Session["loggedInUserUsername"];
             if (loggedInUser != null)
             {
-                return PartialView(usersRepository.GetUserByUsername(loggedInUser.ToString()));
+                var user = usersRepository.GetUserByUsername(loggedInUser.ToString());
+                var userDTO = UserDTO.ConvertUserToDTO(user);
+                return PartialView(userDTO);
             }
             return PartialView();
         }
@@ -205,27 +293,54 @@ namespace MyTube.Controllers
             ViewBag.VideoName = video.VideoName;
             return View("NewVideoSuccess");
         }
-        public ActionResult TestPage()
+
+
+        public bool LoggedInUserExists()
         {
-            return View();
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
-        [HttpPost]
-        public ActionResult TestPage(HttpPostedFileBase file, long? videoId, string ThumbnailUrl)
+        public bool LoggedInUserIsAdmin()
         {
-            if (file == null)
+            if ((string)Session["loggedInUserUserType"] == "ADMIN")
             {
-                return View();
+                return true;
             }
-            if (file.ContentLength > 0)
+            else
             {
-                var extension = Path.GetExtension(file.FileName);
-                Console.WriteLine(extension);
-                var path = Path.Combine(Server.MapPath("~/Pictures/uploads"), videoId + extension);
-                var finalUrl = "~/Pictures/uploads/" + videoId + extension;
-                Console.WriteLine(path);
-                file.SaveAs(path);
+                return false;
             }
-            return RedirectToAction("Index");
+        }
+        public bool LoggedInUserIsOnHisPage(string username)
+        {
+            if ((string)Session["loggedInUserUsername"] == username)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool LoggedInUserIsBlocked()
+        {
+            var status = (string)Session["loggedInUserStatus"];
+
+            if (status == "True")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

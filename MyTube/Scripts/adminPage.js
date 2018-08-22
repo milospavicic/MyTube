@@ -1,26 +1,28 @@
 ﻿var modalCloseReloadPage = false;
 $('document').ready(function (e) {
     console.log("layout.js file start");
-    $('#blockModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage == true)
-            refreshPage();
+    $('#upload').hide();
+
+    $('#newPasswordModal').on('shown.bs.modal', function (e) {
+        $('#changeModalMenu').modal('hide');
     });
-    $('#unblockModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage == true)
-            refreshPage();
+    $('#changeThumbnailModal').on('shown.bs.modal', function (e) {
+        $('#changeModalMenu').modal('hide');
     });
-    $('#deleteModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage == true)
-            refreshPage();
-    });
-    $('#editUserModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage == true)
-            refreshPage();
+    $('#editUserModal').on('shown.bs.modal', function (e) {
+        $('#changeModalMenu').modal('hide');
     });
 });
 function resetModalReloadPageComparator(){
     modalCloseReloadPage = false;
 }
+function editMenu(userName) {
+    $('#editUserButtonEditMenu').attr('onclick', 'editModal(\'' + userName + '\')');
+    $('#username').val(userName);
+    $('#newPasswordForm').attr('action', "/Users/NewPassword/" + userName);
+    $('#changeModalMenu').modal();
+}
+
 function editModal(userName) {
     resetModalReloadPageComparator();
     userEditFill(userName);
@@ -49,8 +51,9 @@ function userEditSubmit(event) {
             console.log("return value");
             var page = 'User has been successfully edited';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
-                $("#editUserModal").html(partialResult);
+                messageModal(partialResult);
+                $("#editUserModal").modal('hide');
+                loadSingleUser(GetUsernameFromUrl(form.attr("action")));
             } else {
 
                 $("#userEditFormContainer").html(partialResult);
@@ -75,8 +78,10 @@ function deleteUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully deleted';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
-                $("#deleteModal").html(partialResult);
+                messageModal(partialResult);
+                $("#deleteModal").modal('hide');
+                var username = GetUsernameFromUrl(url);
+                $('#userDiv-' + username).hide();
             }
         }
     });
@@ -96,8 +101,9 @@ function blockUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully blocked';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
-                $("#blockModal").html(partialResult);
+                messageModal(partialResult);
+                $("#blockModal").modal('hide');
+                loadSingleUser(GetUsernameFromUrl(url));
             }
         }
     });
@@ -118,13 +124,69 @@ function unblockUser(event) {
         success: function (partialResult) {
             var page = 'User has been successfully unblocked';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
-                $("#unblockModal").html(partialResult);
+                messageModal(partialResult);
+                $("#unblockModal").modal('hide');
+                loadSingleUser(GetUsernameFromUrl(url));
             }
+        }
+    });
+}
+function GetUsernameFromUrl(url) {
+    var username = url.substring(url.lastIndexOf('/') + 1);
+    return username;
+}
+function loadSingleUser(username) {
+    $.ajax({
+        url: '/Users/OneUserForAdminPage/' + username,
+        type: 'post',
+        success: function (partialResult) {
+            $('#userDiv-' + username).replaceWith(partialResult);
         }
     });
 }
 
 function refreshPage() {
     location.reload();
+}
+
+function toggleUrlUpload() {
+    $('#link').toggle();
+    $('#upload').toggle();
+}
+
+function submitPicture() {
+    if ($('#linkOrLocalPicture').prop('checked')) {
+        uploadPicture();
+    } else {
+        urlPicture();
+    }
+}
+function uploadPicture() {
+    $("#uploadPicForm").submit();
+}
+function urlPicture() {
+    $("#uploadPicForm").attr("action", "/Users/ChangePictureUrl/");
+    $("#uploadPicForm").submit();
+}
+
+function newPassword() {
+    var form = $("#newPasswordForm");
+    $.ajax({
+        url: form.attr("action"),
+        method: form.attr("method"),  // post
+        data: form.serialize(),
+        success: function (partialResult) {
+            var page = 'Password has been successfully changed.';
+            if (partialResult.includes(page)) {
+                messageModal(partialResult);
+                $("#newPasswordModal").modal('hide');
+            } else {
+                $('#newPasswordModalContainer').html(partialResult);
+            }
+        }
+    });
+}
+function messageModal(partial) {
+    $("#messageModal").html(partial);
+    $("#messageModal").modal();
 }
