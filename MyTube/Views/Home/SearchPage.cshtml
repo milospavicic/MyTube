@@ -12,8 +12,11 @@
         <div class="col-md-12">
             @using (Html.BeginForm("SearchPage/"+Url.RequestContext.RouteData.Values["id"], "Home", FormMethod.Post, new { id = "SortSearchVideosForm" }))
             {
+            <div class="modal-header" id="filterDiv">
                 <h4 class="orderVideos" id="h4Tittle">Order videos by: </h4>
-                @Html.DropDownList("sortOrder", new SelectList(ViewBag.SortValues, "Value", "Text"), new { onchange = "this.form.submit();" })
+                @Html.DropDownList("sortOrder", new SelectList(ViewBag.SortValues, "Value", "Text", new { @id="selectOrderBy"}), new { onchange = "this.form.submit();" })
+            </div>
+
             }
         </div>
     </div>

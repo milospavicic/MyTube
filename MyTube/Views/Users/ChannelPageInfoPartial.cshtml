@@ -1,0 +1,23 @@
+﻿@model MyTube.DTO.UserDTO
+<div class="col-xl-offset-1 col-xl-10 col-md-offset-1 col-md-10 col-sm-offset-1 col-sm-10 col-xs-offset-1 col-xs-10 thumbnail" id="infoDiv">
+    <h4>User info</h4>
+    @if (Model.UserDescription != null)
+    {
+        <p>Description:<br>@Model.UserDescription</p><br>
+    }
+    <p>
+        First name: @Model.Firstname<br>
+        Last Name: @Model.Lastname<br>
+        Email: @Model.Email<br>
+        Joined on: @Model.RegistrationDateString<br>
+        Role: @Model.UserType
+    </p>
+    @if (Model.Blocked == true)
+    {
+        <p>Status: Blocked</p>
+    }
+    else
+    {
+        <p>Status: Normal</p>
+    }
+</div>

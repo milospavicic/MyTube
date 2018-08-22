@@ -113,7 +113,7 @@ namespace MyTube.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoUrl,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
+        public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
         {
             if (ModelState.IsValid)
             {
@@ -140,11 +140,27 @@ namespace MyTube.Controllers
                 var path = Path.Combine(Server.MapPath("~/Pictures/videos"), videoId + extension);
                 var finalUrl = "/Pictures/videos/" + videoId + extension;
                 var video = videosRepository.GetVideoById(videoId);
+                DeleteExistingPictures(videoId);
                 video.ThumbnailUrl = finalUrl;
                 videosRepository.UpdateVideo(video);
                 image.SaveAs(path);
             }
             return RedirectToAction("VideoPage/" + videoId, "Home");
+        }
+        public void DeleteExistingPictures(long? videoId)
+        {
+            var path = Path.Combine(Server.MapPath("~/Pictures/videos"));
+            string[] fileList = Directory.GetFiles(path);
+            foreach (string file in fileList)
+            {
+                string[] subStrings = file.Split('\\');
+                string fileName = subStrings[subStrings.Count() - 1];
+                if (fileName.ToUpper().Contains(videoId.ToString()))
+                {
+                    System.IO.File.Delete(file);
+                    return;
+                }
+            }
         }
         [HttpPost]
         public ActionResult ChangePictureUrl(long? videoId, string ThumbnailUrl)

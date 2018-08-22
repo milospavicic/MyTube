@@ -89,7 +89,6 @@ namespace MyTube.Models
 
         public Video UpdateVideoFromEditVideoModel(EditVideoModel evm)
         {
-            this.VideoUrl = evm.VideoUrl;
             this.VideoName = evm.VideoName;
             this.VideoDescription = evm.VideoDescription;
             this.VideoType = evm.VideoType;

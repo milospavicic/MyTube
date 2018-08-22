@@ -1,0 +1,53 @@
+﻿@model MyTube.Models.EditVideoModel
+@using (Html.BeginForm("EditVideoForm/"+Model.VideoID, "Videos", FormMethod.Post, new { id = "videoEditForm" }))
+{
+    @Html.AntiForgeryToken()
+<div class="modal-header">
+    @Html.HiddenFor(model => model.VideoID)
+
+    @Html.LabelFor(model => model.VideoName, htmlAttributes: new { @class = "control-label col-md-12" })
+    <div class="col-md-12">
+        @Html.EditorFor(model => model.VideoName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.VideoName, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.VideoDescription, htmlAttributes: new { @class = "control-label col-md-12" })
+    <div class="col-md-12">
+        @Html.EditorFor(model => model.VideoDescription, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.VideoDescription, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.LabelFor(model => model.VideoType, "VideoType", htmlAttributes: new { @class = "control-label col-md-12" })
+    <div class="col-md-12">
+        @Html.DropDownList("VideoType", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.VideoType, "", new { @class = "text-danger" })
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="checkbox">
+
+            @Html.EditorFor(model => model.CommentsEnabled)
+            @Html.LabelFor(model => model.CommentsEnabled, htmlAttributes: new { @class = "control-label col-md-12", @id = "myLabel" })
+            @Html.ValidationMessageFor(model => model.CommentsEnabled, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="checkbox">
+            @Html.EditorFor(model => model.RatingEnabled)
+            @Html.LabelFor(model => model.RatingEnabled, htmlAttributes: new { @class = "control-label col-md-12", @id = "myLabel" })
+            @Html.ValidationMessageFor(model => model.RatingEnabled, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+    <!-- footer -->
+    <div class="modal-footer">
+        <div class="col-md-12">
+            <input type="button" class="btn btn-danger btn-block" onclick="videoEditSubmit(event)" value="Submit Changes." />
+            <button class="btn btn-default btn-block" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+}
+

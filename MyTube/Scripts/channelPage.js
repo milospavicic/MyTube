@@ -42,6 +42,9 @@ $('document').ready(function (e) {
         $('#changeModalMenu').modal('hide');
     });
     $('#changeThumbnailModal').on('shown.bs.modal', function (e) {
+        $('#linkOrLocalPicture').prop('checked', false);
+        $('#link').show();
+        $('#upload').hide();
         $('#changeModalMenu').modal('hide');
     });
     $('#editUserModal').on('shown.bs.modal', function (e) {
@@ -233,6 +236,10 @@ function submitPicture() {
     }
 }
 function uploadPicture() {
+    if ($('#image').get(0).files.length === 0) {
+        console.log("No files selected.");
+        return;
+    }
     $("#uploadPicForm").submit();
 }
 function urlPicture() {

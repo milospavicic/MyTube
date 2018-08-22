@@ -7,10 +7,6 @@ namespace MyTube.Models
         public long VideoID { get; set; }
 
         [Required]
-        [Display(Name = "Video Url")]
-        public string VideoUrl { get; set; }
-
-        [Required]
         [Display(Name = "Video Name")]
         public string VideoName { get; set; }
 
@@ -36,7 +32,6 @@ namespace MyTube.Models
             EditVideoModel videoForEdit = new EditVideoModel
             {
                 VideoID = video.VideoID,
-                VideoUrl = video.VideoUrl,
                 VideoName = video.VideoName,
                 VideoDescription = video.VideoDescription,
                 VideoType = video.VideoType,

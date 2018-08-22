@@ -188,3 +188,26 @@
 #editUserModal {
     margin-top: 10%;
 }
+/*#sortOrder{
+    float: right;
+}
+#searchInputField, #submitSearchAndSort {
+    clear: right;
+}*/
+
+#searchUserBar, #sortDiv {
+    display: inline-block;
+    zoom: 1;
+}
+#searchUserBar, #sortDiv {
+    float: left;
+}
+#sortOrder {
+    margin-top: 8px;
+}
+#searchInputField{
+    width: 70%;
+}
+#headerDiv{
+    margin-left: 5%;
+}

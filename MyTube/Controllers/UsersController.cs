@@ -3,6 +3,7 @@ using MyTube.Models;
 using MyTube.Repository;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -174,11 +175,27 @@ namespace MyTube.Controllers
                 var path = Path.Combine(Server.MapPath("~/Pictures/users"), username + extension);
                 var finalUrl = "/Pictures/users/" + username + extension;
                 var user = usersRepository.GetUserByUsername(username);
+                DeleteExistingPictures(username);
                 user.ProfilePictureUrl = finalUrl;
                 usersRepository.UpdateUser(user);
                 image.SaveAs(path);
             }
             return Redirect(Request.UrlReferrer.ToString());
+        }
+        public void DeleteExistingPictures(string username)
+        {
+            var path = Path.Combine(Server.MapPath("~/Pictures/users"));
+            string[] fileList = Directory.GetFiles(path);
+            foreach (string file in fileList)
+            {
+                string[] subStrings = file.Split('\\');
+                string fileName = subStrings[subStrings.Count() - 1];
+                if (fileName.ToUpper().Contains(username.ToUpper()))
+                {
+                    System.IO.File.Delete(file);
+                    return;
+                }
+            }
         }
         [HttpPost]
         public ActionResult ChangePictureUrl(string username, string ProfilePictureUrl)

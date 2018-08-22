@@ -1,10 +1,3 @@
-//var loggedInUser = "";
-//var editCommentId = 0;
-//var editVideoId = 0;
-//var deleteCommentId = 0;
-//var blocked = false;
-//var videoBlocked = false;
-//var currentVideo = null;
 modalCloseReloadPage = false;
 $(document).ready(function (e) {
     $('#upload').hide();
@@ -13,6 +6,11 @@ $(document).ready(function (e) {
     $('#messageModal').on('hidden.bs.modal', function () {
         if (modalCloseReloadPage === true)
             refreshPage();
+    });
+    $('#changeThumbnailModal').on('shown.bs.modal', function (e) {
+        $('#linkOrLocalPicture').prop('checked', false);
+        $('#link').show();
+        $('#upload').hide();
     });
 });
 function sortComments() {
@@ -430,6 +428,10 @@ function submitPicture() {
     }
 }
 function uploadPicture() {
+    if ($('#image').get(0).files.length === 0) {
+        console.log("No files selected.");
+        return;
+    }
     $("#uploadPicForm").submit();
 }
 function urlPicture() {

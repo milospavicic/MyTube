@@ -1,19 +1,21 @@
 ﻿var modalCloseReloadPage = false;
 $('document').ready(function (e) {
     console.log("layout.js file start");
-    $('#upload').hide();
 
     $('#newPasswordModal').on('shown.bs.modal', function (e) {
         $('#changeModalMenu').modal('hide');
     });
     $('#changeThumbnailModal').on('shown.bs.modal', function (e) {
+        $('#linkOrLocalPicture').prop('checked', false);
+        $('#link').show();
+        $('#upload').hide();
         $('#changeModalMenu').modal('hide');
     });
     $('#editUserModal').on('shown.bs.modal', function (e) {
         $('#changeModalMenu').modal('hide');
     });
 });
-function resetModalReloadPageComparator(){
+function resetModalReloadPageComparator() {
     modalCloseReloadPage = false;
 }
 function editMenu(userName) {
@@ -162,6 +164,10 @@ function submitPicture() {
     }
 }
 function uploadPicture() {
+    if ($('#image').get(0).files.length === 0) {
+        console.log("No files selected.");
+        return;
+    }
     $("#uploadPicForm").submit();
 }
 function urlPicture() {
@@ -189,4 +195,14 @@ function newPassword() {
 function messageModal(partial) {
     $("#messageModal").html(partial);
     $("#messageModal").modal();
+}
+function newPasswordModal() {
+    $.ajax({
+        url: '/Users/NewPassword',
+        method: 'get',  // post
+        success: function (partialResult) {
+            $('#newPasswordModalContainer').html(partialResult);
+        }
+    });
+    $('#newPasswordModal').modal();
 }

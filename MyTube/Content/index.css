@@ -117,3 +117,6 @@ hr{
 #channelName:hover{
     color: black;
 }
+#mpUsers{
+    margin: 0 15px;
+}

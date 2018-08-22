@@ -3,7 +3,7 @@
 <div class="rowOne">
     @foreach (var user in Model)
     {
-        <div class="col-md-2 col-sm-4 col-xs-6">
+        <div class="col-md-2 col-sm-4 col-xs-6" id="mpUsers">
             <a href="@Url.Action("ChannelPage/"+user.Username,"Home")" target="_self">
                 <img id="profileImage" src="@user.ProfilePictureUrl" alt="video" height="120" width="120">
                 <div class="caption">

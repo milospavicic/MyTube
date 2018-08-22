@@ -1,0 +1,28 @@
+﻿@model IEnumerable<MyTube.DTO.VideoDTO>
+@if (ViewBag.SelectedView != null && ViewBag.SelectedView == "PostedVideos")
+{
+    <div class="col-md-12">
+        <h4 class="orderVideos" id="h4Tittle">Order videos by: </h4>
+        @Html.DropDownList("sortOrder", new SelectList(ViewBag.SortValues, "Value", "Text"), new { onchange = "loadVideos(true)" })
+    </div>
+}
+@foreach (var item in Model)
+{
+    <div class="col-md-4">
+        <a href="@Url.Action("VideoPage/"+item.VideoID,"Home")" target="_self">
+            <img id="videoImage" src="@item.ThumbnailUrl" alt="video" style="width:100%">
+            <div class="caption">
+                <p id="titleBar"><b></b>@item.VideoName</p>
+            </div>
+        </a>
+        <div id="videoInfo">
+            @if (ViewBag.SelectedView != "PostedVideos")
+            {
+                <a href="@Url.Action("UsersVideos/"+item.VideoOwner,"Videos")" id="channelName">@item.VideoOwner</a>
+            }
+            <p>@item.ViewsCount views</p>
+            <p>Posted on: @item.DatePostedString</p>
+        </div>
+    </div>
+}
+
