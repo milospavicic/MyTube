@@ -65,6 +65,10 @@ function loadVideos(ownedOrLikedVideos) {
         method: "GET",  // post
         data: data,
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value loadVideos");
             $("#mainDiv").html(partialResult);
         }
@@ -76,6 +80,10 @@ function loadUsers() {
         url: "/Users/ChannelPageUsersPartial/" + channelName,
         method: "GET",  // post
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value loadUsers");
             $("#mainDiv").html(partialResult);
         }
@@ -88,6 +96,10 @@ function loadInfo(event) {
         url: "/Users/ChannelPageInfoPartial/" + channelName,
         method: "GET",  // post
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value loadInfo");
             $("#mainDiv").html(partialResult);
         }
@@ -100,6 +112,10 @@ function loadEditModal(event) {
         url: "/Users/EditUserForm/" + channelName,
         method: "GET",  // post
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value loadModal");
             $("#userEditFormContainer").html(partialResult);
             $("#userEditForm").attr("action", "/Users/EditUserForm/" + channelName);
@@ -115,6 +131,10 @@ function userEditSubmit(event) {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value");
             var page = 'User has been successfully edited';
             if (partialResult.includes(page)) {
@@ -132,6 +152,10 @@ function deleteUser(event) {
         url: "/Users/DeleteUser/" + channelName,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully deleted';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -146,6 +170,10 @@ function blockUser(event) {
         url: "/Users/BlockUser/" + channelName,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully blocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -161,6 +189,10 @@ function unblockUser(event) {
         url: "/Users/UnblockUser/" + channelName,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully unblocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -176,6 +208,10 @@ function subUser() {
         type: 'post',
         dataType: "json",
         success: function (data) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             subOrUnsubChangeButton(data);
         }
     });
@@ -243,6 +279,10 @@ function uploadPicture() {
     $("#uploadPicForm").submit();
 }
 function urlPicture() {
+    var pic = $('#ProfilePictureUrl').val();
+    if (pic === null || pic === '') {
+        return;
+    }
     $("#uploadPicForm").attr("action", "/Users/ChangePictureUrl/");
     $("#uploadPicForm").submit();
 }
@@ -254,6 +294,10 @@ function newPassword() {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Password has been successfully changed.';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -263,4 +307,8 @@ function newPassword() {
             }
         }
     });
+}
+function errorPage() {
+    console.log("errorPage");
+    window.location.href = "/Home/Error";
 }

@@ -94,13 +94,26 @@ namespace MyTube.Controllers
         }
         public ActionResult Logout()
         {
+
             Session.Abandon();
+            Response.ClearHeaders();
+            Response.AddHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+            Response.AddHeader("Pragma", "no-cache");
+            Response.AddHeader("Expires", "0");
             return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         public ActionResult BlockUser(string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (usersRepository.GetUserByUsername(id) == null)
+            {
+                return null;
+            }
             usersRepository.BlockUser(id);
             ViewBag.Message = "User has been successfully blocked.";
             return PartialView("MessageModal");
@@ -109,6 +122,14 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult UnblockUser(string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (usersRepository.GetUserByUsername(id) == null)
+            {
+                return null;
+            }
             usersRepository.UnblockUser(id);
             ViewBag.Message = "User has been successfully unblocked.";
             return PartialView("MessageModal");
@@ -117,6 +138,14 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult DeleteUser(string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (usersRepository.GetUserByUsername(id) == null)
+            {
+                return null;
+            }
             usersRepository.DeleteUser(id);
             ViewBag.Message = "User has been successfully deleted.";
             return PartialView("MessageModal");
@@ -131,10 +160,18 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditUserForm([Bind(Include = "Firstname,Lastname,UserType,Email,UserDescription")] EditUserModel eum, string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
 
             if (ModelState.IsValid)
             {
                 User editedUser = usersRepository.GetUserByUsername(id);
+                if (editedUser == null)
+                {
+                    return null;
+                }
                 editedUser = EditUserModel.UpdateUserFromEditUserModel(eum, editedUser);
                 usersRepository.UpdateUser(editedUser);
                 ViewBag.Message = "User has been successfully edited.";
@@ -172,6 +209,10 @@ namespace MyTube.Controllers
         }
         public JsonResult Subscribe(string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             User currentUser = usersRepository.GetUserByUsername((string)Session["loggedInUserUsername"]);
 
             bool exists = subscribeRepository.SubscriptionExists(id, currentUser.Username);
@@ -193,6 +234,10 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUpload(HttpPostedFileBase image, string username)
         {
+            if (!LoggedInUserExists())
+            {
+                return RedirectToAction("Error", "Home");
+            }
             if (image == null)
             {
                 return null;
@@ -203,6 +248,10 @@ namespace MyTube.Controllers
                 var path = Path.Combine(Server.MapPath("~/Pictures/users"), username + extension);
                 var finalUrl = "/Pictures/users/" + username + extension;
                 var user = usersRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
                 DeleteExistingPictures(username);
                 user.ProfilePictureUrl = finalUrl;
                 usersRepository.UpdateUser(user);
@@ -228,11 +277,19 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUrl(string username, string ProfilePictureUrl)
         {
+            if (!LoggedInUserExists())
+            {
+                return RedirectToAction("Error", "Home");
+            }
             if (ProfilePictureUrl == null)
             {
                 return null;
             }
             var user = usersRepository.GetUserByUsername(username);
+            if (user == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
             user.ProfilePictureUrl = ProfilePictureUrl;
             usersRepository.UpdateUser(user);
 
@@ -249,11 +306,19 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult NewPassword([Bind(Include = "OldPassword,NewPassword,ConfirmNewPassword")] NewPasswordModel npm, string id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             if (!ModelState.IsValid)
             {
                 return PartialView(npm);
             }
             var user = usersRepository.GetUserByUsername(id);
+            if (user == null)
+            {
+                return null;
+            }
             if (npm.OldPassword != user.Pass)
             {
                 ViewBag.Message = "Old password is incorrect";
@@ -282,6 +347,18 @@ namespace MyTube.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool LoggedInUserExists()
+        {
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

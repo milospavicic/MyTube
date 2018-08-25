@@ -1,16 +1,23 @@
 modalCloseReloadPage = false;
+returnToIndexPage = false;
 $(document).ready(function (e) {
     $('#upload').hide();
     loadCommentsLikes();
     console.log("video.js file start");
     $('#messageModal').on('hidden.bs.modal', function () {
-        if (modalCloseReloadPage === true)
+        if (returnToIndexPage === true) {
+            indexPage();
+        }
+        else if (modalCloseReloadPage === true)
             refreshPage();
     });
     $('#changeThumbnailModal').on('shown.bs.modal', function (e) {
         $('#linkOrLocalPicture').prop('checked', false);
         $('#link').show();
         $('#upload').hide();
+    });
+    $(window).on('popstate', function (event) {
+        alert("pop");
     });
 });
 function sortComments() {
@@ -22,7 +29,11 @@ function sortComments() {
         data: form.serialize(),
         success: function (partialResult) {
             console.log("return value");
-            if (partialResult!==null) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
+            else{
                 $("#commentsDiv").html(partialResult);
                 loadCommentsLikes();
                 $('#hideShowBtn').click();
@@ -36,6 +47,10 @@ function subUser() {
         type: 'post',
         dataType: "json",
         success: function (data) {
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
             subOrUnsubChangeButton(data);
         }
     });
@@ -60,37 +75,49 @@ function unsub() {
     tempName.attr('class', 'btn btn-danger');
 }
 function videoLiked(videoId) {
-    var data = {
+    var newData = {
         "videoId": videoId,
         "newRating": true
     };
     $.ajax({
         url: "/VideoRatings/CreateVideoRating",
         type: 'post',
-        data: data,
+        data: newData,
         dataType: "json",
         success: function (data) {
             console.log(data);
-            changeButtonsActive(data.returnMessage);
-            changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
+            else{
+                changeButtonsActive(data.returnMessage);
+                changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+            }
         }
     });
 }
 function videoDisliked(videoId) {
 
-    var data = {
+    var newData = {
         "videoId": videoId,
         "newRating": false
     };
     $.ajax({
         url: "/VideoRatings/CreateVideoRating",
         type: 'post',
-        data: data,
+        data: newData,
         dataType: "json",
         success: function (data) {
             console.log(data);
-            changeButtonsActive(data.returnMessage);
-            changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
+            else{
+                changeButtonsActive(data.returnMessage);
+                changeLikeDislikeCount(data.LikesCount, data.DislikesCount);
+            }
         }
     });
 }
@@ -139,17 +166,21 @@ function changeLikeDislikeCount(likeCount, dislikeCount) {
 function createNewComment(videoId) {
     var commentText = $('#myCommentText').val();
     console.log(commentText);
-    var data = {
+    var newData = {
         "CommentText": commentText,
         "VideoID": videoId
     };
     $.ajax({
         url: "/Comments/CreateComment",
         type: 'post',
-        data: data,
+        data: newData,
         success: function (data) {
             console.log("createNewCommentReturnData");
-            if (data !== null) {
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
+            else {
                 $(data).insertAfter('#commHeader');
                 clearAndHideNewCommentSection();
             }
@@ -173,6 +204,11 @@ function videoEditSubmit(event) {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
+            console.log(partialResult);
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value");
             var page = 'Video has been successfully edited';
             if (partialResult.includes(page)) {
@@ -180,7 +216,6 @@ function videoEditSubmit(event) {
                 messageModal(partialResult);
                 $("#editVideoModal").modal('hide');
             } else {
-
                 $("#videoEditFormContainer").html(partialResult);
             }
 
@@ -195,9 +230,13 @@ function deleteVideo(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Video has been successfully deleted';
             if (partialResult.includes(page)) {
-                modalCloseReloadPage = true;
+                returnToIndexPage = true;
                 messageModal(partialResult);
                 $("#deleteVideoModal").modal('hide');
             }
@@ -212,6 +251,10 @@ function blockVideo(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Video has been successfully blocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -229,6 +272,10 @@ function unblockVideo(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Video has been successfully unblocked';
             if (partialResult.includes(page)) {
                 modalCloseReloadPage = true;
@@ -262,16 +309,20 @@ function commentEditSubmit(event) {
     var newText = $("#editCommentText").val();
     var url = $("#EditCommentModalYesButton").attr("href");
     var commentId = GetIdFromUrl(url);
-    data = {
+    newData = {
         "text": newText
     };
     $.ajax({
         url: url,
         method: 'post',  // post
-        data: data,
+        data: newData,
         success: function (partialResult) {
             console.log("return value");
             var page = 'Comment has been successfully edited';
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
                 $("#editCommentModal").modal('hide');
@@ -300,6 +351,10 @@ function deleteComment(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Comment has been successfully deleted';
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
@@ -321,7 +376,8 @@ function loadCommentsLikes() {
     console.log(url);
     var id = GetIdFromUrl(url);
     $.get('/CommentRatings/CommentRatingsForVideo/' + id, {}, function (data) {
-        if (data === null) {
+        if (data === null || data === '') {
+            errorPage();
             return;
         }
         for (it in data) {
@@ -340,36 +396,48 @@ function loadCommentsLikes() {
 }
 
 function commentLiked(commId) {
-    var data = {
+    var newData = {
         "commentId": commId,
         "newRating": true
     };
     $.ajax({
         url: "/CommentRatings/CreateCommentRating",
         type: 'post',
-        data: data,
+        data: newData,
         dataType: "json",
         success: function (data) {
             console.log(data);
-            changeCommentButtonsActive(data.returnMessage, commId);
-            changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount, commId);
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
+            else{
+                changeCommentButtonsActive(data.returnMessage, commId);
+                changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount, commId);
+            }
         }
     });
 }
 function commentDisliked(commId) {
-    var data = {
+    var newData = {
         "commentId": commId,
         "newRating": false
     };
     $.ajax({
         url: "/CommentRatings/CreateCommentRating",
         type: 'post',
-        data: data,
+        data: newData,
         dataType: "json",
         success: function (data) {
             console.log(data);
-            changeCommentButtonsActive(data.returnMessage, commId);
-            changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount,commId);
+            if (data === null || data === '') {
+                errorPage();
+                return;
+            }
+            else{
+                changeCommentButtonsActive(data.returnMessage, commId);
+                changeCommentLikeDislikeCount(data.LikesCount, data.DislikesCount, commId);
+            }
         }
     });
 }
@@ -435,6 +503,10 @@ function uploadPicture() {
     $("#uploadPicForm").submit();
 }
 function urlPicture() {
+    var pic = $('#ThumbnailUrl').val();
+    if (pic === null || pic === '') {
+        return;
+    }
     $("#uploadPicForm").attr("action", "/Videos/ChangePictureUrl/");
     $("#uploadPicForm").submit();
 }
@@ -473,4 +545,12 @@ function blockedUserModal() {
 }
 function LoginModal() {
     $('#login-modal').modal();
+}
+function indexPage() {
+    console.log("indexPage");
+    window.location.href = "/Home/Index";
+}
+function errorPage() {
+    console.log("errorPage");
+    window.location.href = "/Home/Error";
 }

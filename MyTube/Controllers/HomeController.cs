@@ -4,6 +4,7 @@ using MyTube.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
@@ -304,11 +305,22 @@ namespace MyTube.Controllers
                 ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
                 return View(video);
             }
+            var videoUrl = CheckIfYTUrl(video.VideoUrl);
+            if (videoUrl == null)
+            {
+                ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
+                ViewBag.Message = "Invalid youtube url.";
+                return View(video);
+            }
+            else
+            {
+                video.VideoUrl = videoUrl;
+            }
             var loggedInUser = (string)Session["loggedInUserUsername"];
             if (loggedInUser == null)
             {
                 ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
-                return View(video);
+                return View("Index");
             }
             video.VideoOwner = loggedInUser;
             video.DatePosted = DateTime.Now;
@@ -318,7 +330,46 @@ namespace MyTube.Controllers
             ViewBag.VideoName = video.VideoName;
             return View("NewVideoSuccess");
         }
+        public string CheckIfYTUrl(string url)
+        {
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+                request.Method = "HEAD";
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    if (!response.ResponseUri.ToString().Contains("www.youtube.com"))
+                    {
+                        return null;
+                    }
+                    if (response.ResponseUri.ToString().Contains("www.youtube.com/embed/"))
+                    {
+                        return url;
+                    }
+                    if (response.ResponseUri.ToString().Contains("www.youtube.com/watch?v="))
+                    {
+                        return ConvertWatchToEmbedUrl(url);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public string ConvertWatchToEmbedUrl(string url)
+        {
+            //https://www.youtube.com/embed/c7IFocqf8bA
+            string replace = "embed/";
+            string old = "watch?v=";
 
+            string newUrl = url.Replace(old, replace);
+            return newUrl;
+        }
 
         public bool LoggedInUserExists()
         {

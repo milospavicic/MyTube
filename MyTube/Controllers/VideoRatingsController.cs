@@ -45,6 +45,10 @@ namespace MyTube.Controllers
         [HttpPost]
         public JsonResult CreateVideoRating(long videoId, bool newRating)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             string username = (string)Session["loggedInUserUsername"].ToString();
             VideoRating vr = videoRatingRepository.GetVideoRating(videoId, username);
             if (vr != null)
@@ -139,6 +143,18 @@ namespace MyTube.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool LoggedInUserExists()
+        {
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

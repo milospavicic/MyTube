@@ -37,6 +37,10 @@ function userEditFill(userName) {
         url: "/Users/EditUserForm/" + userName,
         method: "GET",  // post
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value");
             $("#userEditFormContainer").html(partialResult);
         }
@@ -50,6 +54,10 @@ function userEditSubmit(event) {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             console.log("return value");
             var page = 'User has been successfully edited';
             if (partialResult.includes(page)) {
@@ -57,7 +65,6 @@ function userEditSubmit(event) {
                 $("#editUserModal").modal('hide');
                 loadSingleUser(GetUsernameFromUrl(form.attr("action")));
             } else {
-
                 $("#userEditFormContainer").html(partialResult);
             }
 
@@ -78,6 +85,10 @@ function deleteUser(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully deleted';
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
@@ -101,6 +112,10 @@ function blockUser(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully blocked';
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
@@ -124,6 +139,10 @@ function unblockUser(event) {
         url: url,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'User has been successfully unblocked';
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
@@ -142,6 +161,10 @@ function loadSingleUser(username) {
         url: '/Users/OneUserForAdminPage/' + username,
         type: 'post',
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             $('#userDiv-' + username).replaceWith(partialResult);
         }
     });
@@ -171,6 +194,10 @@ function uploadPicture() {
     $("#uploadPicForm").submit();
 }
 function urlPicture() {
+    var pic = $('#ProfilePictureUrl').val();
+    if (pic === null || pic === '') {
+        return;
+    }
     $("#uploadPicForm").attr("action", "/Users/ChangePictureUrl/");
     $("#uploadPicForm").submit();
 }
@@ -182,6 +209,10 @@ function newPassword() {
         method: form.attr("method"),  // post
         data: form.serialize(),
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             var page = 'Password has been successfully changed.';
             if (partialResult.includes(page)) {
                 messageModal(partialResult);
@@ -201,8 +232,16 @@ function newPasswordModal() {
         url: '/Users/NewPassword',
         method: 'get',  // post
         success: function (partialResult) {
+            if (partialResult === null || partialResult === '') {
+                errorPage();
+                return;
+            }
             $('#newPasswordModalContainer').html(partialResult);
         }
     });
     $('#newPasswordModal').modal();
+}
+function errorPage() {
+    console.log("errorPage");
+    window.location.href = "/Home/Error";
 }

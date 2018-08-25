@@ -85,6 +85,10 @@ namespace MyTube.Controllers
         }
         public ActionResult CreateComment(Comment comment)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             var currentUser = (string)Session["loggedInUserUsername"];
             if (currentUser == null)
             {
@@ -102,6 +106,10 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult EditComment(long? id, string text)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             if (id == null)
             {
                 return null;
@@ -119,6 +127,10 @@ namespace MyTube.Controllers
         }
         public ActionResult DeleteComment(long id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             commentsRepository.DeleteComment(id);
             ViewBag.Message = "Comment has been successfully deleted.";
             return PartialView("MessageModal");
@@ -132,6 +144,18 @@ namespace MyTube.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool LoggedInUserExists()
+        {
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

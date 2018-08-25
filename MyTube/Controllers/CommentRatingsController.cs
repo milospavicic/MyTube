@@ -56,6 +56,10 @@ namespace MyTube.Controllers
         [HttpPost]
         public JsonResult CreateCommentRating(long commentId, bool newRating)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             string username = (string)Session["loggedInUserUsername"].ToString();
             CommentRating cr = commentRatingsRepository.GetCommentRating(commentId, username);
             if (cr != null)
@@ -150,6 +154,18 @@ namespace MyTube.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool LoggedInUserExists()
+        {
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }

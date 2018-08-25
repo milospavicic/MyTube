@@ -126,6 +126,14 @@ namespace MyTube.Controllers
         }
         public ActionResult BlockVideo(long? id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (videosRepository.GetVideoById(id) == null)
+            {
+                return null;
+            }
             videosRepository.BlockVideo(id);
             ViewBag.Message = "Video has been successfully blocked.";
             return PartialView("MessageModal");
@@ -134,6 +142,14 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult UnblockVideo(long? id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (videosRepository.GetVideoById(id) == null)
+            {
+                return null;
+            }
             videosRepository.UnblockVideo(id);
             ViewBag.Message = "Video has been successfully unblocked.";
             return PartialView("MessageModal");
@@ -142,6 +158,14 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult DeleteVideo(long? id)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
+            if (videosRepository.GetVideoById(id) == null)
+            {
+                return null;
+            }
             videosRepository.DeleteVideo(id);
             ViewBag.Message = "Video has been successfully deleted.";
             return PartialView("MessageModal");
@@ -158,9 +182,17 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
         {
+            if (!LoggedInUserExists())
+            {
+                return null;
+            }
             if (ModelState.IsValid)
             {
                 var video = videosRepository.GetVideoById(evm.VideoID);
+                if (video == null)
+                {
+                    return null;
+                }
                 video.UpdateVideoFromEditVideoModel(evm);
                 videosRepository.UpdateVideo(video);
                 ViewBag.Message = "Video has been successfully edited.";
@@ -173,6 +205,10 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUpload(HttpPostedFileBase image, long? videoId)
         {
+            if (!LoggedInUserExists())
+            {
+                return RedirectToAction("Error", "Home");
+            }
             if (image == null)
             {
                 return View(videosRepository.GetVideoById(videoId));
@@ -183,6 +219,10 @@ namespace MyTube.Controllers
                 var path = Path.Combine(Server.MapPath("~/Pictures/videos"), videoId + extension);
                 var finalUrl = "/Pictures/videos/" + videoId + extension;
                 var video = videosRepository.GetVideoById(videoId);
+                if (video == null)
+                {
+                    return RedirectToAction("Error", "Home");
+                }
                 DeleteExistingPictures(videoId);
                 video.ThumbnailUrl = finalUrl;
                 videosRepository.UpdateVideo(video);
@@ -208,11 +248,19 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUrl(long? videoId, string ThumbnailUrl)
         {
+            if (!LoggedInUserExists())
+            {
+                return RedirectToAction("Error", "Home");
+            }
             if (videoId == null)
             {
                 return RedirectToAction("Error", "Home");
             }
             var video = videosRepository.GetVideoById(videoId);
+            if (video == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
             video.ThumbnailUrl = ThumbnailUrl;
             videosRepository.UpdateVideo(video);
             return RedirectToAction("VideoPage/" + videoId, "Home");
@@ -225,6 +273,18 @@ namespace MyTube.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool LoggedInUserExists()
+        {
+            if (Session["loggedInUserStatus"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }
