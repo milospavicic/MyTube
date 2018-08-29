@@ -208,7 +208,7 @@ function subUser() {
         type: 'post',
         dataType: "json",
         success: function (data) {
-            if (partialResult === null || partialResult === '') {
+            if (data === null || data === '') {
                 errorPage();
                 return;
             }

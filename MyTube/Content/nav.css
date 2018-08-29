@@ -258,12 +258,10 @@ RESENO SA margin: 0;
 #messageModalText, #messageModalContainer {
     text-align: center;
 }
-#login-modal{
-    margin-top: 8%;
-}
-#messageModal {
-    margin-top: 20%;
+
+#messageModal,#logoutModal{
+    margin-top: 10%;
 }
 #blockedUserModal {
-    margin-top: 20%;
+    margin-top: 10%;
 }

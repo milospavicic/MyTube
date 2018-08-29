@@ -3,10 +3,10 @@ VALUES('USER');
 INSERT INTO UserType(TypeName)
 VALUES('ADMIN');
 
-INSERT INTO Users(Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl,SubscribersCount)
-VALUES('123','123','Marko','Markovic','USER','marko@gmail.com',null,'2018-3-1',0,0,'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',0);
-INSERT INTO Users(Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl,SubscribersCount)
-VALUES('1234','123','Pera','Peric','ADMIN','pera@gmail.com',null,'2018-1-1',0,0,'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',0);
+INSERT INTO Users(Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl)
+VALUES('123','123','Marko','Markovic','USER','marko@gmail.com',null,'2018-3-1',0,0,'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
+INSERT INTO Users(Username,Pass,Firstname,Lastname,UserType,Email,UserDescription,RegistrationDate,Blocked,Deleted,ProfilePictureUrl)
+VALUES('1234','123','Pera','Peric','ADMIN','pera@gmail.com',null,'2018-1-1',0,0,'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png');
 
 INSERT INTO Subscribers(ChannelSubscribed,Subscriber)
 VALUES('1234','123');
@@ -44,6 +44,19 @@ VALUES(1,'1234',1,'2018-3-8',0)
 INSERT INTO VideoRating(VideoID,LikeOwner,IsLike,LikeDate,Deleted)
 VALUES(2,'1234',1,'2018-3-8',0)
 
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(1,'1234','WOW','2018-8-8',0,0,0)
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(1,'1234','Amazing!','2018-8-7',0,0,0)
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(1,'1234','Lame','2018-8-9',0,0,0)
+
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(2,'1234','WOW','2018-8-8',0,0,0)
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(2,'1234','Amazing!','2018-8-7',0,0,0)
+INSERT INTO Comments(VideoId,CommentOwner,CommentText,DatePosted,LikesCount,DislikesCount,Deleted)
+VALUES(2,'1234','Lame','2018-8-9',0,0,0)
 
 INSERT INTO CommentRating(LikeOwner,CommentId,IsLike,LikeDate,Deleted)
 VALUES ('123','1',1,'2018-3-1',0)

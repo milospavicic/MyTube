@@ -178,16 +178,14 @@
     padding: 10px 0;
 }
 #blockModal, #unblockModal, #deleteModal, #changeModalMenu, #changeThumbnailModal {
-    margin-top: 20%;
+    margin-top: 10%;
 }
 
 #newPasswordModal {
-    margin-top: 15%;
+    margin-top: 5%;
 }
 
-#editUserModal {
-    margin-top: 10%;
-}
+
 /*#sortOrder{
     float: right;
 }

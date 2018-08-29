@@ -294,8 +294,13 @@ namespace MyTube.Controllers
         }
         public ActionResult NewVideo()
         {
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
-            return View();
+            var video = new Video
+            {
+                CommentsEnabled = true,
+                RatingEnabled = true
+            };
+            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect("PUBLIC");
+            return View(video);
         }
         [HttpPost]
         public ActionResult NewVideo([Bind(Include = "VideoUrl,ThumbnailUrl,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] Video video)

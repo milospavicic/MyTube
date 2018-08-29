@@ -377,7 +377,6 @@ function loadCommentsLikes() {
     var id = GetIdFromUrl(url);
     $.get('/CommentRatings/CommentRatingsForVideo/' + id, {}, function (data) {
         if (data === null || data === '') {
-            errorPage();
             return;
         }
         for (it in data) {

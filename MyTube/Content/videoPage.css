@@ -320,13 +320,13 @@
 }
 #editVideoModal {
     height: 100%;
-    margin-top: 10%;
+    margin-top: 5%;
 }
 #editCommentModal {
-    margin-top: 20%;
+    margin-top: 10%;
 }
 #blockVideoModal, #unblockVideoModal, #deleteVideoModal, #deleteCommentModal, #changeThumbnailModal {
-    margin-top: 20%;
+    margin-top: 10%;
 }
 #SortCommetsForm{
     padding: 5px;
