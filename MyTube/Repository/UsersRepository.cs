@@ -15,7 +15,7 @@ namespace MyTube.Repository
         }
         public IEnumerable<User> GetNUsersWithout(int n, string currentUserUsername)
         {
-            return db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).Take(n);
+            return db.Users.Where(x => x.Deleted == false && x.Blocked == false && x.Username != currentUserUsername).OrderByDescending(x => x.Subscribers.Count()).Take(n);
         }
 
         public bool Login(User user)

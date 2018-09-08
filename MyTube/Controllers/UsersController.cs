@@ -49,7 +49,6 @@ namespace MyTube.Controllers
         {
             var currentUserUsername = (string)Session["loggedInUserUsername"];
             var users = usersRepository.GetNUsersWithout(6, currentUserUsername);
-            users = users.OrderByDescending(x => x.SubscribersCount);
             var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
             return PartialView(usersDTO);
