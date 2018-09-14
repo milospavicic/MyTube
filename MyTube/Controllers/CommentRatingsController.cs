@@ -8,16 +8,13 @@ namespace MyTube.Controllers
 {
     public class CommentRatingsController : Controller
     {
-        private MyTubeDBEntities db = new MyTubeDBEntities();
-        private CommentRatingsRepository commentRatingsRepository;
-        private CommentsRepository commentsRepository;
-        private UsersRepository usersRepository;
+        private ICommentRatingsRepository _commentRatingsRepository;
+        private ICommentsRepository _commentsRepository;
 
-        public CommentRatingsController()
+        public CommentRatingsController(ICommentRatingsRepository commentRatingsRepository, ICommentsRepository commentsRepository)
         {
-            this.commentRatingsRepository = new CommentRatingsRepository(new MyTubeDBEntities());
-            this.commentsRepository = new CommentsRepository(new MyTubeDBEntities());
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            this._commentRatingsRepository = commentRatingsRepository;
+            this._commentsRepository = commentsRepository;
 
             CheckLoggedInUser();
         }
@@ -29,7 +26,11 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = null;
+                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
+                {
+                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                }
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -47,7 +48,7 @@ namespace MyTube.Controllers
             var username = (string)Session["loggedInUserUsername"];
             if (username != null)
             {
-                var crs = commentRatingsRepository.GetCommentRatingsForVideo((long)id, username);
+                var crs = _commentRatingsRepository.GetCommentRatingsForVideo((long)id, username);
                 var crsDTO = CommentRatingsDTO.ConvertCollectionCommentToDTO(crs);
                 return Json(crsDTO, JsonRequestBehavior.AllowGet);
             }
@@ -61,7 +62,7 @@ namespace MyTube.Controllers
                 return null;
             }
             string username = (string)Session["loggedInUserUsername"].ToString();
-            CommentRating cr = commentRatingsRepository.GetCommentRating(commentId, username);
+            CommentRating cr = _commentRatingsRepository.GetCommentRating(commentId, username);
             if (cr != null)
             {
                 return AlterExistingCommentRating(cr, newRating);
@@ -74,7 +75,7 @@ namespace MyTube.Controllers
         public JsonResult AlterExistingCommentRating(CommentRating cr, bool newRating)
         {
             string returnMessage = "";
-            Comment comment = commentsRepository.GetCommentById((long)cr.CommentId);
+            Comment comment = _commentsRepository.GetCommentById((long)cr.CommentId);
             //true = like, false = dislike
             if (cr.IsLike)
             {
@@ -105,16 +106,16 @@ namespace MyTube.Controllers
                 }
             }
 
-            commentsRepository.UpdateComment(comment);
+            _commentsRepository.UpdateComment(comment);
 
             cr.IsLike = newRating;
             if (returnMessage == "neutral")
             {
-                commentRatingsRepository.DeleteCommentRating(cr.LikeID);
+                _commentRatingsRepository.DeleteCommentRating(cr.LikeID);
             }
             else
             {
-                commentRatingsRepository.UpdateCommentRating(cr);
+                _commentRatingsRepository.UpdateCommentRating(cr);
             }
 
             return Json(new { returnMessage, comment.LikesCount, comment.DislikesCount }, JsonRequestBehavior.AllowGet);
@@ -130,8 +131,8 @@ namespace MyTube.Controllers
                 LikeDate = DateTime.Now,
                 IsLike = newRating
             };
-            commentRatingsRepository.CreateCommentRating(cr);
-            Comment comment = commentsRepository.GetCommentById((long)cr.CommentId);
+            _commentRatingsRepository.CreateCommentRating(cr);
+            Comment comment = _commentsRepository.GetCommentById((long)cr.CommentId);
             if (newRating)
             {
                 comment.LikesCount += 1;
@@ -140,20 +141,11 @@ namespace MyTube.Controllers
             {
                 comment.DislikesCount += 1;
             }
-            commentsRepository.UpdateComment(comment);
+            _commentsRepository.UpdateComment(comment);
 
             string returnMessage = (newRating == true) ? "like" : "dislike";
 
             return Json(new { returnMessage, comment.LikesCount, comment.DislikesCount }, JsonRequestBehavior.AllowGet);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
         public bool LoggedInUserExists()
         {

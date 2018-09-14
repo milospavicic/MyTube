@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyTube.Repository
 {
-    interface IUsersRepository : IDisposable
+    public interface IUsersRepository : IDisposable
     {
         IEnumerable<User> GetNUsersWithout(int n, string currentUserUsername);
         IEnumerable<User> GetAllUsersFollowedBy(string username);

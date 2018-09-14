@@ -1,5 +1,6 @@
 ﻿using MyTube.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace MyTube.Repository
@@ -15,7 +16,7 @@ namespace MyTube.Repository
 
         public IEnumerable<VideoType> GetVideoTypes()
         {
-            return db.VideoTypes;
+            return db.VideoTypes.ToList();
         }
 
         public SelectList GetVideoTypesSelectList()

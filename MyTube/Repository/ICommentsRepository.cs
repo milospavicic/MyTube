@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyTube.Repository
 {
-    interface ICommentsRepository : IDisposable
+    public interface ICommentsRepository : IDisposable
     {
         IEnumerable<Comment> GetAllCommentsForVideo(long id);
         Comment GetCommentById(long id);

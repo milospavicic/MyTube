@@ -12,27 +12,26 @@ namespace MyTube.Controllers
     public class HomeController : Controller
     {
 
-        private VideosRepository videosRepository;
-        private VideoTypesRepository videoTypesRepository;
-        private UsersRepository usersRepository;
-        private UserTypesRepository userTypesRepository;
-        private SubscribeRepository subscribeRepository;
-        private VideoRatingRepository videoRatingRepository;
+        private IVideosRepository _videosRepository;
+        private IUsersRepository _usersRepository;
         private readonly string BASIC_PICTURE = "https://blog.stylingandroid.com/wp-content/themes/lontano-pro/images/no-image-slide.png";
-
-        public HomeController()
+        public SelectList VideoTypes
         {
-            this.videosRepository = new VideosRepository(new MyTubeDBEntities());
-            this.videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities());
-
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
-            this.userTypesRepository = new UserTypesRepository(new MyTubeDBEntities());
-
-            this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
-            this.videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities());
+            get
+            {
+                using (var videoTypeRepo = new VideoTypesRepository(new MyTubeDBEntities()))
+                {
+                    var videoType = videoTypeRepo.GetVideoTypes();
+                    return new SelectList(videoType, "TypeName", "TypeName");
+                }
+            }
+        }
+        public HomeController(IVideosRepository videosRepository, IUsersRepository usersRepository)
+        {
+            this._videosRepository = videosRepository;
+            this._usersRepository = usersRepository;
 
             CheckLoggedInUser();
-
         }
 
         private void CheckLoggedInUser()
@@ -43,7 +42,7 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = _usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -60,9 +59,9 @@ namespace MyTube.Controllers
         {
             IEnumerable<Video> videos = null;
             if (LoggedInUserIsAdmin())
-                videos = videosRepository.GetNVideos(6);
+                videos = _videosRepository.GetNVideos(6);
             else
-                videos = videosRepository.GetNPublicVideos(6);
+                videos = _videosRepository.GetNPublicVideos(6);
 
             IEnumerable<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
@@ -74,7 +73,7 @@ namespace MyTube.Controllers
             {
                 return View("Error");
             }
-            Video currentVideo = videosRepository.GetVideoById(id);
+            Video currentVideo = _videosRepository.GetVideoById(id);
             if (currentVideo == null)
             {
                 return View("Error");
@@ -87,16 +86,28 @@ namespace MyTube.Controllers
                 }
             }
             currentVideo.ViewsCount += 1;
-            videosRepository.UpdateVideo(currentVideo);
+            _videosRepository.UpdateVideo(currentVideo);
             if (Session["loggedInUserUsername"] != null)
             {
-                bool exists = subscribeRepository.SubscriptionExists(currentVideo.VideoOwner, Session["loggedInUserUsername"].ToString());
-                VideoRating rating = videoRatingRepository.GetVideoRating((long)id, Session["loggedInUserUsername"].ToString());
+                bool exists = CheckIfSubbed(currentVideo.VideoOwner);
+                VideoRating rating = GetVideoRatingForVideo(id);
                 ViewBag.Subbed = exists;
                 ViewBag.Rating = rating?.IsLike;
             }
             var video = VideoDTO.ConvertVideoToDTO(currentVideo);
             return View(video);
+        }
+        public VideoRating GetVideoRatingForVideo(long? id)
+        {
+            if (Session["loggedInUserUsername"] != null)
+            {
+                using (var videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities()))
+                {
+                    VideoRating rating = videoRatingRepository.GetVideoRating((long)id, Session["loggedInUserUsername"].ToString());
+                    return rating;
+                }
+            }
+            return null;
         }
         public ActionResult ChannelPage(string id)
         {
@@ -104,7 +115,7 @@ namespace MyTube.Controllers
             {
                 return View("Error");
             }
-            var user = usersRepository.GetUserByUsername(id);
+            var user = _usersRepository.GetUserByUsername(id);
             if (user == null)
             {
                 return View("Error");
@@ -116,17 +127,22 @@ namespace MyTube.Controllers
                     return View("Error");
                 }
             }
-            CheckIfSubbed(id);
+            if (!LoggedInUserIsOnHisPage(user.Username))
+                ViewBag.Subbed = CheckIfSubbed(id);
             var userDTO = UserDTO.ConvertUserToDTO(user);
             return View(userDTO);
         }
-        public void CheckIfSubbed(string id)
+        public bool CheckIfSubbed(string id)
         {
             if (Session["loggedInUserUsername"] != null)
             {
-                bool exists = subscribeRepository.SubscriptionExists(id, Session["loggedInUserUsername"].ToString());
-                ViewBag.Subbed = exists;
+                using (var subscribeRepository = new SubscribeRepository(new MyTubeDBEntities()))
+                {
+                    bool exists = subscribeRepository.SubscriptionExists(id, Session["loggedInUserUsername"].ToString());
+                    return exists;
+                }
             }
+            return false;
         }
         public ActionResult AdminPage(string sortOrder, string searchString)
         {
@@ -135,7 +151,7 @@ namespace MyTube.Controllers
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "username_asc" : "";
             ViewBag.SearchString = searchString;
 
-            var users = usersRepository.GetAndSearchUsers(searchString);
+            var users = _usersRepository.GetAndSearchUsers(searchString);
             users = SortUsers(users, sortOrder);
 
             ViewBag.Values = Models.User.UsersSortOrderSelectList();
@@ -152,7 +168,7 @@ namespace MyTube.Controllers
             }
             else
             {
-                var user = usersRepository.GetUserByUsername(username);
+                var user = _usersRepository.GetUserByUsername(username);
                 if (user == null || user.Blocked == true)
                 {
                     return false;
@@ -224,9 +240,9 @@ namespace MyTube.Controllers
         {
             var userType = (string)Session["loggedInUserUserType"];
             if (userType == "ADMIN")
-                return videosRepository.GetVideosAllAndSearch(searchString);
+                return _videosRepository.GetVideosAllAndSearch(searchString);
             else
-                return videosRepository.GetVideosPublicAndSearch(searchString);
+                return _videosRepository.GetVideosPublicAndSearch(searchString);
         }
         public IEnumerable<Video> SortVideos(IEnumerable<Video> videos, string sortOrder)
         {
@@ -257,7 +273,7 @@ namespace MyTube.Controllers
             var loggedInUser = Session["loggedInUserUsername"];
             if (loggedInUser != null)
             {
-                var user = usersRepository.GetUserByUsername(loggedInUser.ToString());
+                var user = _usersRepository.GetUserByUsername(loggedInUser.ToString());
                 var userDTO = UserDTO.ConvertUserToDTO(user);
                 return PartialView(userDTO);
             }
@@ -269,7 +285,6 @@ namespace MyTube.Controllers
         }
         public ActionResult Register()
         {
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectList();
             return View();
         }
         [HttpPost]
@@ -280,16 +295,15 @@ namespace MyTube.Controllers
             {
                 return View(user);
             }
-            bool usernameTaken = usersRepository.UsernameTaken(user.Username);
+            bool usernameTaken = _usersRepository.UsernameTaken(user.Username);
             if (usernameTaken)
             {
                 ViewBag.Message = "Username is taken.";
-                ViewBag.UserType = userTypesRepository.GetUserTypesSelectList();
                 return View(user);
             }
             user.UserType = "USER";
             user.RegistrationDate = DateTime.Now;
-            usersRepository.InsertUser(user);
+            _usersRepository.InsertUser(user);
             return View("RegistrationSuccess");
         }
         public ActionResult NewVideo()
@@ -299,7 +313,8 @@ namespace MyTube.Controllers
                 CommentsEnabled = true,
                 RatingEnabled = true
             };
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect("PUBLIC");
+
+            ViewBag.VideoType = VideoTypes;
             return View(video);
         }
         [HttpPost]
@@ -307,13 +322,13 @@ namespace MyTube.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
+                ViewBag.VideoType = VideoTypes;
                 return View(video);
             }
             var videoUrl = CheckIfYTUrl(video.VideoUrl);
             if (videoUrl == null)
             {
-                ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
+                ViewBag.VideoType = VideoTypes;
                 ViewBag.Message = "Invalid youtube url.";
                 return View(video);
             }
@@ -324,17 +339,19 @@ namespace MyTube.Controllers
             var loggedInUser = (string)Session["loggedInUserUsername"];
             if (loggedInUser == null)
             {
-                ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectList();
+                ViewBag.VideoType = VideoTypes;
                 return View("Index");
             }
             video.VideoOwner = loggedInUser;
             video.DatePosted = DateTime.Now;
             video.ThumbnailUrl = BASIC_PICTURE;
-            videosRepository.InsertVideo(video);
+            _videosRepository.InsertVideo(video);
             ViewBag.VideoId = video.VideoID;
             ViewBag.VideoName = video.VideoName;
             return View("NewVideoSuccess");
         }
+
+
         public string CheckIfYTUrl(string url)
         {
             try

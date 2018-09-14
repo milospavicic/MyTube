@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyTube.Repository
 {
-    interface ICommentRatingsRepository : IDisposable
+    public interface ICommentRatingsRepository : IDisposable
     {
         bool RatingExistsForComment(long commentId, string username);
 

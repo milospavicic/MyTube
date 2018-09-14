@@ -7,16 +7,13 @@ namespace MyTube.Controllers
 {
     public class VideoRatingsController : Controller
     {
-        private MyTubeDBEntities db = new MyTubeDBEntities();
-        private VideoRatingRepository videoRatingRepository;
-        private VideosRepository videosRepository;
-        private UsersRepository usersRepository;
+        private IVideoRatingRepository _videoRatingRepository;
+        private IVideosRepository _videosRepository;
 
-        public VideoRatingsController()
+        public VideoRatingsController(IVideoRatingRepository videoRatingRepository, IVideosRepository videosRepository)
         {
-            this.videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities());
-            this.videosRepository = new VideosRepository(new MyTubeDBEntities());
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            this._videoRatingRepository = videoRatingRepository;
+            this._videosRepository = videosRepository;
 
             CheckLoggedInUser();
 
@@ -29,7 +26,11 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = null;
+                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
+                {
+                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                }
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -50,7 +51,7 @@ namespace MyTube.Controllers
                 return null;
             }
             string username = (string)Session["loggedInUserUsername"].ToString();
-            VideoRating vr = videoRatingRepository.GetVideoRating(videoId, username);
+            VideoRating vr = _videoRatingRepository.GetVideoRating(videoId, username);
             if (vr != null)
             {
                 return AlterExistingVideoRating(vr, newRating);
@@ -63,7 +64,7 @@ namespace MyTube.Controllers
         public JsonResult AlterExistingVideoRating(VideoRating vr, bool newRating)
         {
             string returnMessage = "";
-            Video video = videosRepository.GetVideoById(vr.VideoID);
+            Video video = _videosRepository.GetVideoById(vr.VideoID);
             //true = like, false = dislike
             if (vr.IsLike)
             {
@@ -94,16 +95,16 @@ namespace MyTube.Controllers
                 }
             }
 
-            videosRepository.UpdateVideo(video);
+            _videosRepository.UpdateVideo(video);
 
             vr.IsLike = newRating;
             if (returnMessage == "neutral")
             {
-                videoRatingRepository.DeleteVideoRating(vr.LikeID);
+                _videoRatingRepository.DeleteVideoRating(vr.LikeID);
             }
             else
             {
-                videoRatingRepository.UpdateVideoRating(vr);
+                _videoRatingRepository.UpdateVideoRating(vr);
             }
 
             return Json(new { returnMessage, video.LikesCount, video.DislikesCount }, JsonRequestBehavior.AllowGet);
@@ -119,8 +120,8 @@ namespace MyTube.Controllers
                 LikeDate = DateTime.Now,
                 IsLike = newRating
             };
-            videoRatingRepository.CreateVideoRating(vr);
-            Video video = videosRepository.GetVideoById(vr.VideoID);
+            _videoRatingRepository.CreateVideoRating(vr);
+            Video video = _videosRepository.GetVideoById(vr.VideoID);
             if (newRating)
             {
                 video.LikesCount += 1;
@@ -129,21 +130,13 @@ namespace MyTube.Controllers
             {
                 video.DislikesCount += 1;
             }
-            videosRepository.UpdateVideo(video);
+            _videosRepository.UpdateVideo(video);
 
             string returnMessage = (newRating == true) ? "like" : "dislike";
 
             return Json(new { returnMessage, video.LikesCount, video.DislikesCount }, JsonRequestBehavior.AllowGet);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
         public bool LoggedInUserExists()
         {
             if (Session["loggedInUserStatus"] != null)

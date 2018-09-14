@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace MyTube.Repository
 {
-    interface IUserTypesRepository : IDisposable
+    public interface IUserTypesRepository : IDisposable
     {
         IEnumerable<UserType> GetUserTypes();
 

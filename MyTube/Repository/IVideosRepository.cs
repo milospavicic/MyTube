@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyTube.Repository
 {
-    interface IVideosRepository : IDisposable
+    public interface IVideosRepository : IDisposable
     {
         IEnumerable<Video> GetNVideos(int n);
         IEnumerable<Video> GetNVideosWithout(int n, long videoId);

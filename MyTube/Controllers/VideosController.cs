@@ -12,16 +12,18 @@ namespace MyTube.Controllers
 {
     public class VideosController : Controller
     {
-        private MyTubeDBEntities db = new MyTubeDBEntities();
-        private VideosRepository videosRepository;
-        private VideoTypesRepository videoTypesRepository;
-        private UsersRepository usersRepository;
-
-        public VideosController()
+        private IVideosRepository _videosRepository;
+        public SelectList GetVideoTypesAndSelect(string currentType)
         {
-            this.videosRepository = new VideosRepository(new MyTubeDBEntities());
-            this.videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities());
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            using (var videoTypesRepository = new VideoTypesRepository(new MyTubeDBEntities()))
+            {
+                var videoType = videoTypesRepository.GetVideoTypes();
+                return new SelectList(videoType, "TypeName", "TypeName", currentType);
+            }
+        }
+        public VideosController(IVideosRepository videosRepository)
+        {
+            this._videosRepository = videosRepository;
 
             CheckLoggedInUser();
         }
@@ -33,7 +35,11 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = null;
+                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
+                {
+                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                }
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -71,22 +77,22 @@ namespace MyTube.Controllers
             var userType = (string)Session["loggedInUserUserType"];
             var loggedInUserUsername = (string)Session["loggedInUserUsername"];
             if (loggedInUserUsername == username)
-                return videosRepository.GetVideosAllOwnedByUser(username);
+                return _videosRepository.GetVideosAllOwnedByUser(username);
             else if (userType == "ADMIN")
-                return videosRepository.GetVideosAllOwnedByUser(username);
+                return _videosRepository.GetVideosAllOwnedByUser(username);
             else
-                return videosRepository.GetVideosPublicOwnedByUser(username);
+                return _videosRepository.GetVideosPublicOwnedByUser(username);
         }
         public IEnumerable<Video> VideosLikedBy(string username)
         {
             var userType = (string)Session["loggedInUserUserType"];
             var loggedInUserUsername = (string)Session["loggedInUserUsername"];
             if (loggedInUserUsername == username)
-                return videosRepository.GetVideosAllLikedByUser(username);
+                return _videosRepository.GetVideosAllLikedByUser(username);
             else if (userType == "ADMIN")
-                return videosRepository.GetVideosAllLikedByUser(username);
+                return _videosRepository.GetVideosAllLikedByUser(username);
             else
-                return videosRepository.GetVideosPublicLikedByUser(username);
+                return _videosRepository.GetVideosPublicLikedByUser(username);
         }
         public IEnumerable<Video> SortVideos(IEnumerable<Video> videos, string sortOrder)
         {
@@ -116,9 +122,9 @@ namespace MyTube.Controllers
             IEnumerable<Video> videos = null;
             var userType = (string)Session["loggedInUserUserType"];
             if (userType == "ADMIN")
-                videos = videosRepository.GetNVideosWithout(6, (long)id);
+                videos = _videosRepository.GetNVideosWithout(6, (long)id);
             else
-                videos = videosRepository.GetNPublicVideosWithout(6, (long)id);
+                videos = _videosRepository.GetNPublicVideosWithout(6, (long)id);
 
             IEnumerable<VideoDTO> videosDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
@@ -130,11 +136,11 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (videosRepository.GetVideoById(id) == null)
+            if (_videosRepository.GetVideoById(id) == null)
             {
                 return null;
             }
-            videosRepository.BlockVideo(id);
+            _videosRepository.BlockVideo(id);
             ViewBag.Message = "Video has been successfully blocked.";
             return PartialView("MessageModal");
         }
@@ -146,11 +152,11 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (videosRepository.GetVideoById(id) == null)
+            if (_videosRepository.GetVideoById(id) == null)
             {
                 return null;
             }
-            videosRepository.UnblockVideo(id);
+            _videosRepository.UnblockVideo(id);
             ViewBag.Message = "Video has been successfully unblocked.";
             return PartialView("MessageModal");
         }
@@ -162,19 +168,19 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (videosRepository.GetVideoById(id) == null)
+            if (_videosRepository.GetVideoById(id) == null)
             {
                 return null;
             }
-            videosRepository.DeleteVideo(id);
+            _videosRepository.DeleteVideo(id);
             ViewBag.Message = "Video has been successfully deleted.";
             return PartialView("MessageModal");
         }
         public ActionResult EditVideoForm(long? id)
         {
-            var video = videosRepository.GetVideoById(id);
+            var video = _videosRepository.GetVideoById(id);
             EditVideoModel evm = EditVideoModel.EditVideoModalFromVideo(video);
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(evm.VideoType);
+            ViewBag.VideoType = GetVideoTypesAndSelect(evm.VideoType);
 
             return PartialView(evm);
         }
@@ -188,17 +194,17 @@ namespace MyTube.Controllers
             }
             if (ModelState.IsValid)
             {
-                var video = videosRepository.GetVideoById(evm.VideoID);
+                var video = _videosRepository.GetVideoById(evm.VideoID);
                 if (video == null)
                 {
                     return null;
                 }
                 video.UpdateVideoFromEditVideoModel(evm);
-                videosRepository.UpdateVideo(video);
+                _videosRepository.UpdateVideo(video);
                 ViewBag.Message = "Video has been successfully edited.";
                 return PartialView("MessageModal");
             }
-            ViewBag.VideoType = videoTypesRepository.GetVideoTypesSelectListAndSelect(evm.VideoType);
+            ViewBag.VideoType = GetVideoTypesAndSelect(evm.VideoType);
             return PartialView(evm);
         }
 
@@ -211,21 +217,21 @@ namespace MyTube.Controllers
             }
             if (image == null)
             {
-                return View(videosRepository.GetVideoById(videoId));
+                return View(_videosRepository.GetVideoById(videoId));
             }
             if (image.ContentLength > 0)
             {
                 var extension = Path.GetExtension(image.FileName);
                 var path = Path.Combine(Server.MapPath("~/Pictures/videos"), videoId + extension);
                 var finalUrl = "/Pictures/videos/" + videoId + extension;
-                var video = videosRepository.GetVideoById(videoId);
+                var video = _videosRepository.GetVideoById(videoId);
                 if (video == null)
                 {
                     return RedirectToAction("Error", "Home");
                 }
                 DeleteExistingPictures(videoId);
                 video.ThumbnailUrl = finalUrl;
-                videosRepository.UpdateVideo(video);
+                _videosRepository.UpdateVideo(video);
                 image.SaveAs(path);
             }
             return RedirectToAction("VideoPage/" + videoId, "Home");
@@ -256,23 +262,14 @@ namespace MyTube.Controllers
             {
                 return RedirectToAction("Error", "Home");
             }
-            var video = videosRepository.GetVideoById(videoId);
+            var video = _videosRepository.GetVideoById(videoId);
             if (video == null)
             {
                 return RedirectToAction("Error", "Home");
             }
             video.ThumbnailUrl = ThumbnailUrl;
-            videosRepository.UpdateVideo(video);
+            _videosRepository.UpdateVideo(video);
             return RedirectToAction("VideoPage/" + videoId, "Home");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
         public bool LoggedInUserExists()
         {

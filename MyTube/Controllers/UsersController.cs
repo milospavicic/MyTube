@@ -11,15 +11,18 @@ namespace MyTube.Controllers
 {
     public class UsersController : Controller
     {
-        private MyTubeDBEntities db = new MyTubeDBEntities();
-        private UsersRepository usersRepository;
-        private UserTypesRepository userTypesRepository;
-        private SubscribeRepository subscribeRepository;
-        public UsersController()
+        private IUsersRepository _usersRepository;
+        public SelectList GetUserTypesAndSelect(string currentType)
         {
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
-            this.userTypesRepository = new UserTypesRepository(new MyTubeDBEntities());
-            this.subscribeRepository = new SubscribeRepository(new MyTubeDBEntities());
+            using (var userTypesRepository = new UserTypesRepository(new MyTubeDBEntities()))
+            {
+                var userType = userTypesRepository.GetUserTypes();
+                return new SelectList(userType, "TypeName", "TypeName", currentType);
+            }
+        }
+        public UsersController(IUsersRepository usersRepository)
+        {
+            this._usersRepository = usersRepository;
 
             CheckLoggedInUser();
         }
@@ -32,7 +35,7 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = _usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -48,7 +51,7 @@ namespace MyTube.Controllers
         public ActionResult IndexPageUsers()
         {
             var currentUserUsername = (string)Session["loggedInUserUsername"];
-            var users = usersRepository.GetNUsersWithout(6, currentUserUsername);
+            var users = _usersRepository.GetNUsersWithout(6, currentUserUsername);
             var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
             return PartialView(usersDTO);
@@ -62,7 +65,7 @@ namespace MyTube.Controllers
 
         public ActionResult Login(User user)
         {
-            if (usersRepository.Login(user))
+            if (_usersRepository.Login(user))
             {
                 StoreInSession(user.Username);
                 return PartialView("LoginSuccess");
@@ -80,14 +83,14 @@ namespace MyTube.Controllers
         }
         public void StoreInSession(string username)
         {
-            User loggedInUser = usersRepository.GetUserByUsername(username);
+            User loggedInUser = _usersRepository.GetUserByUsername(username);
             Session.Add("loggedInUserUsername", loggedInUser.Username);
             Session.Add("loggedInUserUserType", loggedInUser.UserType);
             Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
         }
         public ActionResult OneUserForAdminPage(string id)
         {
-            var user = usersRepository.GetUserByUsername(id);
+            var user = _usersRepository.GetUserByUsername(id);
             var userDTO = UserDTO.ConvertUserToDTO(user);
             return PartialView(userDTO);
         }
@@ -109,11 +112,11 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (usersRepository.GetUserByUsername(id) == null)
+            if (_usersRepository.GetUserByUsername(id) == null)
             {
                 return null;
             }
-            usersRepository.BlockUser(id);
+            _usersRepository.BlockUser(id);
             ViewBag.Message = "User has been successfully blocked.";
             return PartialView("MessageModal");
         }
@@ -125,11 +128,11 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (usersRepository.GetUserByUsername(id) == null)
+            if (_usersRepository.GetUserByUsername(id) == null)
             {
                 return null;
             }
-            usersRepository.UnblockUser(id);
+            _usersRepository.UnblockUser(id);
             ViewBag.Message = "User has been successfully unblocked.";
             return PartialView("MessageModal");
         }
@@ -141,18 +144,18 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            if (usersRepository.GetUserByUsername(id) == null)
+            if (_usersRepository.GetUserByUsername(id) == null)
             {
                 return null;
             }
-            usersRepository.DeleteUser(id);
+            _usersRepository.DeleteUser(id);
             ViewBag.Message = "User has been successfully deleted.";
             return PartialView("MessageModal");
         }
         public ActionResult EditUserForm(string id)
         {
-            EditUserModel userToEdit = EditUserModel.EditUserModalFromUser(usersRepository.GetUserByUsername(id));
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(userToEdit.UserType);
+            EditUserModel userToEdit = EditUserModel.EditUserModalFromUser(_usersRepository.GetUserByUsername(id));
+            ViewBag.UserType = GetUserTypesAndSelect(userToEdit.UserType);
             return PartialView("EditUserForm", userToEdit);
         }
         [HttpPost]
@@ -166,17 +169,17 @@ namespace MyTube.Controllers
 
             if (ModelState.IsValid)
             {
-                User editedUser = usersRepository.GetUserByUsername(id);
+                User editedUser = _usersRepository.GetUserByUsername(id);
                 if (editedUser == null)
                 {
                     return null;
                 }
                 editedUser = EditUserModel.UpdateUserFromEditUserModel(eum, editedUser);
-                usersRepository.UpdateUser(editedUser);
+                _usersRepository.UpdateUser(editedUser);
                 ViewBag.Message = "User has been successfully edited.";
                 return PartialView("MessageModal");
             }
-            ViewBag.UserType = userTypesRepository.GetUserTypesSelectListAndSelect(eum.UserType);
+            ViewBag.UserType = GetUserTypesAndSelect(eum.UserType);
             return PartialView(eum);
 
         }
@@ -193,16 +196,16 @@ namespace MyTube.Controllers
             var userType = (string)Session["loggedInUserUserType"];
             var loggedInUserUsername = (string)Session["loggedInUserUsername"];
             if (loggedInUserUsername == username)
-                return usersRepository.GetAllUsersFollowedBy(username);
+                return _usersRepository.GetAllUsersFollowedBy(username);
             else if (userType == "ADMIN")
-                return usersRepository.GetAllUsersFollowedBy(username);
+                return _usersRepository.GetAllUsersFollowedBy(username);
             else
-                return usersRepository.GetAllAvaiableUsersFollowedBy(username);
+                return _usersRepository.GetAllAvaiableUsersFollowedBy(username);
 
         }
         public ActionResult ChannelPageInfoPartial(string id)
         {
-            var user = usersRepository.GetUserByUsername(id);
+            var user = _usersRepository.GetUserByUsername(id);
             var userDTO = UserDTO.ConvertUserToDTO(user);
             return PartialView(userDTO);
         }
@@ -212,21 +215,24 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            User currentUser = usersRepository.GetUserByUsername((string)Session["loggedInUserUsername"]);
-
-            bool exists = subscribeRepository.SubscriptionExists(id, currentUser.Username);
-            if (exists)
+            var currentUser = (string)Session["loggedInUserUsername"];
+            using (var subscribeRepository = new SubscribeRepository(new MyTubeDBEntities()))
             {
-                subscribeRepository.DeleteSubscription(id, currentUser.Username);
+                bool exists = subscribeRepository.SubscriptionExists(id, currentUser);
+                if (exists)
+                {
+                    subscribeRepository.DeleteSubscription(id, currentUser);
 
-            }
-            else
-            {
-                subscribeRepository.NewSubscription(id, currentUser.Username);
+                }
+                else
+                {
+                    subscribeRepository.NewSubscription(id, currentUser);
 
+                }
+                User userSubscribedTo = _usersRepository.GetUserByUsername(id);
+                return Json(new { subStatus = exists, subCount = userSubscribedTo.SubscribersCount }, JsonRequestBehavior.AllowGet);
             }
-            User userSubscribedTo = usersRepository.GetUserByUsername(id);
-            return Json(new { subStatus = exists, subCount = userSubscribedTo.SubscribersCount }, JsonRequestBehavior.AllowGet);
+
         }
 
 
@@ -246,14 +252,14 @@ namespace MyTube.Controllers
                 var extension = Path.GetExtension(image.FileName);
                 var path = Path.Combine(Server.MapPath("~/Pictures/users"), username + extension);
                 var finalUrl = "/Pictures/users/" + username + extension;
-                var user = usersRepository.GetUserByUsername(username);
+                var user = _usersRepository.GetUserByUsername(username);
                 if (user == null)
                 {
                     return RedirectToAction("Error", "Home");
                 }
                 DeleteExistingPictures(username);
                 user.ProfilePictureUrl = finalUrl;
-                usersRepository.UpdateUser(user);
+                _usersRepository.UpdateUser(user);
                 image.SaveAs(path);
             }
             return Redirect(Request.UrlReferrer.ToString());
@@ -284,13 +290,13 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            var user = usersRepository.GetUserByUsername(username);
+            var user = _usersRepository.GetUserByUsername(username);
             if (user == null)
             {
                 return RedirectToAction("Error", "Home");
             }
             user.ProfilePictureUrl = ProfilePictureUrl;
-            usersRepository.UpdateUser(user);
+            _usersRepository.UpdateUser(user);
 
             return Redirect(Request.UrlReferrer.ToString());
         }
@@ -313,7 +319,7 @@ namespace MyTube.Controllers
             {
                 return PartialView(npm);
             }
-            var user = usersRepository.GetUserByUsername(id);
+            var user = _usersRepository.GetUserByUsername(id);
             if (user == null)
             {
                 return null;
@@ -334,19 +340,11 @@ namespace MyTube.Controllers
                 return PartialView(npm);
             }
             user.Pass = npm.NewPassword;
-            usersRepository.UpdateUser(user);
+            _usersRepository.UpdateUser(user);
             ViewBag.Message = "Password has been successfully changed.";
             return PartialView("MessageModal");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
         public bool LoggedInUserExists()
         {
             if (Session["loggedInUserStatus"] != null)

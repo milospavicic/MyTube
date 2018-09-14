@@ -65,10 +65,6 @@ function loadVideos(ownedOrLikedVideos) {
         method: "GET",  // post
         data: data,
         success: function (partialResult) {
-            if (partialResult === null || partialResult === '') {
-                errorPage();
-                return;
-            }
             console.log("return value loadVideos");
             $("#mainDiv").html(partialResult);
         }
@@ -80,10 +76,6 @@ function loadUsers() {
         url: "/Users/ChannelPageUsersPartial/" + channelName,
         method: "GET",  // post
         success: function (partialResult) {
-            if (partialResult === null || partialResult === '') {
-                errorPage();
-                return;
-            }
             console.log("return value loadUsers");
             $("#mainDiv").html(partialResult);
         }

@@ -3,7 +3,7 @@ using System;
 
 namespace MyTube.Repository
 {
-    interface IVideoRatingRepository : IDisposable
+    public interface IVideoRatingRepository : IDisposable
     {
         bool RatingExistsForVideo(long videoId, string username);
 

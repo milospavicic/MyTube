@@ -10,16 +10,11 @@ namespace MyTube.Controllers
 {
     public class CommentsController : Controller
     {
-        private MyTubeDBEntities db = new MyTubeDBEntities();
-        private VideosRepository videosRepository;
-        private CommentsRepository commentsRepository;
-        private UsersRepository usersRepository;
+        private ICommentsRepository _commentsRepository;
 
-        public CommentsController()
+        public CommentsController(ICommentsRepository commentsRepository)
         {
-            this.videosRepository = new VideosRepository(new MyTubeDBEntities());
-            this.commentsRepository = new CommentsRepository(new MyTubeDBEntities());
-            this.usersRepository = new UsersRepository(new MyTubeDBEntities());
+            this._commentsRepository = commentsRepository;
             CheckLoggedInUser();
         }
         private void CheckLoggedInUser()
@@ -30,7 +25,11 @@ namespace MyTube.Controllers
             }
             else
             {
-                User loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                User loggedInUser = null;
+                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
+                {
+                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
+                }
                 if (loggedInUser == null)
                 {
                     Session.Abandon();
@@ -45,20 +44,28 @@ namespace MyTube.Controllers
         }
         public ActionResult CommentSection(long? id, string sortOrder)
         {
-            ViewBag.VideoId = id;
-            var video = videosRepository.GetVideoById(id);
-            ViewBag.VideoOwner = video.VideoOwner;
-            ViewBag.CommentsEnabled = video.CommentsEnabled;
+            VideoPageDetailsForCommentSection((long)id);
+
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "latest" : "";
             ViewBag.Values = Comment.CommentsSortOrderSelectList();
             if (id == null)
             {
                 return PartialView();
             }
-            var comments = commentsRepository.GetAllCommentsForVideo((long)id);
+            var comments = _commentsRepository.GetAllCommentsForVideo((long)id);
             comments = SortComments(comments, sortOrder);
             var commentsDTO = CommentDTO.ConvertCollectionCommentToDTO(comments);
             return PartialView(commentsDTO);
+        }
+        public void VideoPageDetailsForCommentSection(long id)
+        {
+            using (var videosRepository = new VideosRepository(new MyTubeDBEntities()))
+            {
+                ViewBag.VideoId = id;
+                var video = videosRepository.GetVideoById(id);
+                ViewBag.VideoOwner = video.VideoOwner;
+                ViewBag.CommentsEnabled = video.CommentsEnabled;
+            }
         }
         public IEnumerable<Comment> SortComments(IEnumerable<Comment> comments, string sortOrder)
         {
@@ -96,7 +103,7 @@ namespace MyTube.Controllers
             }
             comment.CommentOwner = currentUser;
             comment.DatePosted = DateTime.Now;
-            commentsRepository.CreateComment(comment);
+            _commentsRepository.CreateComment(comment);
 
             ViewBag.Values = Comment.CommentsSortOrderSelectList();
             var cdto = CommentDTO.ConvertCommentToDTO(comment);
@@ -114,13 +121,13 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            Comment comment = commentsRepository.GetCommentById((long)id);
+            Comment comment = _commentsRepository.GetCommentById((long)id);
             if (comment == null)
             {
                 return null;
             }
             comment.CommentText = text;
-            commentsRepository.UpdateComment(comment);
+            _commentsRepository.UpdateComment(comment);
             ViewBag.Message = "Comment has been successfully edited.";
             return PartialView("MessageModal");
 
@@ -131,19 +138,10 @@ namespace MyTube.Controllers
             {
                 return null;
             }
-            commentsRepository.DeleteComment(id);
+            _commentsRepository.DeleteComment(id);
             ViewBag.Message = "Comment has been successfully deleted.";
             return PartialView("MessageModal");
 
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
         public bool LoggedInUserExists()
         {
