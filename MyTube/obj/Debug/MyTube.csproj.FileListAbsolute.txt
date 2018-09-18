@@ -209,3 +209,7 @@ D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\Unity.Interception.pdb
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\Unity.Interception.Configuration.pdb
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\Unity.RegistrationByConvention.pdb
 D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\Unity.ServiceLocation.pdb
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\PagedList.dll
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\PagedList.Mvc.dll
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\PagedList.xml
+D:\Skola\Fax\workspaces\workspaceVS\MyTube\MyTube\bin\PagedList.Mvc.xml

@@ -209,3 +209,22 @@
 #headerDiv{
     margin-left: 5%;
 }
+
+.pagination {
+    margin-left: 5%;
+}
+
+.pagination li a {
+    border-color: silver;
+    color: dimgray;
+}
+
+.pagination .active a {
+    color: white;
+    background-color: red;
+    border-color: grey;
+}
+
+.pagination .active a:hover {
+    background-color: darkred;
+}

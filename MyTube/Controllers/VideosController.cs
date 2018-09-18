@@ -122,9 +122,9 @@ namespace MyTube.Controllers
             IEnumerable<Video> videos = null;
             var userType = (string)Session["loggedInUserUserType"];
             if (userType == "ADMIN")
-                videos = _videosRepository.GetNVideosWithout(6, (long)id);
+                videos = _videosRepository.GetNRandomVideosWithout(6, (long)id);
             else
-                videos = _videosRepository.GetNPublicVideosWithout(6, (long)id);
+                videos = _videosRepository.GetNRandomPublicVideosWithout(6, (long)id);
 
             IEnumerable<VideoDTO> videosDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
 

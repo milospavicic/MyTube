@@ -1,4 +1,5 @@
 ﻿using MyTube.Models;
+using PagedList;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -77,6 +78,23 @@ namespace MyTube.DTO
             }
             IEnumerable<UserDTO> iListDTO = listDTO;
             return iListDTO;
+        }
+        public static PagedList<UserDTO> ConvertCollectionUserToDTOPagedList(IEnumerable<User> users, int? page)
+        {
+            List<UserDTO> listDTO = new List<UserDTO>();
+            foreach (var item in users)
+            {
+                listDTO.Add(ConvertUserToDTO(item));
+            }
+            var pageNumber = page ?? 1;
+            var videoCountPerPage = 10;
+            PagedList<UserDTO> pagelistDTO = new PagedList<UserDTO>(listDTO, pageNumber, videoCountPerPage);
+            while (pagelistDTO.Count() == 0)
+            {
+                pageNumber = 1;
+                pagelistDTO = new PagedList<UserDTO>(listDTO, pageNumber, videoCountPerPage); ;
+            }
+            return pagelistDTO;
         }
     }
 }

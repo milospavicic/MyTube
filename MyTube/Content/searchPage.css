@@ -84,6 +84,7 @@
 .pagination .active a{
     color: white;
     background-color: red;
+    border-color: grey;
 }
 .pagination .active a:hover{
     background-color: darkred;

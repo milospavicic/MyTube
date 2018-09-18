@@ -1,4 +1,7 @@
-﻿@model IEnumerable<MyTube.DTO.VideoDTO>
+﻿@*@model IEnumerable<MyTube.DTO.VideoDTO>*@
+@using PagedList;
+@using PagedList.Mvc;
+@model PagedList.IPagedList<MyTube.DTO.VideoDTO>
 @{
     ViewBag.Title = "SearchPage";
 }
@@ -34,6 +37,9 @@
                 </ul>
             </div>
         }
+    </div>
+    <div>
+        @Html.PagedListPager(Model,page=> Url.Action("SearchPage",new { page = page }))
     </div>
 </body>
 </html>

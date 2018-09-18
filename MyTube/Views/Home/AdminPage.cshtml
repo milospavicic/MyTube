@@ -1,4 +1,7 @@
-﻿@model IEnumerable<MyTube.DTO.UserDTO>
+﻿@*@model IEnumerable<MyTube.DTO.UserDTO>*@
+@using PagedList;
+@using PagedList.Mvc;
+@model PagedList.IPagedList<MyTube.DTO.UserDTO>
 @{
     ViewBag.Title = "AdminPage";
 }
@@ -135,16 +138,16 @@
     </div>
     @using (Html.BeginForm("AdminPage", "Home", FormMethod.Post, new { id = "SortAndSearchUsersForm" }))
     {
-    <div id="headerDiv">
-        <div class="input-group" id="searchUserBar">
-            <input type="text" name="searchString" class="form-control" placeholder="Search users" autocomplete="off" id="searchInputField" value="@ViewBag.SearchString">
-            <span class="input-group-btn"><input class="btn btn-danger" type="submit" id="submitSearchAndSort" onclick="sortAndSearchUsers()" value="Submit"></span>
+        <div id="headerDiv">
+            <div class="input-group" id="searchUserBar">
+                <input type="text" name="searchString" class="form-control" placeholder="Search users" autocomplete="off" id="searchInputField" value="@ViewBag.SearchString">
+                <span class="input-group-btn"><input class="btn btn-danger" type="submit" id="submitSearchAndSort" onclick="sortAndSearchUsers()" value="Submit"></span>
+            </div>
+            <div id="sortDiv">
+                @Html.DropDownList("sortOrder", new SelectList(ViewBag.Values, "Value", "Text"), new { onchange = "this.form.submit();" })
+            </div>
         </div>
-        <div id="sortDiv"> 
-            @Html.DropDownList("sortOrder", new SelectList(ViewBag.Values, "Value", "Text"), new { onchange = "this.form.submit();" })
-        </div>
-    </div>
-        
+
     }
 
     <div class="row">
@@ -184,6 +187,9 @@
                 </div>
             </div>
         }
+    </div>
+    <div id="pagginationDiv">
+        @Html.PagedListPager(Model, page => Url.Action("AdminPage", new { page = page }))
     </div>
 </body>
 </html>

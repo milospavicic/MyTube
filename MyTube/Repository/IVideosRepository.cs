@@ -6,10 +6,10 @@ namespace MyTube.Repository
 {
     public interface IVideosRepository : IDisposable
     {
-        IEnumerable<Video> GetNVideos(int n);
-        IEnumerable<Video> GetNVideosWithout(int n, long videoId);
-        IEnumerable<Video> GetNPublicVideos(int n);
-        IEnumerable<Video> GetNPublicVideosWithout(int n, long videoId);
+        IEnumerable<Video> GetNRandomVideos(int n);
+        IEnumerable<Video> GetNRandomVideosWithout(int n, long videoId);
+        IEnumerable<Video> GetNRandomPublicVideos(int n);
+        IEnumerable<Video> GetNRandomPublicVideosWithout(int n, long videoId);
         IEnumerable<Video> GetVideosAll();
         IEnumerable<Video> GetVideosPublic();
         IEnumerable<Video> GetVideosAllOwnedByUser(string username);

@@ -15,24 +15,24 @@ namespace MyTube.Repository
         {
             this.db = db;
         }
-        public IEnumerable<Video> GetNVideos(int n)
+        public IEnumerable<Video> GetNRandomVideos(int n)
         {
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false).OrderBy(x => x.ViewsCount).OrderBy(x => Guid.NewGuid()).Take(n);
             return videos;
         }
-        public IEnumerable<Video> GetNVideosWithout(int n, long videoId)
+        public IEnumerable<Video> GetNRandomVideosWithout(int n, long videoId)
         {
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.VideoID != videoId).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.VideoID != videoId).OrderBy(x => Guid.NewGuid()).Take(n);
             return videos;
         }
-        public IEnumerable<Video> GetNPublicVideos(int n)
+        public IEnumerable<Video> GetNRandomPublicVideos(int n)
         {
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO).OrderBy(x => Guid.NewGuid()).Take(n);
             return videos;
         }
-        public IEnumerable<Video> GetNPublicVideosWithout(int n, long videoId)
+        public IEnumerable<Video> GetNRandomPublicVideosWithout(int n, long videoId)
         {
-            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO && x.VideoID != videoId).Take(n);
+            var videos = db.Videos.Where(x => x.Deleted == false && x.Blocked == false && x.User.Deleted == false && x.User.Blocked == false && x.VideoType == PUBLIC_VIDEO && x.VideoID != videoId).OrderBy(x => Guid.NewGuid()).Take(n);
             return videos;
         }
         public IEnumerable<Video> GetVideosAll()

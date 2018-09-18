@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-
 namespace MyTube.Controllers
 {
     public class HomeController : Controller
@@ -59,9 +58,9 @@ namespace MyTube.Controllers
         {
             IEnumerable<Video> videos = null;
             if (LoggedInUserIsAdmin())
-                videos = _videosRepository.GetNVideos(6);
+                videos = _videosRepository.GetNRandomVideos(6);
             else
-                videos = _videosRepository.GetNPublicVideos(6);
+                videos = _videosRepository.GetNRandomPublicVideos(6);
 
             IEnumerable<VideoDTO> vdto = VideoDTO.ConvertCollectionVideoToDTO(videos);
 
@@ -144,7 +143,7 @@ namespace MyTube.Controllers
             }
             return false;
         }
-        public ActionResult AdminPage(string sortOrder, string searchString)
+        public ActionResult AdminPage(string sortOrder, string searchString, int? page)
         {
             if (!CheckIfPermited()) { return RedirectToAction("Index", "Home"); }
 
@@ -156,7 +155,7 @@ namespace MyTube.Controllers
 
             ViewBag.Values = Models.User.UsersSortOrderSelectList();
 
-            var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
+            var usersDTO = UserDTO.ConvertCollectionUserToDTOPagedList(users, page);
             return View(usersDTO);
         }
         public bool CheckIfPermited()
@@ -223,7 +222,7 @@ namespace MyTube.Controllers
             }
             return users;
         }
-        public ActionResult SearchPage(string id, string sortOrder)
+        public ActionResult SearchPage(string id, string sortOrder, int? page)
         {
             if (id == null)
             {
@@ -233,7 +232,8 @@ namespace MyTube.Controllers
             var videos = GetVideosAccordingToUserType(id);
             ViewBag.SortOrder = String.IsNullOrEmpty(sortOrder) ? "latest" : "";
             videos = SortVideos(videos, sortOrder);
-            var videoDTO = VideoDTO.ConvertCollectionVideoToDTO(videos);
+            var videoDTO = VideoDTO.ConvertCollectionVideoToDTOPagedList(videos, page);
+
             return View(videoDTO);
         }
         public IEnumerable<Video> GetVideosAccordingToUserType(string searchString)

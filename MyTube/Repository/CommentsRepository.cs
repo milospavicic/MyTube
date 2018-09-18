@@ -17,7 +17,7 @@ namespace MyTube.Repository
 
         public IEnumerable<Comment> GetAllCommentsForVideo(long id)
         {
-            return db.Comments.Where(x => x.VideoID == id && x.Deleted == false);
+            return db.Comments.Where(x => x.VideoID == id && x.Deleted == false && x.User.Blocked == false && x.User.Deleted == false);
         }
 
         public Comment GetCommentById(long id)
