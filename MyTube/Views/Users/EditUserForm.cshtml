@@ -1,4 +1,5 @@
-﻿@model MyTube.Models.EditUserModel
+﻿@using MyTube.Helpers;
+@model MyTube.Models.EditUserModel
 @{
     ViewBag.Title = "EditUserForm";
 }
@@ -17,7 +18,7 @@
             @Html.EditorFor(model => model.Lastname, new { htmlAttributes = new { @class = "form-control", @placeholder = " Enter Last Name" } })
             @Html.ValidationMessageFor(model => model.Lastname, "", new { @class = "text-danger" })
         </div>
-        @if ((string)Session["loggedInUserUserType"] == "ADMIN" && (string)Session["loggedInUserUsername"] != Model.Username)
+        @if (UsersHelper.LoggedInUserIsAdmin(Session) && UsersHelper.LoggedInUserIsOnHisPage(Session,Model.Username))
         {
             @Html.LabelFor(model => model.UserType, "UserType", htmlAttributes: new { @class = "control-label col-md-12" })
             <div class="col-md-12">

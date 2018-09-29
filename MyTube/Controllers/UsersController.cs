@@ -1,4 +1,6 @@
-﻿using MyTube.DTO;
+﻿using MyTube.App_Start;
+using MyTube.DTO;
+using MyTube.Helpers;
 using MyTube.Models;
 using MyTube.Repository;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Web.Mvc;
 
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class UsersController : Controller
     {
         private IUsersRepository _usersRepository;
@@ -23,34 +26,10 @@ namespace MyTube.Controllers
         public UsersController(IUsersRepository usersRepository)
         {
             this._usersRepository = usersRepository;
-
-            CheckLoggedInUser();
-        }
-
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = _usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
         }
         public ActionResult IndexPageUsers()
         {
-            var currentUserUsername = (string)Session["loggedInUserUsername"];
+            var currentUserUsername = UsersHelper.LoggedInUserUsername(Session);
             var users = _usersRepository.GetNUsersWithout(6, currentUserUsername);
             var usersDTO = UserDTO.ConvertCollectionUserToDTO(users);
 
@@ -84,9 +63,13 @@ namespace MyTube.Controllers
         public void StoreInSession(string username)
         {
             User loggedInUser = _usersRepository.GetUserByUsername(username);
-            Session.Add("loggedInUserUsername", loggedInUser.Username);
-            Session.Add("loggedInUserUserType", loggedInUser.UserType);
-            Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
+            var currentUser = new UserSessionModel
+            {
+                Username = loggedInUser.Username,
+                UserType = loggedInUser.UserType,
+                Blocked = loggedInUser.Blocked
+            };
+            Session.Add(UsersHelper.loggedInUser, currentUser);
         }
         public ActionResult OneUserForAdminPage(string id)
         {
@@ -108,7 +91,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult BlockUser(string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -124,7 +107,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult UnblockUser(string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -140,7 +123,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult DeleteUser(string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -162,7 +145,7 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditUserForm([Bind(Include = "Firstname,Lastname,UserType,Email,UserDescription")] EditUserModel eum, string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -193,8 +176,8 @@ namespace MyTube.Controllers
 
         public IEnumerable<User> UsersFollowedBy(string username)
         {
-            var userType = (string)Session["loggedInUserUserType"];
-            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            var userType = UsersHelper.LoggedInUserUserType(Session);
+            var loggedInUserUsername = UsersHelper.LoggedInUserUsername(Session);
             if (loggedInUserUsername == username)
                 return _usersRepository.GetAllUsersFollowedBy(username);
             else if (userType == "ADMIN")
@@ -211,11 +194,11 @@ namespace MyTube.Controllers
         }
         public JsonResult Subscribe(string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
-            var currentUser = (string)Session["loggedInUserUsername"];
+            var currentUser = UsersHelper.LoggedInUserUsername(Session);
             using (var subscribeRepository = new SubscribeRepository(new MyTubeDBEntities()))
             {
                 bool exists = subscribeRepository.SubscriptionExists(id, currentUser);
@@ -239,7 +222,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUpload(HttpPostedFileBase image, string username)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -282,7 +265,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUrl(string username, string ProfilePictureUrl)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -311,7 +294,7 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult NewPassword([Bind(Include = "OldPassword,NewPassword,ConfirmNewPassword")] NewPasswordModel npm, string id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -343,19 +326,6 @@ namespace MyTube.Controllers
             _usersRepository.UpdateUser(user);
             ViewBag.Message = "Password has been successfully changed.";
             return PartialView("MessageModal");
-        }
-
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
         }
     }
 }

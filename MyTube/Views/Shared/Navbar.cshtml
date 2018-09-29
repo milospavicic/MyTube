@@ -1,8 +1,8 @@
-﻿@model MyTube.DTO.UserDTO
+﻿@using MyTube.Helpers;
 @{
     ViewBag.Title = "Navbar";
 }
-@if (Model == null)
+@if (UsersHelper.LoggedInUserUsername(Session) == null)
 {
     <ul class="nav navbar-nav navbar-right" id="navbarNotLoggedIn">
         <li><a data-toggle="modal" href="#login-modal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -18,7 +18,7 @@
 else
 {
     <ul class="nav navbar-nav navbar-right" id="navbarLoggedIn">
-        @if (!Model.Blocked)
+        @if (!UsersHelper.LoggedInUserIsBlocked(Session))
         {
             <li><a href="@Url.Action("NewVideo", "Home")" id="uploadVideo"><span class="glyphicon glyphicon-upload"></span> Upload</a></li>
         }
@@ -29,14 +29,14 @@ else
 
         <li class="dropdown">
             <!-- Link koji otvara dropdown listu -->
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"><span class="glyphicon glyphicon-user"></span> @Model.Username <span class="caret"></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="userNameTab"><span class="glyphicon glyphicon-user"></span> @UsersHelper.LoggedInUserUsername(Session) <span class="caret"></span></a>
             <!-- Lista koja se pojavljuje i sakriva na klik -->
             <ul class="dropdown-menu" id="mainDropdown">
-                @if (Model.UserType == "ADMIN" && Model.Blocked != true)
+                @if (UsersHelper.LoggedInUserIsAdmin(Session) && !UsersHelper.LoggedInUserIsBlocked(Session))
                 {
                     <li><a href="@Url.Action("AdminPage", "Home")" target="_self" id="users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
                 }
-                <li><a id="myChannel" href="@Url.Action("ChannelPage/"+Model.Username, "Home")" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
+                <li><a id="myChannel" href="@Url.Action("ChannelPage/"+UsersHelper.LoggedInUserUsername(Session), "Home")" target="_self"><span class="glyphicon glyphicon-eye-open"></span> My Channel</a></li>
                 <li><a href="@Url.Action("Index", "Home")" target="_self"><span class="glyphicon glyphicon-time"></span> History</a></li>
                 <li><a href="@Url.Action("Index", "Home")" target="_self"><span class="glyphicon glyphicon-thumbs-up"></span> Liked</a></li>
             </ul>

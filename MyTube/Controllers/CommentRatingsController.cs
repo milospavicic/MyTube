@@ -1,4 +1,6 @@
-﻿using MyTube.DTO;
+﻿using MyTube.App_Start;
+using MyTube.DTO;
+using MyTube.Helpers;
 using MyTube.Models;
 using MyTube.Repository;
 using System;
@@ -6,6 +8,7 @@ using System.Web.Mvc;
 
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class CommentRatingsController : Controller
     {
         private ICommentRatingsRepository _commentRatingsRepository;
@@ -15,37 +18,10 @@ namespace MyTube.Controllers
         {
             this._commentRatingsRepository = commentRatingsRepository;
             this._commentsRepository = commentsRepository;
-
-            CheckLoggedInUser();
-        }
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = null;
-                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
-                {
-                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                }
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
         }
         public JsonResult CommentRatingsForVideo(long? id)
         {
-            var username = (string)Session["loggedInUserUsername"];
+            var username = UsersHelper.LoggedInUserUsername(Session);
             if (username != null)
             {
                 var crs = _commentRatingsRepository.GetCommentRatingsForVideo((long)id, username);
@@ -57,11 +33,11 @@ namespace MyTube.Controllers
         [HttpPost]
         public JsonResult CreateCommentRating(long commentId, bool newRating)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
-            string username = (string)Session["loggedInUserUsername"].ToString();
+            string username = UsersHelper.LoggedInUserUsername(Session);
             CommentRating cr = _commentRatingsRepository.GetCommentRating(commentId, username);
             if (cr != null)
             {
@@ -126,7 +102,7 @@ namespace MyTube.Controllers
         {
             CommentRating cr = new CommentRating
             {
-                LikeOwner = Session["loggedInUserUsername"].ToString(),
+                LikeOwner = UsersHelper.LoggedInUserUsername(Session),
                 CommentId = commentId,
                 LikeDate = DateTime.Now,
                 IsLike = newRating
@@ -146,18 +122,6 @@ namespace MyTube.Controllers
             string returnMessage = (newRating == true) ? "like" : "dislike";
 
             return Json(new { returnMessage, comment.LikesCount, comment.DislikesCount }, JsonRequestBehavior.AllowGet);
-        }
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
         }
     }
 }

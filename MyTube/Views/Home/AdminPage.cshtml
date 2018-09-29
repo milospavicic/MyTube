@@ -1,15 +1,10 @@
 ﻿@*@model IEnumerable<MyTube.DTO.UserDTO>*@
+@using MyTube.Helpers;
 @using PagedList;
 @using PagedList.Mvc;
 @model PagedList.IPagedList<MyTube.DTO.UserDTO>
 @{
     ViewBag.Title = "AdminPage";
-}
-@if ((string)Session["loggedInUserUserType"] != "ADMIN" || (string)Session["loggedInUserStatus"] == "True")
-{
-    <script>
-        window.location.href = '/Home/Index/';
-    </script>
 }
 <html>
 <head>
@@ -26,7 +21,7 @@
                 <div class="modal-footer" id="menuButtonsDiv">
                     <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" onclick="editModal(event)" id="editUserButtonEditMenu">Change basic info</button>
                     <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" href="#changeThumbnailModal" data-toggle="modal">Change profile picture</button>
-                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" onclick="newPasswordModal()">Change password</button>
+                    <button class="btn btn-danger col-md-12 col-sm-12 col-xs-12" onclick="newPasswordModal()" id="editPasswordButtonEditMenu">Change password</button>
                     <button class="btn btn-default col-md-12 col-sm-12 col-xs-12" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
@@ -153,7 +148,7 @@
     <div class="row">
         @foreach (var item in Model)
         {
-            if (item.Username == Session["loggedInUserUsername"].ToString()) { continue; }
+            if (UsersHelper.LoggedInUserIsOnHisPage(Session, item.Username)) { continue; }
 
 
             <div class="col-md-12 col-sm-12 col-xs-12" id="userDiv-@item.Username">

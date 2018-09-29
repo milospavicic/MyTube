@@ -1,12 +1,7 @@
-﻿@model MyTube.Models.Video
+﻿@using MyTube.Helpers;
+@model MyTube.Models.Video
 @{
     ViewBag.Title = "New Video";
-}
-@if (Session["loggedInUserStatus"] == null || (string)Session["loggedInUserStatus"] == "True")
-{
-    <script>
-        window.location.href = '/Home/Index/';
-    </script>
 }
 <html>
 <head>

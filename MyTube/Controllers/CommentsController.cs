@@ -1,4 +1,6 @@
-﻿using MyTube.DTO;
+﻿using MyTube.App_Start;
+using MyTube.DTO;
+using MyTube.Helpers;
 using MyTube.Models;
 using MyTube.Repository;
 using System;
@@ -8,6 +10,7 @@ using System.Web.Mvc;
 
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class CommentsController : Controller
     {
         private ICommentsRepository _commentsRepository;
@@ -15,32 +18,6 @@ namespace MyTube.Controllers
         public CommentsController(ICommentsRepository commentsRepository)
         {
             this._commentsRepository = commentsRepository;
-            CheckLoggedInUser();
-        }
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = null;
-                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
-                {
-                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                }
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
         }
         public ActionResult CommentSection(long? id, string sortOrder)
         {
@@ -92,11 +69,11 @@ namespace MyTube.Controllers
         }
         public ActionResult CreateComment(Comment comment)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
-            var currentUser = (string)Session["loggedInUserUsername"];
+            var currentUser = UsersHelper.LoggedInUserUsername(Session);
             if (currentUser == null)
             {
                 return null;
@@ -113,7 +90,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult EditComment(long? id, string text)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -134,25 +111,13 @@ namespace MyTube.Controllers
         }
         public ActionResult DeleteComment(long id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
             _commentsRepository.DeleteComment(id);
             ViewBag.Message = "Comment has been successfully deleted.";
             return PartialView("MessageModal");
-
-        }
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
 
         }
     }

@@ -1,4 +1,5 @@
-﻿@model MyTube.DTO.VideoDTO
+﻿@using MyTube.Helpers;
+@model MyTube.DTO.VideoDTO
 @{
     ViewBag.Title = "VideoPage";
 }
@@ -146,7 +147,7 @@
                     <p class="viewsCounter" id="vCounter">Views: @Model.ViewsCount</p>
                 </div>
                 <div class="viewsAndButton" id="buttonsDiv">
-                    @if (Model.CommentsEnabled != false || LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                    @if (Model.CommentsEnabled != false || UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, Model.VideoOwner))
                     {
                         <div class="btn-group" id="ldBtnGroup">
                             @if (ViewBag.Rating != null)
@@ -174,12 +175,12 @@
                         <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></button>
                         <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                         <ul class="dropdown-menu">
-                            @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                            @if (UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, Model.VideoOwner))
                             {
                                 <li id="editVideoOption"><a href="#editVideoModal" data-toggle="modal">Edit video</a></li>
                                 <li id="changeThubnailOption"><a href="#changeThumbnailModal" data-toggle="modal">Change Thumbnail</a></li>
                             }
-                            @if (LoggedInUserIsAdmin())
+                            @if (UsersHelper.LoggedInUserIsAdmin(Session))
                             {
                                 if (Model.Blocked != true)
                                 {
@@ -190,7 +191,7 @@
                                     <li id="unblockOptionVideo"><a href="#unblockVideoModal" data-toggle="modal">Unblock video</a></li>
                                 }
                             }
-                            @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                            @if (UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, Model.VideoOwner))
                             {
                                 <li id="deleteOptionVideo"><a href="#deleteVideoModal" data-toggle="modal">Delete video</a></li>
 
@@ -215,13 +216,13 @@
                             <li><p id="datePosted">Published on<br>@Model.DatePostedString</p></li>
                         </ul>
                     </a>
-                    @if (!LoggedInUserExists())
+                    @if (UsersHelper.LoggedInUserUsername(Session) == null)
                     {
                         <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
                     }
                     else
                     {
-                        if (!LoggedInUserIsOnHisPage())
+                        if (!UsersHelper.LoggedInUserIsOnHisPage(Session,Model.VideoOwner))
                         {
                             if (ViewBag.Subbed != true)
                             {
@@ -276,50 +277,3 @@
     </div>
 </body>
 </html>
-@functions{
-    public bool LoggedInUserExists()
-    {
-        if (Session["loggedInUserStatus"] != null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
-    }
-    public bool LoggedInUserIsAdmin()
-    {
-        if ((string)Session["loggedInUserUserType"] == "ADMIN")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsOnHisPage()
-    {
-        if ((string)Session["loggedInUserUsername"] == Model.VideoOwner)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsBlocked()
-    {
-        if ((string)Session["loggedInUserStatus"] == "True")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-}

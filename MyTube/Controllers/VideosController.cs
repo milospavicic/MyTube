@@ -1,4 +1,6 @@
-﻿using MyTube.DTO;
+﻿using MyTube.App_Start;
+using MyTube.DTO;
+using MyTube.Helpers;
 using MyTube.Models;
 using MyTube.Repository;
 using System;
@@ -10,6 +12,7 @@ using System.Web.Mvc;
 
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class VideosController : Controller
     {
         private IVideosRepository _videosRepository;
@@ -24,35 +27,7 @@ namespace MyTube.Controllers
         public VideosController(IVideosRepository videosRepository)
         {
             this._videosRepository = videosRepository;
-
-            CheckLoggedInUser();
         }
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = null;
-                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
-                {
-                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                }
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
-        }
-
         public ActionResult ChannelPageVideosPartial(string channelName, bool? ownedOrLikedVideos, string sortOrder)
         {
             IEnumerable<Video> videos = null;
@@ -74,8 +49,8 @@ namespace MyTube.Controllers
 
         public IEnumerable<Video> VideosPostedBy(string username)
         {
-            var userType = (string)Session["loggedInUserUserType"];
-            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            var userType = UsersHelper.LoggedInUserUserType(Session);
+            var loggedInUserUsername = UsersHelper.LoggedInUserUsername(Session);
             if (loggedInUserUsername == username)
                 return _videosRepository.GetVideosAllOwnedByUser(username);
             else if (userType == "ADMIN")
@@ -85,8 +60,8 @@ namespace MyTube.Controllers
         }
         public IEnumerable<Video> VideosLikedBy(string username)
         {
-            var userType = (string)Session["loggedInUserUserType"];
-            var loggedInUserUsername = (string)Session["loggedInUserUsername"];
+            var userType = UsersHelper.LoggedInUserUserType(Session);
+            var loggedInUserUsername = UsersHelper.LoggedInUserUsername(Session);
             if (loggedInUserUsername == username)
                 return _videosRepository.GetVideosAllLikedByUser(username);
             else if (userType == "ADMIN")
@@ -132,7 +107,7 @@ namespace MyTube.Controllers
         }
         public ActionResult BlockVideo(long? id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -148,7 +123,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult UnblockVideo(long? id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -164,7 +139,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult DeleteVideo(long? id)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -188,7 +163,7 @@ namespace MyTube.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditVideoForm([Bind(Include = "VideoID,VideoName,VideoDescription,VideoType,CommentsEnabled,RatingEnabled")] EditVideoModel evm)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
@@ -211,7 +186,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUpload(HttpPostedFileBase image, long? videoId)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -254,7 +229,7 @@ namespace MyTube.Controllers
         [HttpPost]
         public ActionResult ChangePictureUrl(long? videoId, string ThumbnailUrl)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -270,18 +245,6 @@ namespace MyTube.Controllers
             video.ThumbnailUrl = ThumbnailUrl;
             _videosRepository.UpdateVideo(video);
             return RedirectToAction("VideoPage/" + videoId, "Home");
-        }
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
         }
     }
 }

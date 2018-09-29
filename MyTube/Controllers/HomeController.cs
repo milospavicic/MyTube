@@ -1,4 +1,6 @@
-﻿using MyTube.DTO;
+﻿using MyTube.App_Start;
+using MyTube.DTO;
+using MyTube.Helpers;
 using MyTube.Models;
 using MyTube.Repository;
 using System;
@@ -8,12 +10,13 @@ using System.Net;
 using System.Web.Mvc;
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class HomeController : Controller
     {
 
         private IVideosRepository _videosRepository;
         private IUsersRepository _usersRepository;
-        private readonly string BASIC_PICTURE = "https://blog.stylingandroid.com/wp-content/themes/lontano-pro/images/no-image-slide.png";
+        private readonly string BASIC_PICTURE = "/Pictures/default_user.jpg";
         public SelectList VideoTypes
         {
             get
@@ -29,35 +32,12 @@ namespace MyTube.Controllers
         {
             this._videosRepository = videosRepository;
             this._usersRepository = usersRepository;
-
-            CheckLoggedInUser();
         }
 
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = _usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
-        }
         public ActionResult Index()
         {
             IEnumerable<Video> videos = null;
-            if (LoggedInUserIsAdmin())
+            if (UsersHelper.LoggedInUserIsAdmin(Session))
                 videos = _videosRepository.GetNRandomVideos(6);
             else
                 videos = _videosRepository.GetNRandomPublicVideos(6);
@@ -79,14 +59,14 @@ namespace MyTube.Controllers
             }
             if (currentVideo.Blocked == true || currentVideo.User.Blocked == true || currentVideo.VideoType == "PRIVATE")
             {
-                if (!(LoggedInUserIsAdmin() && !LoggedInUserIsBlocked()) && !LoggedInUserIsOnHisPage(currentVideo.VideoOwner))
+                if (!(UsersHelper.LoggedInUserIsAdmin(Session) && !UsersHelper.LoggedInUserIsBlocked(Session)) && !UsersHelper.LoggedInUserIsOnHisPage(Session, currentVideo.VideoOwner))
                 {
                     return View("Error");
                 }
             }
             currentVideo.ViewsCount += 1;
             _videosRepository.UpdateVideo(currentVideo);
-            if (Session["loggedInUserUsername"] != null)
+            if (UsersHelper.LoggedInUserUsername(Session) != null)
             {
                 bool exists = CheckIfSubbed(currentVideo.VideoOwner);
                 VideoRating rating = GetVideoRatingForVideo(id);
@@ -98,15 +78,15 @@ namespace MyTube.Controllers
         }
         public VideoRating GetVideoRatingForVideo(long? id)
         {
-            if (Session["loggedInUserUsername"] != null)
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
-                using (var videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities()))
-                {
-                    VideoRating rating = videoRatingRepository.GetVideoRating((long)id, Session["loggedInUserUsername"].ToString());
-                    return rating;
-                }
+                return null;
             }
-            return null;
+            using (var videoRatingRepository = new VideoRatingRepository(new MyTubeDBEntities()))
+            {
+                VideoRating rating = videoRatingRepository.GetVideoRating((long)id, UsersHelper.LoggedInUserUsername(Session));
+                return rating;
+            }
         }
         public ActionResult ChannelPage(string id)
         {
@@ -121,27 +101,28 @@ namespace MyTube.Controllers
             }
             if (user.Blocked == true)
             {
-                if (!(LoggedInUserIsAdmin() && !LoggedInUserIsBlocked()) && !LoggedInUserIsOnHisPage(user.Username))
+                if (!(UsersHelper.LoggedInUserIsAdmin(Session) && !UsersHelper.LoggedInUserIsBlocked(Session)) && !UsersHelper.LoggedInUserIsOnHisPage(Session, user.Username))
                 {
                     return View("Error");
                 }
             }
-            if (!LoggedInUserIsOnHisPage(user.Username))
+            if (!UsersHelper.LoggedInUserIsOnHisPage(Session, user.Username))
                 ViewBag.Subbed = CheckIfSubbed(id);
             var userDTO = UserDTO.ConvertUserToDTO(user);
             return View(userDTO);
         }
         public bool CheckIfSubbed(string id)
         {
-            if (Session["loggedInUserUsername"] != null)
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
-                using (var subscribeRepository = new SubscribeRepository(new MyTubeDBEntities()))
-                {
-                    bool exists = subscribeRepository.SubscriptionExists(id, Session["loggedInUserUsername"].ToString());
-                    return exists;
-                }
+                return false;
             }
-            return false;
+            using (var subscribeRepository = new SubscribeRepository(new MyTubeDBEntities()))
+            {
+                bool exists = subscribeRepository.SubscriptionExists(id, UsersHelper.LoggedInUserUsername(Session));
+                return exists;
+            }
+
         }
         public ActionResult AdminPage(string sortOrder, string searchString, int? page)
         {
@@ -160,18 +141,14 @@ namespace MyTube.Controllers
         }
         public bool CheckIfPermited()
         {
-            var username = (string)Session["loggedInUserUsername"];
-            if (username == null)
+            var user = UsersHelper.LoggedInUser(Session);
+            if (user == null)
             {
                 return false;
             }
-            else
+            if (user.UserType != "ADMIN" || user.Blocked == true)
             {
-                var user = _usersRepository.GetUserByUsername(username);
-                if (user == null || user.Blocked == true)
-                {
-                    return false;
-                }
+                return false;
             }
             return true;
         }
@@ -249,10 +226,10 @@ namespace MyTube.Controllers
             switch (sortOrder)
             {
                 case "latest":
-                    videos = videos.OrderBy(s => s.DatePosted);
+                    videos = videos.OrderByDescending(s => s.DatePosted);
                     break;
                 case "oldest":
-                    videos = videos.OrderByDescending(s => s.DatePosted);
+                    videos = videos.OrderBy(s => s.DatePosted);
                     break;
                 case "most_viewed":
                     videos = videos.OrderByDescending(s => s.ViewsCount);
@@ -270,13 +247,6 @@ namespace MyTube.Controllers
         [ChildActionOnly]
         public ActionResult Navbar()
         {
-            var loggedInUser = Session["loggedInUserUsername"];
-            if (loggedInUser != null)
-            {
-                var user = _usersRepository.GetUserByUsername(loggedInUser.ToString());
-                var userDTO = UserDTO.ConvertUserToDTO(user);
-                return PartialView(userDTO);
-            }
             return PartialView();
         }
         public ActionResult Error()
@@ -285,6 +255,10 @@ namespace MyTube.Controllers
         }
         public ActionResult Register()
         {
+            if (UsersHelper.LoggedInUserUsername(Session) != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
         [HttpPost]
@@ -302,12 +276,19 @@ namespace MyTube.Controllers
                 return View(user);
             }
             user.UserType = "USER";
+            user.ProfilePictureUrl = BASIC_PICTURE;
             user.RegistrationDate = DateTime.Now;
             _usersRepository.InsertUser(user);
             return View("RegistrationSuccess");
         }
         public ActionResult NewVideo()
         {
+            var temp = UsersHelper.LoggedInUserUsername(Session);
+            var temp1 = UsersHelper.LoggedInUserIsBlocked(Session);
+            if (UsersHelper.LoggedInUserUsername(Session) == null || UsersHelper.LoggedInUserIsBlocked(Session))
+            {
+                return RedirectToAction("Index", "Home");
+            }
             var video = new Video
             {
                 CommentsEnabled = true,
@@ -336,7 +317,7 @@ namespace MyTube.Controllers
             {
                 video.VideoUrl = videoUrl;
             }
-            var loggedInUser = (string)Session["loggedInUserUsername"];
+            var loggedInUser = UsersHelper.LoggedInUserUsername(Session);
             if (loggedInUser == null)
             {
                 ViewBag.VideoType = VideoTypes;
@@ -391,54 +372,6 @@ namespace MyTube.Controllers
 
             string newUrl = url.Replace(old, replace);
             return newUrl;
-        }
-
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }
-        public bool LoggedInUserIsAdmin()
-        {
-            if ((string)Session["loggedInUserUserType"] == "ADMIN")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public bool LoggedInUserIsOnHisPage(string username)
-        {
-            if ((string)Session["loggedInUserUsername"] == username)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        public bool LoggedInUserIsBlocked()
-        {
-            var status = (string)Session["loggedInUserStatus"];
-
-            if (status == "True")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
     }
 }

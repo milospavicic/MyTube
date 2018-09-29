@@ -20,6 +20,7 @@ function resetModalReloadPageComparator() {
 }
 function editMenu(userName) {
     $('#editUserButtonEditMenu').attr('onclick', 'editModal(\'' + userName + '\')');
+    $('#editPasswordButtonEditMenu').attr('onclick', 'newPasswordModal(\'' + userName + '\')');
     $('#username').val(userName);
     $('#newPasswordForm').attr('action', "/Users/NewPassword/" + userName);
     $('#changeModalMenu').modal();
@@ -227,16 +228,15 @@ function messageModal(partial) {
     $("#messageModal").html(partial);
     $("#messageModal").modal();
 }
-function newPasswordModal() {
+function newPasswordModal(username) {
     $.ajax({
         url: '/Users/NewPassword',
         method: 'get',  // post
         success: function (partialResult) {
-            if (partialResult === null || partialResult === '') {
-                errorPage();
-                return;
-            }
             $('#newPasswordModalContainer').html(partialResult);
+            var tempUrl = '/Users/NewPassword/' + username;
+            console.log(tempUrl);
+            $('#newPasswordForm').attr('action', tempUrl);
         }
     });
     $('#newPasswordModal').modal();

@@ -1,4 +1,5 @@
-﻿@model MyTube.DTO.UserDTO
+﻿@using MyTube.Helpers;
+@model MyTube.DTO.UserDTO
 @{
     ViewBag.Title = "ChannelPage";
 }
@@ -139,13 +140,13 @@
                 <li id="subscribers">Subscribers: @Model.SubscribersCount</li>      <!-- FOLLOWERS -->
             </ul>
             <div class="col-md-12 col-sm-12 col-xs-12 btn-group dropdown" id="navButtons">
-                @if (!LoggedInUserExists())
+                @if (UsersHelper.LoggedInUserUsername(Session) == null)
                 {
                     <button id="subButton" class="btn btn-danger" href="#login-modal" data-toggle="modal">Subscribe</button>
                 }
                 else
                 {
-                    if (!LoggedInUserIsOnHisPage())
+                    if (!UsersHelper.LoggedInUserIsOnHisPage(Session, Model.Username))
                     {
                         if (ViewBag.Subbed != true)
                         {
@@ -165,12 +166,12 @@
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-option-horizontal"></span></button>
                     <ul class="dropdown-menu" role="menu" id="optionsDropdown">
                         <li><a id="userInfo" href="#" onclick="loadInfo(event)">Info</a></li>
-                        @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage())
+                        @if (UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, Model.Username))
                         {
                             <li id="editChannelOption"><a href="#changeModalMenu" data-toggle="modal" id="editOptionBlocked">Edit menu</a></li>
                             <li id="deleteOptionChannel"><a href="#deleteModal" data-toggle="modal" id="deleteOptionBlocked">Delete user</a></li>
                         }
-                        @if (LoggedInUserIsAdmin() && !LoggedInUserIsOnHisPage())
+                        @if (UsersHelper.LoggedInUserIsAdmin(Session) && !UsersHelper.LoggedInUserIsOnHisPage(Session, Model.Username))
                         {
                             if (Model.Blocked != true)
                             {
@@ -200,57 +201,11 @@
     </div>
 </body>
 </html>
-@if (LoggedInUserExists())
+@if (UsersHelper.LoggedInUserUsername(Session) != null)
 {
-    if (LoggedInUserIsBlocked())
+    if (UsersHelper.LoggedInUserIsBlocked(Session))
     {
 
-        <script>BlockAll('@LoggedInUserIsOnHisPage()')</script>
-    }
-}
-@functions{
-    public bool LoggedInUserExists()
-    {
-        if (Session["loggedInUserStatus"] != null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsAdmin()
-    {
-        if ((string)Session["loggedInUserUserType"] == "ADMIN")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsOnHisPage()
-    {
-        if ((string)Session["loggedInUserUsername"] == Model.Username)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsBlocked()
-    {
-        if ((string)Session["loggedInUserStatus"] == "True")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        <script>BlockAll('@UsersHelper.LoggedInUserIsOnHisPage(Session, Model.Username)')</script>
     }
 }

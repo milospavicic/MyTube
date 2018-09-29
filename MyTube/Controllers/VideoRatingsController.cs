@@ -1,10 +1,13 @@
-﻿using MyTube.Models;
+﻿using MyTube.App_Start;
+using MyTube.Helpers;
+using MyTube.Models;
 using MyTube.Repository;
 using System;
 using System.Web.Mvc;
 
 namespace MyTube.Controllers
 {
+    [SessionFilter]
     public class VideoRatingsController : Controller
     {
         private IVideoRatingRepository _videoRatingRepository;
@@ -14,43 +17,15 @@ namespace MyTube.Controllers
         {
             this._videoRatingRepository = videoRatingRepository;
             this._videosRepository = videosRepository;
-
-            CheckLoggedInUser();
-
-        }
-        private void CheckLoggedInUser()
-        {
-            if (Session == null)
-            {
-                return;
-            }
-            else
-            {
-                User loggedInUser = null;
-                using (var usersRepository = new UsersRepository(new MyTubeDBEntities()))
-                {
-                    loggedInUser = usersRepository.GetUserByUsername(Session["loggedInUserUsername"].ToString());
-                }
-                if (loggedInUser == null)
-                {
-                    Session.Abandon();
-                }
-                else
-                {
-                    Session.Add("loggedInUserUsername", loggedInUser.Username);
-                    Session.Add("loggedInUserUserType", loggedInUser.UserType);
-                    Session.Add("loggedInUserStatus", loggedInUser.Blocked.ToString());
-                }
-            }
         }
         [HttpPost]
         public JsonResult CreateVideoRating(long videoId, bool newRating)
         {
-            if (!LoggedInUserExists())
+            if (UsersHelper.LoggedInUserUsername(Session) == null)
             {
                 return null;
             }
-            string username = (string)Session["loggedInUserUsername"].ToString();
+            string username = UsersHelper.LoggedInUserUsername(Session);
             VideoRating vr = _videoRatingRepository.GetVideoRating(videoId, username);
             if (vr != null)
             {
@@ -115,7 +90,7 @@ namespace MyTube.Controllers
         {
             VideoRating vr = new VideoRating
             {
-                LikeOwner = Session["loggedInUserUsername"].ToString(),
+                LikeOwner = UsersHelper.LoggedInUserUsername(Session),
                 VideoID = videoId,
                 LikeDate = DateTime.Now,
                 IsLike = newRating
@@ -135,19 +110,6 @@ namespace MyTube.Controllers
             string returnMessage = (newRating == true) ? "like" : "dislike";
 
             return Json(new { returnMessage, video.LikesCount, video.DislikesCount }, JsonRequestBehavior.AllowGet);
-        }
-
-        public bool LoggedInUserExists()
-        {
-            if (Session["loggedInUserStatus"] != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
         }
     }
 }

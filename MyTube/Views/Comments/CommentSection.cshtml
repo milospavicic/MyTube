@@ -1,4 +1,5 @@
-﻿@model IEnumerable<MyTube.DTO.CommentDTO>
+﻿@using MyTube.Helpers;
+@model IEnumerable<MyTube.DTO.CommentDTO>
 
 <div id="centerButtons">
     @if (ViewBag.CommentsEnabled)
@@ -8,7 +9,7 @@
     }
     else
     {
-        if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage(ViewBag.VideoOwner))
+        if (UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, ViewBag.VideoOwner))
         {
             <button id="myCommentButton" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#myComment">Comment</button>
             <button id="hideShowBtn" type="button" class="btn btn-danger" data-toggle="collapse" data-target="#commentSection">Show Comments</button>
@@ -26,7 +27,7 @@
 <div class="collapse" id="commentSection">
     <div id="commHeader">
         <!-- ZAMENITI SA ORDER BY -->
-        @using (Html.BeginForm("CommentSection/" + videoId(), "Comments", FormMethod.Post, new { id = "SortCommetsForm" }))
+        @using (Html.BeginForm("CommentSection/" + (int)ViewBag.VideoId, "Comments", FormMethod.Post, new { id = "SortCommetsForm" }))
         {
             <p id="comm">Order by: </p>
             @Html.DropDownList("sortOrder", new SelectList(ViewBag.Values, "Value", "Text"), new { onchange = "sortComments()" })
@@ -46,7 +47,7 @@
                         <button class="btn btn-default commentLikeButtons" id="likeBtn-@item.CommentID" onclick="commentLiked(@item.CommentID)"><span class="glyphicon glyphicon-thumbs-up"></span> @item.LikesCount</button>
                         <button class="btn btn-default commentDisikeButtons" id="dislikeBtn-@item.CommentID" onclick="commentDisliked(@item.CommentID)"><span class="glyphicon glyphicon-thumbs-down"></span> @item.DislikesCount</button>
                     </div>
-                    @if (LoggedInUserIsAdmin() || LoggedInUserIsOnHisPage(item.CommentOwner))
+                    @if (UsersHelper.LoggedInUserIsAdmin(Session) || UsersHelper.LoggedInUserIsOnHisPage(Session, ViewBag.VideoOwner))
                     {
                         <button onclick="editCommentModal(@item.CommentID)" class="btn btn-default commentEditButtons"><span class="glyphicon glyphicon-edit"></span></button>
                         <button onclick="deleteCommentModal(@item.CommentID)" class="btn btn-default commentDeleteButtons"><span class="glyphicon glyphicon-trash"></span></button>
@@ -56,65 +57,15 @@
         </div>
     }
 </div>
-@if (!LoggedInUserExists())
+@if (UsersHelper.LoggedInUserUsername(Session) == null)
 {
     <script>NotLoggedIn()</script>
 }
 else
 {
-    if (LoggedInUserIsBlocked())
+    if (UsersHelper.LoggedInUserIsBlocked(Session))
     {
         <script>BlockAll()</script>
     }
 }
-@functions{
-    public bool LoggedInUserExists()
-    {
-        if (Session["loggedInUserStatus"] != null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
 
-    }
-    public bool LoggedInUserIsAdmin()
-    {
-        if ((string)Session["loggedInUserUserType"] == "ADMIN")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsOnHisPage(string username)
-    {
-        if ((string)Session["loggedInUserUsername"] == username)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public bool LoggedInUserIsBlocked()
-    {
-        if ((string)Session["loggedInUserStatus"] == "True")
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    public long? videoId()
-    {
-        return ViewBag.VideoId;
-    }
-}
